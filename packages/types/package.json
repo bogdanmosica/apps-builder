@@ -1,0 +1,15 @@
+{
+  "exports": {
+    ".": "./src/index.d.ts",
+    "./next-auth": "./src/next-auth.d.ts"
+  },
+  "name": "@workspace/types",
+  "private": true,
+  "scripts": {
+    "build": "echo 'Add build script here'",
+    "dev": "echo 'Add dev script here'",
+    "lint": "echo 'Add lint script here'",
+    "test": "echo 'Add test script here'"
+  },
+  "version": "0.0.0"
+}

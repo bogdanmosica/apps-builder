@@ -1,0 +1,26 @@
+{
+  "dependencies": {
+    "@auth/prisma-adapter": "^2.8.0",
+    "@prisma/client": "^6.6.0",
+    "@workspace/prisma": "workspace:*",
+    "next-auth": "5.0.0-beta.25",
+    "nodemailer": "^6.9.14",
+    "postmark": "^4.0.4"
+  },
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "main": "src/index.ts",
+  "name": "@workspace/next-auth",
+  "private": true,
+  "scripts": {
+    "build": "echo 'Add dev script here'",
+    "dev": "echo 'Add dev script here'",
+    "lint": "echo 'Add lint script here'",
+    "test": "echo 'Add test script here'"
+  },
+  "version": "0.0.0",
+  "devDependencies": {
+    "prisma": "^6.6.0"
+  }
+}

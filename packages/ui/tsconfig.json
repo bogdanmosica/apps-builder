@@ -3,9 +3,21 @@
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
-      "@workspace/ui/*": ["./src/*"]
-    }
+      "@workspace/ui/*": ["./src/*"],
+      "next/*": ["../../node_modules/next/*"]
+    },
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ],
+    "moduleResolution": "NodeNext"
   },
-  "include": ["."],
+  "include": [
+    ".",
+    "../../node_modules/next/**/*.ts",
+    "../../apps/web/components/user-account-nav.tsx",
+    "../../apps/web/components/login-avatar-btn.tsx"
+  ],
   "exclude": ["node_modules", "dist"]
 }

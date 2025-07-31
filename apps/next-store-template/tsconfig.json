@@ -1,0 +1,47 @@
+{
+  "$schema": "https://json.schemastore.org/tsconfig.json",
+  "extends": "@workspace/typescript-config/nextjs.json",
+  "compilerOptions": {
+    "target": "ES2022",
+    "lib": ["dom", "dom.iterable", "esnext"],
+    "allowJs": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "forceConsistentCasingInFileNames": true,
+    "noEmit": true,
+    "esModuleInterop": true,
+    "module": "esnext",
+    "moduleResolution": "Bundler",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "jsx": "preserve",
+    "incremental": true,
+    "allowUnreachableCode": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": false,
+    "noUncheckedIndexedAccess": true,
+    "declaration": false,
+    "declarationMap": false,
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ],
+    "paths": {
+      "@/*": ["./src/*"],
+      "@ui/*": ["./src/ui/*"],
+      "@config/*": ["./src/config/*"],
+      "@workspace/ui/*": ["../../packages/ui/src/*"],
+      "@workspace/prisma/*": ["../../packages/next-auth/src/*"]
+    }
+  },
+  "include": [
+    "next-fix.d.ts",
+    "i18n.d.ts",
+    "**/*.mjs",
+    "**/*.ts",
+    "**/*.tsx",
+    ".next/types/**/*.ts"
+, "src/middleware.ts.doc"  ],
+  "exclude": ["node_modules", "src/script/**/*.ts"]
+}
