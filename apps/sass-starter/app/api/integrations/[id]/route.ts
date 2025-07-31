@@ -12,9 +12,10 @@ import { eq, and } from 'drizzle-orm';
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const user = await getUser();
     if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
@@ -32,7 +33,7 @@ export async function DELETE(
     }
 
     const teamId = userWithTeam[0].teamId;
-    const integrationId = parseInt(params.id);
+    const integrationId = parseInt(id);
 
     if (isNaN(integrationId)) {
       return NextResponse.json(
@@ -114,9 +115,10 @@ export async function DELETE(
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const user = await getUser();
     if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
@@ -134,7 +136,7 @@ export async function GET(
     }
 
     const teamId = userWithTeam[0].teamId;
-    const integrationId = parseInt(params.id);
+    const integrationId = parseInt(id);
 
     if (isNaN(integrationId)) {
       return NextResponse.json(
@@ -174,9 +176,10 @@ export async function GET(
 
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const user = await getUser();
     if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
@@ -194,7 +197,7 @@ export async function PATCH(
     }
 
     const teamId = userWithTeam[0].teamId;
-    const integrationId = parseInt(params.id);
+    const integrationId = parseInt(id);
 
     if (isNaN(integrationId)) {
       return NextResponse.json(

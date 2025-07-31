@@ -2,6 +2,9 @@ import { getUser, getTeamForUser } from '@/lib/db/queries';
 import { redirect } from 'next/navigation';
 import DashboardPricing from '@/components/dashboard-pricing';
 
+// Force dynamic rendering since this page uses cookies for authentication
+export const dynamic = 'force-dynamic';
+
 export default async function PricingPage() {
   const user = await getUser();
   if (!user) {

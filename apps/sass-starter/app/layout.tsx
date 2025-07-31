@@ -1,7 +1,6 @@
 import './globals.css';
 import type { Metadata, Viewport } from 'next';
 import { Manrope } from 'next/font/google';
-import { getUser, getTeamForUser } from '@/lib/db/queries';
 import { SWRConfig } from 'swr';
 import { PerformanceMonitor } from '@/lib/monitoring';
 import { Toaster } from '@workspace/ui/components/sonner';
@@ -66,12 +65,8 @@ export default function RootLayout({
         <AnalyticsProvider enableTracking={true} trackAdminPages={false}>
           <SWRConfig
             value={{
-              fallback: {
-                // We do NOT await here
-                // Only components that read this data will suspend
-                '/api/user': getUser(),
-                '/api/team': getTeamForUser(),
-              },
+              // Remove direct function calls from fallback to avoid static rendering issues
+              // Components will fetch data directly when needed
             }}
           >
             {children}

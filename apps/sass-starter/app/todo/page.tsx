@@ -6,6 +6,9 @@ import { Card, CardContent, CardHeader, CardTitle } from '@workspace/ui/componen
 import { Lock, LogIn } from 'lucide-react';
 import Link from 'next/link';
 
+// Force dynamic rendering since this page uses cookies
+export const dynamic = 'force-dynamic';
+
 export default async function TodoPage() {
   const user = await getUser();
   const isLoggedIn = !!user;
