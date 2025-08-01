@@ -23,6 +23,6 @@ if (!connectionSingleton) {
   connectionSingleton = client;
 }
 
-const sql = neon(process.env.DATABASE_URL!);
+const sql = neon(process.env.POSTGRES_URL!);
 export const db = drizzle({ client: sql, schema: schema });
 // export const db = drizzle(client, { schema });
