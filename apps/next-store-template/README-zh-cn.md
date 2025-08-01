@@ -141,7 +141,7 @@ Your Next Store 支持简单的变体产品。要创建带变体的产品，你�
 
 Your Next Store 使用 Stripe 网络钩子处理来自 Stripe 的事件。目前，该端点用于自动重新验证购物车页面和创建税务交易（如果启用）。要设置网络钩子，请参考 Stripe 文档。具体步骤取决于你是否在 Stripe 账户中激活了 Stripe 工作台：[docs.stripe.com/webhooks#add-a-webhook-endpoint](https://docs.stripe.com/webhooks#add-a-webhook-endpoint).
 
-网络钩子的端点是 `https://{YOUR_DOMAIN}/api/stripe-webhook`。唯一必需的事件是 `payment_intent.successed`。在 Stripe 中配置网络钩子后，将 `STRIPE_WEBHOOK_SECRET` 变量值设置为 Stripe 创建的密钥 (secret key)。
+网络钩子的端点是 `https://{YOUR_DOMAIN}/api/stripe-webhook`。唯一必需的事件是 `payment_intent.succeeded`。在 Stripe 中配置网络钩子后，将 `STRIPE_WEBHOOK_SECRET` 变量值设置为 Stripe 创建的密钥 (secret key)。
 
 > [!NOTE]备注
 > 我们之后计划为网络钩子中添加支持更多事件，以改善用户体验。
