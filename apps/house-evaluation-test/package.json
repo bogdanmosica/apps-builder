@@ -50,5 +50,5 @@
     "@workspace/eslint-config": "workspace:^",
     "@workspace/typescript-config": "workspace:*"
   },
-  "name": "house-evaluation"
+  "name": "house-evaluation-test"
 }

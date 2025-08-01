@@ -21,9 +21,13 @@
     "node": ">=20"
   },
   "pnpm": {
+    "ignoredBuiltDependencies": [
+      "@vercel/speed-insights"
+    ],
     "onlyBuiltDependencies": [
       "@prisma/client",
       "@prisma/engines",
+      "@vercel/speed-insights",
       "prisma"
     ]
   },
