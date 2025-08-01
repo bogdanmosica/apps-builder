@@ -5,6 +5,9 @@ import { getUser } from '@/lib/db/queries';
 import { eq, and, desc } from 'drizzle-orm';
 import { z } from 'zod';
 
+// Type for product data from database
+type ProductData = typeof products.$inferSelect;
+
 const createProductSchema = z.object({
   name: z.string().min(1, 'Product name is required').max(100, 'Product name must be less than 100 characters'),
   description: z.string().optional(),
@@ -42,7 +45,7 @@ export async function GET(request: NextRequest) {
       .orderBy(desc(products.createdAt));
 
     // Format products for display (empty array if no products)
-    const formattedProducts = teamProducts.map(product => ({
+    const formattedProducts = teamProducts.map((product: ProductData) => ({
       ...product,
       formattedPrice: `$${(product.price / 100).toFixed(2)}`,
       isActive: product.isActive === 'true',

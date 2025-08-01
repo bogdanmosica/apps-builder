@@ -22,6 +22,15 @@ import { getActivityLogs } from '@/lib/db/queries';
 // Force dynamic rendering for authenticated pages
 export const dynamic = 'force-dynamic';
 
+// Type for the activity log returned by getActivityLogs query
+type ActivityLogWithUser = {
+  id: number;
+  action: string;
+  timestamp: Date;
+  ipAddress: string | null;
+  userName: string | null;
+};
+
 const iconMap: Record<ActivityType, LucideIcon> = {
   [ActivityType.SIGN_UP]: UserPlus,
   [ActivityType.SIGN_IN]: UserCog,
@@ -91,7 +100,7 @@ export default async function ActivityPage() {
         <CardContent>
           {logs.length > 0 ? (
             <ul className='space-y-4'>
-              {logs.map((log) => {
+              {logs.map((log: ActivityLogWithUser) => {
                 const Icon = iconMap[log.action as ActivityType] || Settings;
                 const formattedAction = formatAction(
                   log.action as ActivityType

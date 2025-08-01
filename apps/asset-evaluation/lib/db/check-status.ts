@@ -1,6 +1,12 @@
 import { db } from './drizzle';
 import { users, teams, teamMembers, activityLogs, invitations } from './schema';
 
+// Type for user data from database
+type UserData = typeof users.$inferSelect;
+
+// Type for team data from database
+type TeamData = typeof teams.$inferSelect;
+
 async function checkDatabaseStatus() {
   console.log('🔍 Checking database status...\n');
 
@@ -8,14 +14,14 @@ async function checkDatabaseStatus() {
     // Count users
     const userCount = await db.select().from(users);
     console.log(`👥 Users: ${userCount.length}`);
-    userCount.forEach((user, index) => {
+    userCount.forEach((user: UserData, index: number) => {
       console.log(`  ${index + 1}. ${user.name || 'Unnamed'} (${user.email}) - ${user.role}`);
     });
 
     // Count teams
     const teamCount = await db.select().from(teams);
     console.log(`\n🏢 Teams: ${teamCount.length}`);
-    teamCount.forEach((team, index) => {
+    teamCount.forEach((team: TeamData, index: number) => {
       console.log(`  ${index + 1}. ${team.name} - ${team.planName || 'No plan'} (${team.subscriptionStatus || 'No status'})`);
     });
 

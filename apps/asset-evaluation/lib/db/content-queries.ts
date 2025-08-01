@@ -13,6 +13,51 @@ import {
 } from './schema';
 import { eq, desc, count, sql, and, or, like, isNull } from 'drizzle-orm';
 
+// Type for post data from specific query
+type PostData = {
+  id: number;
+  title: string;
+  slug: string;
+  excerpt: string | null;
+  status: string;
+  tags: string[] | null;
+  isFeatured: boolean;
+  views: number;
+  publishedAt: Date | null;
+  createdAt: Date;
+  updatedAt: Date;
+  author: {
+    id: number;
+    name: string | null;
+    email: string;
+  };
+  category: {
+    id: number;
+    name: string;
+    slug: string;
+  } | null;
+};
+
+// Type for recent post data from activity query
+type RecentPostData = {
+  id: number;
+  title: string;
+  status: string;
+  author: string | null;
+  timestamp: Date;
+  type: string;
+};
+
+// Type for recent comment data from activity query  
+type RecentCommentData = {
+  id: number;
+  title: string;
+  content: string;
+  author: string | null;
+  timestamp: Date;
+  type: string;
+};
+
 // Content Posts Queries
 export async function getContentPosts(teamId: number, filters?: {
   status?: string;
@@ -75,7 +120,7 @@ export async function getContentPosts(teamId: number, filters?: {
 
   // Get comment counts separately
   const postsWithComments = await Promise.all(
-    posts.map(async (post) => {
+    posts.map(async (post: PostData) => {
       const commentCount = await db
         .select({ count: count() })
         .from(contentComments)
@@ -398,7 +443,7 @@ export async function getContentStats(teamId: number) {
       .select({ count: count() })
       .from(contentPosts)
       .where(eq(contentPosts.teamId, teamId))
-      .then(result => result[0]?.count || 0),
+      .then((result: { count: number }[]) => result[0]?.count || 0),
     
     // Published posts
     db
@@ -408,7 +453,7 @@ export async function getContentStats(teamId: number) {
         eq(contentPosts.teamId, teamId),
         eq(contentPosts.status, 'published')
       ))
-      .then(result => result[0]?.count || 0),
+      .then((result: { count: number }[]) => result[0]?.count || 0),
     
     // Draft posts
     db
@@ -418,14 +463,14 @@ export async function getContentStats(teamId: number) {
         eq(contentPosts.teamId, teamId),
         eq(contentPosts.status, 'draft')
       ))
-      .then(result => result[0]?.count || 0),
+      .then((result: { count: number }[]) => result[0]?.count || 0),
     
     // Total views
     db
       .select({ total: sql<number>`COALESCE(SUM(${contentPosts.views}), 0)` })
       .from(contentPosts)
       .where(eq(contentPosts.teamId, teamId))
-      .then(result => result[0]?.total || 0),
+      .then((result: { total: number }[]) => result[0]?.total || 0),
     
     // Total comments
     db
@@ -436,7 +481,7 @@ export async function getContentStats(teamId: number) {
         eq(contentPosts.teamId, teamId),
         eq(contentComments.status, 'approved')
       ))
-      .then(result => result[0]?.count || 0),
+      .then((result: { count: number }[]) => result[0]?.count || 0),
     
     // Total categories
     db
@@ -446,7 +491,7 @@ export async function getContentStats(teamId: number) {
         eq(contentCategories.teamId, teamId),
         eq(contentCategories.isActive, true)
       ))
-      .then(result => result[0]?.count || 0),
+      .then((result: { count: number }[]) => result[0]?.count || 0),
   ]);
 
   return {
@@ -498,7 +543,7 @@ export async function getRecentContentActivity(teamId: number, limit: number = 1
 
   // Combine and sort by timestamp
   const allActivity = [
-    ...recentPosts.map(post => ({
+    ...recentPosts.map((post: RecentPostData) => ({
       id: post.id,
       type: 'post_created' as const,
       title: post.status === 'published' ? 'New blog post published' : 'New draft created',
@@ -506,7 +551,7 @@ export async function getRecentContentActivity(teamId: number, limit: number = 1
       user: post.author || 'Unknown',
       timestamp: post.timestamp,
     })),
-    ...recentComments.map(comment => ({
+    ...recentComments.map((comment: RecentCommentData) => ({
       id: comment.id,
       type: 'comment_added' as const,
       title: 'New comment on post',

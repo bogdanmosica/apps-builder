@@ -12,6 +12,21 @@ import {
 import { getUser } from '@/lib/db/queries';
 import { eq, and, gte, sql, desc, count, countDistinct } from 'drizzle-orm';
 
+// Type for daily analytics data
+type DailyAnalyticsData = {
+  date: string;
+  sessions: number;
+  users: number;
+  revenue: number;
+};
+
+// Type for top pages data
+type TopPageData = {
+  page: string;
+  views: number;
+  uniqueViews: number;
+};
+
 export async function GET(request: NextRequest) {
   try {
     const user = await getUser();
@@ -370,7 +385,7 @@ export async function GET(request: NextRequest) {
         }
       },
       timeSeries: {
-        daily: dailyData.map(day => ({
+        daily: dailyData.map((day: DailyAnalyticsData) => ({
           date: day.date,
           sessions: safeNumber(day.sessions),
           users: safeNumber(day.users), 
@@ -442,7 +457,7 @@ export async function GET(request: NextRequest) {
         { source: "Referrals", visitors: Math.floor(uniqueVisitors * 0.10) },
         { source: "Email", visitors: Math.floor(uniqueVisitors * 0.05) },
       ],
-      topPages: topPagesResult.length > 0 ? topPagesResult.map(page => {
+      topPages: topPagesResult.length > 0 ? topPagesResult.map((page: TopPageData) => {
         // Clean up the page path from action name
         let cleanPath = page.page
           .replace('PAGE_VIEW_', '')

@@ -4,6 +4,25 @@ import { conversations, messages, teams, users } from '@/lib/db/schema';
 import { eq, desc, and, sql } from 'drizzle-orm';
 import { getSession } from '@/lib/auth/session';
 
+// Type for conversation data from query
+type ConversationData = {
+  id: number;
+  participantName: string | null;
+  participantEmail: string | null;
+  participantAvatar: string | null;
+  lastMessage: string | null;
+  lastMessageAt: Date | null;
+  unreadCount: number;
+  status: string;
+  participantStatus: string;
+  type: string;
+  priority: string;
+  assignedTo: number | null;
+  createdAt: Date;
+  updatedAt: Date;
+  messageCount: number;
+};
+
 export async function GET(request: NextRequest) {
   try {
     const session = await getSession();
@@ -80,21 +99,21 @@ export async function GET(request: NextRequest) {
     if (search && search.trim()) {
       const searchLower = search.toLowerCase();
       filteredConversations = conversationList.filter(
-        (conv) =>
-          conv.participantName.toLowerCase().includes(searchLower) ||
-          conv.participantEmail.toLowerCase().includes(searchLower) ||
+        (conv: ConversationData) =>
+          conv.participantName?.toLowerCase().includes(searchLower) ||
+          conv.participantEmail?.toLowerCase().includes(searchLower) ||
           (conv.lastMessage && conv.lastMessage.toLowerCase().includes(searchLower))
       );
     }
 
     return NextResponse.json({
-      conversations: filteredConversations.map((conv) => ({
+      conversations: filteredConversations.map((conv: ConversationData) => ({
         id: conv.id,
         participant: conv.participantName,
         email: conv.participantEmail,
         avatar: conv.participantAvatar,
         lastMessage: conv.lastMessage,
-        timestamp: conv.lastMessageAt.toISOString(),
+        timestamp: conv.lastMessageAt?.toISOString() || new Date().toISOString(),
         unread: conv.unreadCount,
         status: conv.participantStatus, // Online/offline status of participant
         conversationStatus: conv.status, // Active/archived/closed status of conversation

@@ -10,6 +10,37 @@ import {
 import { getUser } from '@/lib/db/queries';
 import { eq, and, desc, sql } from 'drizzle-orm';
 
+// Type for activity log with user info
+type ActivityLogWithUser = {
+  id: number;
+  action: string;
+  timestamp: Date;
+  userName: string | null;
+  userEmail: string;
+};
+
+// Type for payment with user info
+type PaymentWithUser = {
+  id: number;
+  amount: number;
+  currency: string;
+  description: string | null;
+  createdAt: Date;
+  userName: string | null;
+  userEmail: string;
+};
+
+// Type for subscription with user info
+type SubscriptionWithUser = {
+  id: number;
+  planName: string;
+  amount: number;
+  status: string;
+  createdAt: Date;
+  userName: string | null;
+  userEmail: string;
+};
+
 export async function GET(request: NextRequest) {
   try {
     const user = await getUser();
@@ -119,12 +150,12 @@ export async function GET(request: NextRequest) {
     const activities: ActivityItem[] = [];
 
     // Add activity logs
-    recentActivityLogs.forEach(log => {
+    recentActivityLogs.forEach((log: ActivityLogWithUser) => {
       activities.push({
         id: `activity-${log.id}`,
         type: 'activity',
         user: log.userName || log.userEmail || 'Unknown User',
-        action: log.action.replace(/_/g, ' ').toLowerCase().replace(/\b\w/g, l => l.toUpperCase()),
+        action: log.action.replace(/_/g, ' ').toLowerCase().replace(/\b\w/g, (l: string) => l.toUpperCase()),
         time: getTimeAgo(log.timestamp),
         value: '',
         timestamp: log.timestamp,
@@ -132,7 +163,7 @@ export async function GET(request: NextRequest) {
     });
 
     // Add payments
-    recentPayments.forEach(payment => {
+    recentPayments.forEach((payment: PaymentWithUser) => {
       activities.push({
         id: `payment-${payment.id}`,
         type: 'payment',
@@ -145,7 +176,7 @@ export async function GET(request: NextRequest) {
     });
 
     // Add subscriptions
-    recentSubscriptions.forEach(subscription => {
+    recentSubscriptions.forEach((subscription: SubscriptionWithUser) => {
       activities.push({
         id: `subscription-${subscription.id}`,
         type: 'subscription',

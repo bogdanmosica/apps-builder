@@ -10,6 +10,11 @@ import {
 import { getUser } from '@/lib/db/queries';
 import { eq, and } from 'drizzle-orm';
 
+// Type for webhook ID query result
+type WebhookIdData = {
+  id: number;
+};
+
 export async function DELETE(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
@@ -69,7 +74,7 @@ export async function DELETE(
       .where(eq(webhooks.integrationId, integrationId));
     
     if (integrationWebhooks.length > 0) {
-      const webhookIds = integrationWebhooks.map(w => w.id);
+      const webhookIds = integrationWebhooks.map((w: WebhookIdData) => w.id);
       await db
         .delete(webhookDeliveries)
         .where(

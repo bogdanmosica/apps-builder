@@ -10,6 +10,38 @@ import {
 import { getUser } from '@/lib/db/queries';
 import { eq, and, desc, gte, sql } from 'drizzle-orm';
 
+// Type for member data with user details from specific query
+type MemberWithUserData = {
+  id: number;
+  name: string | null;
+  email: string;
+  role: string;
+  joinedAt: Date;
+  createdAt: Date;
+};
+
+// Type for invitation data with inviter details
+type InvitationWithInviterData = {
+  id: number;
+  email: string;
+  role: string;
+  invitedAt: Date;
+  status: string;
+  invitedByName: string | null;
+  invitedByEmail: string;
+};
+
+// Type for formatted member (result of map operation)
+type FormattedMember = {
+  id: number;
+  name: string;
+  email: string;
+  role: string;
+  status: string;
+  joinedAt: string;
+  lastActive: string;
+};
+
 export async function GET(request: NextRequest) {
   try {
     console.log('Team API: Starting request');
@@ -71,7 +103,7 @@ export async function GET(request: NextRequest) {
     console.log('Team API: Members found:', members.length);
 
     // Simple version - just set last active to "Recently" for now
-    const formattedMembers = members.map(member => ({
+    const formattedMembers = members.map((member: MemberWithUserData) => ({
       id: member.id,
       name: member.name || member.email.split('@')[0],
       email: member.email,
@@ -107,7 +139,7 @@ export async function GET(request: NextRequest) {
 
       console.log('Team API: Invitations found:', pendingInvites.length);
 
-      formattedInvitations = pendingInvites.map(invite => ({
+      formattedInvitations = pendingInvites.map((invite: InvitationWithInviterData) => ({
         id: invite.id,
         email: invite.email,
         role: invite.role,
@@ -125,7 +157,7 @@ export async function GET(request: NextRequest) {
     // Calculate stats
     const stats = {
       totalMembers: formattedMembers.length,
-      activeMembers: formattedMembers.filter(m => m.status === 'Active').length,
+      activeMembers: formattedMembers.filter((m: FormattedMember) => m.status === 'Active').length,
       pendingInvites: formattedInvitations.length,
     };
 

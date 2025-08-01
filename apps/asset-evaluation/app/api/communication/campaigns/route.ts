@@ -4,6 +4,9 @@ import { campaigns, users } from '@/lib/db/schema';
 import { eq, desc, and } from 'drizzle-orm';
 import { getSession } from '@/lib/auth/session';
 
+// Type for campaign data from database
+type CampaignData = typeof campaigns.$inferSelect;
+
 export async function GET(request: NextRequest) {
   try {
     const session = await getSession();
@@ -54,7 +57,7 @@ export async function GET(request: NextRequest) {
       .limit(50);
 
     return NextResponse.json({
-      campaigns: campaignList.map((campaign) => ({
+      campaigns: campaignList.map((campaign: CampaignData) => ({
         id: campaign.id,
         name: campaign.name,
         type: campaign.type,

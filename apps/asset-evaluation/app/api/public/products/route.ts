@@ -3,6 +3,16 @@ import { db } from '@/lib/db/drizzle';
 import { products } from '@/lib/db/schema';
 import { eq, asc } from 'drizzle-orm';
 
+// Type for public product data from specific query
+type PublicProductData = {
+  id: number;
+  name: string;
+  description: string | null;
+  price: number;
+  currency: string;
+  billingPeriod: string;
+};
+
 // GET /api/public/products - Fetch active products for public display (marketing page)
 export async function GET() {
   try {
@@ -23,7 +33,7 @@ export async function GET() {
       .orderBy(asc(products.price));
 
     // Format products for display
-    const formattedProducts = activeProducts.map((product, index) => ({
+    const formattedProducts = activeProducts.map((product: PublicProductData, index: number) => ({
       ...product,
       price: product.price / 100, // Convert cents to dollars
       // Create some default features based on price tier

@@ -4,6 +4,9 @@ import { communicationTemplates, users } from '@/lib/db/schema';
 import { eq, desc, and } from 'drizzle-orm';
 import { getSession } from '@/lib/auth/session';
 
+// Type for template data from database
+type TemplateData = typeof communicationTemplates.$inferSelect;
+
 export async function GET(request: NextRequest) {
   try {
     const session = await getSession();
@@ -57,7 +60,7 @@ export async function GET(request: NextRequest) {
       .limit(50);
 
     return NextResponse.json({
-      templates: templateList.map((template) => ({
+      templates: templateList.map((template: TemplateData) => ({
         id: template.id,
         name: template.name,
         type: template.type,

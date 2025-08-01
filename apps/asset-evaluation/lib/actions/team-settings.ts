@@ -15,6 +15,24 @@ import {
   activityLogs 
 } from '@/lib/db/schema';
 
+// Type for team member from query with relations
+type TeamMemberWithUser = {
+  id: number;
+  userId: number;
+  teamId: number;
+  role: string;
+  joinedAt: Date;
+  user: {
+    id: number;
+    name: string | null;
+    email: string;
+    createdAt: Date;
+  };
+};
+
+// Type for invitation from database
+type InvitationData = typeof invitations.$inferSelect;
+
 // Team invitation schema
 const invitationSchema = z.object({
   email: z.string().email('Invalid email address'),
@@ -82,7 +100,7 @@ export async function getTeamData() {
 
     // Find current user's role in the team
     const currentUserMembership = result.team.teamMembers.find(
-      member => member.userId === user.id
+      (member: TeamMemberWithUser) => member.userId === user.id
     );
 
     return {
@@ -123,7 +141,7 @@ export async function inviteTeamMember(formData: FormData) {
 
     // Check if user is already a team member
     const existingMember = teamData.team.teamMembers.find(
-      member => member.user.email.toLowerCase() === validatedData.email
+      (member: TeamMemberWithUser) => member.user.email.toLowerCase() === validatedData.email
     );
 
     if (existingMember) {
@@ -132,7 +150,7 @@ export async function inviteTeamMember(formData: FormData) {
 
     // Check if invitation already exists
     const existingInvitation = teamData.pendingInvitations.find(
-      inv => inv.email.toLowerCase() === validatedData.email
+      (inv: InvitationData) => inv.email.toLowerCase() === validatedData.email
     );
 
     if (existingInvitation) {
@@ -195,11 +213,11 @@ export async function updateMemberRole(formData: FormData) {
     const validatedData = updateMemberRoleSchema.parse(updateData);
 
     // Prevent user from changing their own role if they're the only admin
-    const admins = teamData.team.teamMembers.filter(member => 
+    const admins = teamData.team.teamMembers.filter((member: TeamMemberWithUser) => 
       member.role === 'admin' || member.role === 'owner'
     );
     
-    const targetMember = teamData.team.teamMembers.find(member => 
+    const targetMember = teamData.team.teamMembers.find((member: TeamMemberWithUser) => 
       member.id === validatedData.memberId
     );
 
@@ -255,14 +273,14 @@ export async function removeMember(formData: FormData) {
     }
 
     const memberId = parseInt(formData.get('memberId') as string);
-    const targetMember = teamData.team.teamMembers.find(member => member.id === memberId);
+    const targetMember = teamData.team.teamMembers.find((member: TeamMemberWithUser) => member.id === memberId);
 
     if (!targetMember) {
       return { success: false, message: 'Member not found' };
     }
 
     // Prevent removing yourself if you're the only admin
-    const admins = teamData.team.teamMembers.filter(member => 
+    const admins = teamData.team.teamMembers.filter((member: TeamMemberWithUser) => 
       member.role === 'admin' || member.role === 'owner'
     );
 

@@ -11,6 +11,32 @@ import {
 import { getUser } from '@/lib/db/queries';
 import { eq, and, gte, sql, desc, count, avg, sum } from 'drizzle-orm';
 
+// Type for integration data from active integrations query
+type ActiveIntegrationData = {
+  id: number;
+  name: string;
+  description: string | null;
+  category: string;
+  status: string;
+  health: string;
+  dataFlow: string;
+  lastSync: Date | null;
+  config: unknown;
+};
+
+// Type for webhook data from database
+type WebhookData = typeof webhooks.$inferSelect;
+
+// Type for API key data from database  
+type ApiKeyData = typeof apiKeys.$inferSelect;
+
+// Type for endpoint result from query
+type EndpointData = {
+  endpoint: string;
+  requests: number;
+  avgTime: number;
+};
+
 export async function GET(request: NextRequest) {
   try {
     const user = await getUser();
@@ -129,7 +155,7 @@ export async function GET(request: NextRequest) {
 
     // 6. GET API METRICS FOR EACH INTEGRATION
     const integrationsWithMetrics = await Promise.all(
-      activeIntegrationsData.map(async (integration) => {
+      activeIntegrationsData.map(async (integration: ActiveIntegrationData) => {
         // Get events count (API requests) for last 24h
         const eventsResult = await db
           .select({ count: count() })
@@ -197,7 +223,7 @@ export async function GET(request: NextRequest) {
 
     // Calculate success rate for each webhook
     const webhooksWithMetrics = await Promise.all(
-      webhooksData.map(async (webhook) => {
+      webhooksData.map(async (webhook: WebhookData) => {
         const [successful, total] = await Promise.all([
           db
             .select({ count: count() })
@@ -248,7 +274,7 @@ export async function GET(request: NextRequest) {
       .orderBy(desc(apiKeys.lastUsed));
 
     // Calculate usage for each API key (simplified - you'd track this in api_requests table)
-    const apiKeysWithUsage = apiKeysData.map(apiKey => ({
+    const apiKeysWithUsage = apiKeysData.map((apiKey: ApiKeyData) => ({
       ...apiKey,
       usage: Math.floor(Math.random() * (apiKey.rateLimit || 1000)), // Mock usage for now
     }));
@@ -271,7 +297,7 @@ export async function GET(request: NextRequest) {
       .orderBy(desc(count(apiRequests.id)))
       .limit(5);
 
-    const topEndpoints = topEndpointsResult.map(endpoint => ({
+    const topEndpoints = topEndpointsResult.map((endpoint: EndpointData) => ({
       endpoint: endpoint.endpoint,
       requests: safeNumber(endpoint.requests),
       avgTime: Math.round(safeNumber(endpoint.avgTime)),

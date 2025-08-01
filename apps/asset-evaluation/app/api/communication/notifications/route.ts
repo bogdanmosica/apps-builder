@@ -4,6 +4,9 @@ import { notifications, users } from '@/lib/db/schema';
 import { eq, desc, and, or, isNull } from 'drizzle-orm';
 import { getSession } from '@/lib/auth/session';
 
+// Type for notification data from database
+type NotificationData = typeof notifications.$inferSelect;
+
 export async function GET(request: NextRequest) {
   try {
     const session = await getSession();
@@ -55,7 +58,7 @@ export async function GET(request: NextRequest) {
       .limit(50);
 
     return NextResponse.json({
-      notifications: notificationList.map((notification) => ({
+      notifications: notificationList.map((notification: NotificationData) => ({
         id: notification.id,
         title: notification.title,
         description: notification.description,

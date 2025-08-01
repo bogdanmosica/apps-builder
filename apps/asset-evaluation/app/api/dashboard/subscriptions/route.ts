@@ -9,6 +9,21 @@ import {
 import { getUser } from '@/lib/db/queries';
 import { eq, and, desc } from 'drizzle-orm';
 
+// Type for subscription data with user info from custom query
+type SubscriptionWithUserData = {
+  id: number;
+  planName: string;
+  status: string;
+  amount: number;
+  currency: string;
+  billingPeriod: string;
+  currentPeriodStart: Date;
+  currentPeriodEnd: Date;
+  createdAt: Date;
+  userName: string | null;
+  userEmail: string;
+};
+
 export async function GET(request: NextRequest) {
   try {
     const user = await getUser();
@@ -51,7 +66,7 @@ export async function GET(request: NextRequest) {
       .orderBy(desc(subscriptions.createdAt));
 
     // Format the data for the frontend
-    const formattedSubscriptions = teamSubscriptions.map(sub => ({
+    const formattedSubscriptions = teamSubscriptions.map((sub: SubscriptionWithUserData) => ({
       id: sub.id,
       planName: sub.planName,
       status: sub.status,
