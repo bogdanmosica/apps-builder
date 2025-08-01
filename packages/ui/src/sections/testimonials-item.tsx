@@ -9,7 +9,7 @@ import {
 
 type HomeFeatureItemProps = {
   children?: React.ReactNode;
-} & Record<string, any>;
+} & Record<string, unknown>;
 
 export function HomeTestimonialsItem({
   authorName,

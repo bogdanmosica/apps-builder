@@ -8,7 +8,7 @@ import { Icons } from '@workspace/ui/components/icons';
 import { JSX } from 'react';
 
 interface UserAvatarProps extends AvatarProps {
-  user: Record<string, any>;
+  user: Record<string, unknown>;
 }
 
 export function UserAvatar({ user, ...props }: UserAvatarProps): JSX.Element {

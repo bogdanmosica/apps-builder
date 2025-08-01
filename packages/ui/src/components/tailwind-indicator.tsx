@@ -1,6 +1,7 @@
 import { JSX } from 'react';
 
 export function TailwindIndicator(): JSX.Element | null {
+  // eslint-disable-next-line turbo/no-undeclared-env-vars
   if (process.env.NODE_ENV === 'production') return null;
 
   return (

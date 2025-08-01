@@ -2,7 +2,7 @@ import { HomeFeaturesList } from '@workspace/ui/sections/features-list';
 import { JSX } from 'react';
 
 interface HomeFeaturesSectionProps {
-  marketingConfig?: Record<string, any>;
+  marketingConfig?: Record<string, unknown>;
 }
 
 export function HomeFeaturesSection({
