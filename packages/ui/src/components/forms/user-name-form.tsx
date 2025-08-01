@@ -44,7 +44,6 @@ export function UserNameForm({
     },
   });
   const [isSaving, setIsSaving] = React.useState<boolean>(false);
-  const [updateUser, setUpdateUser] = React.useState<User>(user);
 
   async function onSubmit(data: FormData) {
     setIsSaving(true);
@@ -64,7 +63,6 @@ export function UserNameForm({
         variant: "destructive",
       });
     }
-    setUpdateUser({ ...response.data });
     toast({
       description: "Your name has been updated.",
     });

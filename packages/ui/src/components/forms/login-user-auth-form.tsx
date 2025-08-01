@@ -60,7 +60,7 @@ export function LoginUserAuthForm({
     //   email: data.email.toLowerCase(),
     // }));
     router.push(`/${searchParams.get('from') || 'dashboard'}`);
-    toast('Success! You successfully logged in.');
+    toast(`Success! You successfully logged in as ${data.email.toLowerCase()}.`);
   }
 
   return (

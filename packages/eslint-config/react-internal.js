@@ -1,4 +1,4 @@
-import js from "@eslint/js"
+import js from "./js.js"
 import eslintConfigPrettier from "eslint-config-prettier"
 import pluginReact from "eslint-plugin-react"
 import pluginReactHooks from "eslint-plugin-react-hooks"

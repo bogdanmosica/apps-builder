@@ -2,7 +2,7 @@ import * as React from 'react';
 import { HomeFeatureItem } from '@workspace/ui/sections/feature-item';
 
 interface HomeFeaturesListProps {
-  items?: Record<string, any>[];
+  items?: Record<string, unknown>[];
   children?: React.ReactNode;
 }
 

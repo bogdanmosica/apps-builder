@@ -3,7 +3,7 @@ import * as React from 'react';
 import { HomeTestimonialsItem } from '@workspace/ui/sections/testimonials-item';
 
 interface HomeFeaturesListProps {
-  items?: Record<string, any>[];
+  items?: Record<string, unknown>[];
   children?: React.ReactNode;
 }
 
