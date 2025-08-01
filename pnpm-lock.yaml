@@ -83,7 +83,7 @@ importers:
         version: 0.31.4
       drizzle-orm:
         specifier: ^0.43.1
-        version: 0.43.1(@opentelemetry/api@1.9.0)(@prisma/client@6.13.0(prisma@6.13.0(typescript@5.8.3))(typescript@5.8.3))(@types/pg@8.11.6)(postgres@3.4.7)(prisma@6.13.0(typescript@5.8.3))
+        version: 0.43.1(@neondatabase/serverless@1.0.1)(@opentelemetry/api@1.9.0)(@prisma/client@6.13.0(prisma@6.13.0(typescript@5.8.3))(typescript@5.8.3))(@types/pg@8.11.6)(@vercel/postgres@0.10.0)(postgres@3.4.7)(prisma@6.13.0(typescript@5.8.3))
       jose:
         specifier: ^6.0.11
         version: 6.0.12
@@ -222,7 +222,7 @@ importers:
         version: 1.1.1(@types/react-dom@19.1.5(@types/react@19.1.4))(@types/react@19.1.4)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       commerce-kit:
         specifier: 0.0.40
-        version: 0.0.40(@neondatabase/serverless@0.9.5)(@types/node@22.17.0)(@types/react-dom@19.1.5(@types/react@19.1.4))(@types/react@19.1.4)(next@15.4.4(@opentelemetry/api@1.9.0)(babel-plugin-react-compiler@19.0.0-beta-ebf51a3-20250411)(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(server-only@0.0.1)(stripe@14.25.0)(typescript@5.8.3)(zod@3.25.76)
+        version: 0.0.40(@neondatabase/serverless@1.0.1)(@types/node@22.17.0)(@types/react-dom@19.1.5(@types/react@19.1.4))(@types/react@19.1.4)(next@15.4.4(@opentelemetry/api@1.9.0)(babel-plugin-react-compiler@19.0.0-beta-ebf51a3-20250411)(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(server-only@0.0.1)(stripe@14.25.0)(typescript@5.8.3)(zod@3.25.76)
       intl-messageformat:
         specifier: 10.7.16
         version: 10.7.16
@@ -290,6 +290,9 @@ importers:
 
   apps/sass-starter:
     dependencies:
+      '@neondatabase/serverless':
+        specifier: ^1.0.1
+        version: 1.0.1
       '@tailwindcss/postcss':
         specifier: 4.1.7
         version: 4.1.7
@@ -305,6 +308,9 @@ importers:
       '@types/react-dom':
         specifier: 19.1.5
         version: 19.1.5(@types/react@19.1.4)
+      '@vercel/postgres':
+        specifier: ^0.10.0
+        version: 0.10.0
       '@workspace/next-auth':
         specifier: workspace:*
         version: link:../../packages/next-auth
@@ -346,7 +352,7 @@ importers:
         version: 0.31.4
       drizzle-orm:
         specifier: ^0.43.1
-        version: 0.43.1(@opentelemetry/api@1.9.0)(@prisma/client@6.13.0(prisma@6.13.0(typescript@5.8.3))(typescript@5.8.3))(@types/pg@8.11.6)(postgres@3.4.7)(prisma@6.13.0(typescript@5.8.3))
+        version: 0.43.1(@neondatabase/serverless@1.0.1)(@opentelemetry/api@1.9.0)(@prisma/client@6.13.0(prisma@6.13.0(typescript@5.8.3))(typescript@5.8.3))(@types/pg@8.11.6)(@vercel/postgres@0.10.0)(postgres@3.4.7)(prisma@6.13.0(typescript@5.8.3))
       jose:
         specifier: ^6.0.11
         version: 6.0.12
@@ -1358,6 +1364,10 @@ packages:
 
   '@neondatabase/serverless@0.9.5':
     resolution: {integrity: sha512-siFas6gItqv6wD/pZnvdu34wEqgG3nSE6zWZdq5j2DEsa+VvX8i/5HXJOo06qrw5axPXn+lGCxeR+NLaSPIXug==}
+
+  '@neondatabase/serverless@1.0.1':
+    resolution: {integrity: sha512-O6yC5TT0jbw86VZVkmnzCZJB0hfxBl0JJz6f+3KHoZabjb/X08r9eFA+vuY06z1/qaovykvdkrXYq3SPUuvogA==}
+    engines: {node: '>=19.0.0'}
 
   '@next/env@15.3.0':
     resolution: {integrity: sha512-6mDmHX24nWlHOlbwUiAOmMyY7KELimmi+ed8qWcJYjqXeC+G6JzPZ3QosOAfjNwgMIzwhXBiRiCgdh8axTTdTA==}
@@ -2787,6 +2797,10 @@ packages:
       vue-router:
         optional: true
 
+  '@vercel/postgres@0.10.0':
+    resolution: {integrity: sha512-fSD23DxGND40IzSkXjcFcxr53t3Tiym59Is0jSYIFpG4/0f0KO9SGtcp1sXiebvPaGe7N/tU05cH4yt2S6/IPg==}
+    engines: {node: '>=18.14'}
+
   '@vercel/speed-insights@1.2.0':
     resolution: {integrity: sha512-y9GVzrUJ2xmgtQlzFP2KhVRoCglwfRQgjyfY607aU0hh0Un6d0OUyrJkjuAlsV18qR4zfoFPs/BiIj9YDS6Wzw==}
     peerDependencies:
@@ -2981,6 +2995,10 @@ packages:
 
   buffer@5.7.1:
     resolution: {integrity: sha512-EHcyIPBQ4BSGlvjB16k5KgAJ27CIsHY/2JBmCRReo48y9rQ3MaUzWX3KVlBa4U7MyX02HdVj0K7C3WaB3ju7FQ==}
+
+  bufferutil@4.0.9:
+    resolution: {integrity: sha512-WDtdLmJvAuNNPzByAYpRo2rF1Mmradw6gvWsQKf63476DDXmomT9zUiGypLcG4ibIM67vhAj8jJRdbmEws2Aqw==}
+    engines: {node: '>=6.14.2'}
 
   c12@3.1.0:
     resolution: {integrity: sha512-uWoS8OU1MEIsOv8p/5a82c3H31LsWVR5qiyXVfBNOzfffjUWtPnhAb4BYI2uG2HfGmZmFjCtui5XNWaps+iFuw==}
@@ -4623,6 +4641,10 @@ packages:
   node-fetch-native@1.6.6:
     resolution: {integrity: sha512-8Mc2HhqPdlIfedsuZoc3yioPuzp6b+L5jRCRY1QzuWZh2EGJVQrGppC6V6cF0bLdbW0+O2YpqCA25aF/1lvipQ==}
 
+  node-gyp-build@4.8.4:
+    resolution: {integrity: sha512-LA4ZjwlnUblHVgq0oBF3Jl/6h/Nvs5fzBLwdEF4nuxnFdsfajde4WfxtJr3CaiH+F6ewcIB/q4jQ4UzPyid+CQ==}
+    hasBin: true
+
   node-plop@0.26.3:
     resolution: {integrity: sha512-Cov028YhBZ5aB7MdMWJEmwyBig43aGL5WT4vdoB28Oitau1zZAcHUn8Sgfk9HM33TqhtLJ9PlM/O0Mv+QpV/4Q==}
     engines: {node: '>=8.9.4'}
@@ -5785,6 +5807,18 @@ packages:
   wrappy@1.0.2:
     resolution: {integrity: sha512-l4Sp/DRseor9wL6EvV2+TuQn63dMkPjZ/sp9XkghTEbV9KlPS1xUsZ3u7/IQO4wxtcFB4bgpQPRcR3QCvezPcQ==}
 
+  ws@8.18.3:
+    resolution: {integrity: sha512-PEIGCY5tSlUt50cqyMXfCzX+oOPqN0vuGqWzbcJ2xvnkzkq46oOpz7dQaTDBdfICb4N14+GARUDw2XV2N4tvzg==}
+    engines: {node: '>=10.0.0'}
+    peerDependencies:
+      bufferutil: ^4.0.1
+      utf-8-validate: '>=5.0.2'
+    peerDependenciesMeta:
+      bufferutil:
+        optional: true
+      utf-8-validate:
+        optional: true
+
   y18n@4.0.3:
     resolution: {integrity: sha512-JKhqTOwSrqNA1NY5lSztJ1GrBiUodLMmIZuLiDaMRJ+itFd+ABVE8XBjOvIWL+rSqNDC74LCSFmlb/U4UZ4hJQ==}
 
@@ -6339,6 +6373,11 @@ snapshots:
 
   '@neondatabase/serverless@0.9.5':
     dependencies:
+      '@types/pg': 8.11.6
+
+  '@neondatabase/serverless@1.0.1':
+    dependencies:
+      '@types/node': 22.17.0
       '@types/pg': 8.11.6
 
   '@next/env@15.3.0': {}
@@ -7788,6 +7827,14 @@ snapshots:
       next: 15.4.4(@opentelemetry/api@1.9.0)(babel-plugin-react-compiler@19.0.0-beta-ebf51a3-20250411)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       react: 19.1.0
 
+  '@vercel/postgres@0.10.0':
+    dependencies:
+      '@neondatabase/serverless': 0.9.5
+      bufferutil: 4.0.9
+      ws: 8.18.3(bufferutil@4.0.9)
+    transitivePeerDependencies:
+      - utf-8-validate
+
   '@vercel/speed-insights@1.2.0(next@15.4.4(@opentelemetry/api@1.9.0)(babel-plugin-react-compiler@19.0.0-beta-ebf51a3-20250411)(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(react@19.1.0)':
     optionalDependencies:
       next: 15.4.4(@opentelemetry/api@1.9.0)(babel-plugin-react-compiler@19.0.0-beta-ebf51a3-20250411)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
@@ -7993,6 +8040,10 @@ snapshots:
       base64-js: 1.5.1
       ieee754: 1.2.1
 
+  bufferutil@4.0.9:
+    dependencies:
+      node-gyp-build: 4.8.4
+
   c12@3.1.0:
     dependencies:
       chokidar: 4.0.3
@@ -8169,9 +8220,9 @@ snapshots:
 
   commander@10.0.1: {}
 
-  commerce-kit@0.0.40(@neondatabase/serverless@0.9.5)(@types/node@22.17.0)(@types/react-dom@19.1.5(@types/react@19.1.4))(@types/react@19.1.4)(next@15.4.4(@opentelemetry/api@1.9.0)(babel-plugin-react-compiler@19.0.0-beta-ebf51a3-20250411)(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(server-only@0.0.1)(stripe@14.25.0)(typescript@5.8.3)(zod@3.25.76):
+  commerce-kit@0.0.40(@neondatabase/serverless@1.0.1)(@types/node@22.17.0)(@types/react-dom@19.1.5(@types/react@19.1.4))(@types/react@19.1.4)(next@15.4.4(@opentelemetry/api@1.9.0)(babel-plugin-react-compiler@19.0.0-beta-ebf51a3-20250411)(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(server-only@0.0.1)(stripe@14.25.0)(typescript@5.8.3)(zod@3.25.76):
     dependencies:
-      '@neondatabase/serverless': 0.9.5
+      '@neondatabase/serverless': 1.0.1
       '@types/node': 22.17.0
       '@types/react': 19.1.4
       '@types/react-dom': 19.1.5(@types/react@19.1.4)
@@ -8395,11 +8446,13 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  drizzle-orm@0.43.1(@opentelemetry/api@1.9.0)(@prisma/client@6.13.0(prisma@6.13.0(typescript@5.8.3))(typescript@5.8.3))(@types/pg@8.11.6)(postgres@3.4.7)(prisma@6.13.0(typescript@5.8.3)):
+  drizzle-orm@0.43.1(@neondatabase/serverless@1.0.1)(@opentelemetry/api@1.9.0)(@prisma/client@6.13.0(prisma@6.13.0(typescript@5.8.3))(typescript@5.8.3))(@types/pg@8.11.6)(@vercel/postgres@0.10.0)(postgres@3.4.7)(prisma@6.13.0(typescript@5.8.3)):
     optionalDependencies:
+      '@neondatabase/serverless': 1.0.1
       '@opentelemetry/api': 1.9.0
       '@prisma/client': 6.13.0(prisma@6.13.0(typescript@5.8.3))(typescript@5.8.3)
       '@types/pg': 8.11.6
+      '@vercel/postgres': 0.10.0
       postgres: 3.4.7
       prisma: 6.13.0(typescript@5.8.3)
 
@@ -9963,6 +10016,8 @@ snapshots:
 
   node-fetch-native@1.6.6: {}
 
+  node-gyp-build@4.8.4: {}
+
   node-plop@0.26.3:
     dependencies:
       '@babel/runtime-corejs3': 7.28.2
@@ -11376,6 +11431,10 @@ snapshots:
       strip-ansi: 6.0.1
 
   wrappy@1.0.2: {}
+
+  ws@8.18.3(bufferutil@4.0.9):
+    optionalDependencies:
+      bufferutil: 4.0.9
 
   y18n@4.0.3: {}
 

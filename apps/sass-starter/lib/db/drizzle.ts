@@ -1,4 +1,5 @@
-import { drizzle } from 'drizzle-orm/postgres-js';
+import { drizzle } from "drizzle-orm/neon-http";
+import { neon } from "@neondatabase/serverless";
 import postgres from 'postgres';
 import * as schema from './schema';
 import dotenv from 'dotenv';
@@ -22,4 +23,6 @@ if (!connectionSingleton) {
   connectionSingleton = client;
 }
 
-export const db = drizzle(client, { schema });
+const sql = neon(process.env.DATABASE_URL!);
+export const db = drizzle({ client: sql, schema: schema });
+// export const db = drizzle(client, { schema });

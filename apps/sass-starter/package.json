@@ -11,11 +11,13 @@
     "db:studio": "drizzle-kit studio"
   },
   "dependencies": {
+    "@neondatabase/serverless": "^1.0.1",
     "@tailwindcss/postcss": "4.1.7",
     "@types/node": "^22.15.18",
     "@types/qrcode": "^1.5.5",
     "@types/react": "19.1.4",
     "@types/react-dom": "19.1.5",
+    "@vercel/postgres": "^0.10.0",
     "@workspace/next-auth": "workspace:*",
     "@workspace/prisma": "workspace:*",
     "@workspace/types": "workspace:*",
