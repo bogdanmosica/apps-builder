@@ -2,8 +2,14 @@ import { compare, hash } from 'bcryptjs';
 import { SignJWT, jwtVerify } from 'jose';
 import { cookies } from 'next/headers';
 import { NewUser } from '@/lib/db/schema';
+import { config } from '@/lib/config';
 
-const key = new TextEncoder().encode(process.env.AUTH_SECRET);
+// Ensure AUTH_SECRET is available
+if (!config.authSecret) {
+  throw new Error('AUTH_SECRET environment variable is required');
+}
+
+const key = new TextEncoder().encode(config.authSecret);
 const SALT_ROUNDS = 10;
 
 export async function hashPassword(password: string) {
