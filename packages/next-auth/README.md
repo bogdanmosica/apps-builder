@@ -1,1 +1,1 @@
-# `@hub/next-auth`
+# `@workspace/next-auth`
