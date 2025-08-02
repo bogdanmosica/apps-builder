@@ -1,6 +1,16 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@workspace/ui/components/dialog';
+import { Button } from '@workspace/ui/components/button';
+import { toast } from 'sonner';
 import StartScreen from './StartScreen';
 import QuestionCard from './QuestionCard';
 import FinalScreen from './FinalScreen';
@@ -23,6 +33,13 @@ export default function EvaluationFlow({ propertyData }: EvaluationFlowProps) {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [userAnswers, setUserAnswers] = useState<UserAnswer[]>([]);
   const [evaluationResult, setEvaluationResult] = useState<EvaluationResult | null>(null);
+  const [showResumeDialog, setShowResumeDialog] = useState(false);
+  const [savedSession, setSavedSession] = useState<{
+    answers: UserAnswer[];
+    questionIndex: number;
+    screen: Screen;
+    timestamp: number;
+  } | null>(null);
 
   // Flatten all questions from all categories
   const allQuestions = propertyData.categories.flatMap(category =>
@@ -64,21 +81,9 @@ export default function EvaluationFlow({ propertyData }: EvaluationFlowProps) {
         
         // Only resume if evaluation was incomplete AND it's a recent session
         if (screen === 'questions' && answers && questionIndex !== undefined && isRecentSession) {
-          // Ask user if they want to continue or start fresh
-          const shouldContinue = confirm(
-            `You have an incomplete evaluation in progress.\n\nWould you like to continue from Question ${questionIndex + 1} of ${totalQuestions}?\n\nClick "OK" to continue or "Cancel" to start fresh.`
-          );
-          
-          if (shouldContinue) {
-            setUserAnswers(answers || []);
-            setCurrentQuestionIndex(questionIndex || 0);
-            setCurrentScreen('questions');
-            console.log('📋 Resuming incomplete evaluation from question', questionIndex + 1);
-          } else {
-            // User chose to start fresh - clear old data
-            localStorage.removeItem(`evaluation-${propertyData.id}`);
-            console.log('🆕 Starting fresh evaluation');
-          }
+          // Store session data and show dialog instead of using confirm()
+          setSavedSession({ answers, questionIndex, screen, timestamp });
+          setShowResumeDialog(true);
         } else {
           // Evaluation was completed or too old - clear and start fresh
           localStorage.removeItem(`evaluation-${propertyData.id}`);
@@ -91,6 +96,25 @@ export default function EvaluationFlow({ propertyData }: EvaluationFlowProps) {
       }
     }
   }, [propertyData.id, totalQuestions]);
+
+  const handleContinueEvaluation = () => {
+    if (savedSession) {
+      setUserAnswers(savedSession.answers || []);
+      setCurrentQuestionIndex(savedSession.questionIndex || 0);
+      setCurrentScreen('questions');
+      console.log('📋 Resuming incomplete evaluation from question', savedSession.questionIndex + 1);
+    }
+    setShowResumeDialog(false);
+    setSavedSession(null);
+  };
+
+  const handleStartFreshEvaluation = () => {
+    // User chose to start fresh - clear old data
+    localStorage.removeItem(`evaluation-${propertyData.id}`);
+    console.log('🆕 Starting fresh evaluation');
+    setShowResumeDialog(false);
+    setSavedSession(null);
+  };
 
   // Save progress to localStorage
   const saveProgress = useCallback((answers: UserAnswer[], questionIndex: number, screen: Screen) => {
@@ -183,6 +207,20 @@ export default function EvaluationFlow({ propertyData }: EvaluationFlowProps) {
     }
   };
 
+  const handleBack = () => {
+    if (currentQuestionIndex > 0) {
+      // Go to previous question
+      handlePrevious();
+    } else {
+      // Go back to start screen
+      setCurrentScreen('start');
+      trackEvaluationEvent('navigation_back_to_start', {
+        fromQuestionIndex: currentQuestionIndex,
+        totalQuestions,
+      });
+    }
+  };
+
   const handlePrevious = () => {
     if (currentQuestionIndex > 0) {
       const prevIndex = currentQuestionIndex - 1;
@@ -241,7 +279,9 @@ export default function EvaluationFlow({ propertyData }: EvaluationFlowProps) {
       navigator.clipboard.writeText(`${shareText} ${window.location.href}`)
         .then(() => {
           // Show toast notification
-          alert('Results copied to clipboard!');
+          toast.success('Results copied to clipboard!', {
+            description: 'You can now paste and share your evaluation results.',
+          });
         })
         .catch(console.error);
     }
@@ -305,16 +345,52 @@ export default function EvaluationFlow({ propertyData }: EvaluationFlowProps) {
         userAnswer={currentUserAnswer}
         onAnswer={handleAnswer}
         onNext={handleNext}
+        onBack={handleBack}
         onRestart={handleRestart}
         onSkip={handleSkip}
         canGoNext={currentQuestionIndex < totalQuestions - 1 || currentUserAnswer !== undefined}
         currentScore={currentScore}
         maxPossibleScore={maxPossibleScore}
+        isLastQuestion={currentQuestionIndex === totalQuestions - 1}
       />
     );
   }
 
-  return null;
+  return (
+    <>
+      {/* Resume Evaluation Dialog */}
+      <Dialog open={showResumeDialog} onOpenChange={setShowResumeDialog}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Continue Your Evaluation?</DialogTitle>
+            <DialogDescription>
+              You have an incomplete evaluation in progress.
+              {savedSession && (
+                <span className="block mt-2 font-medium">
+                  Continue from Question {savedSession.questionIndex + 1} of {totalQuestions}
+                </span>
+              )}
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="flex-col-reverse sm:flex-row sm:justify-end gap-2">
+            <Button
+              variant="outline"
+              onClick={handleStartFreshEvaluation}
+              className="w-full sm:w-auto"
+            >
+              Start Fresh
+            </Button>
+            <Button
+              onClick={handleContinueEvaluation}
+              className="w-full sm:w-auto"
+            >
+              Continue Evaluation
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </>
+  );
 }
 
 // Generate a text report for download

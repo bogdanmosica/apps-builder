@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Button } from '@workspace/ui/components/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@workspace/ui/components/card';
 import { Badge } from '@workspace/ui/components/badge';
@@ -35,11 +35,13 @@ interface QuestionCardProps {
   userAnswer?: UserAnswer;
   onAnswer: (answer: UserAnswer) => void;
   onNext: () => void;
+  onBack: () => void;
   onRestart: () => void;
   onSkip: () => void;
   canGoNext: boolean;
   currentScore: number;
   maxPossibleScore: number;
+  isLastQuestion?: boolean;
 }
 
 export default function QuestionCard({
@@ -50,17 +52,21 @@ export default function QuestionCard({
   userAnswer,
   onAnswer,
   onNext,
+  onBack,
   onRestart,
   onSkip,
   canGoNext,
   currentScore,
   maxPossibleScore,
+  isLastQuestion = false,
 }: QuestionCardProps) {
   const [selectedAnswerId, setSelectedAnswerId] = useState<number | null>(
     userAnswer?.answerId || null
   );
   const [showFeedback, setShowFeedback] = useState(false);
   const [justAnswered, setJustAnswered] = useState(false);
+  const [isTransitioning, setIsTransitioning] = useState(false);
+  const nextButtonRef = useRef<HTMLButtonElement>(null);
 
   const progress = ((currentQuestionIndex + 1) / totalQuestions) * 100;
   const currentLevel = getCurrentLevel(currentScore, maxPossibleScore);
@@ -69,7 +75,26 @@ export default function QuestionCard({
     setSelectedAnswerId(userAnswer?.answerId || null);
     setShowFeedback(false);
     setJustAnswered(false);
+    setIsTransitioning(false);
   }, [question.id, userAnswer]);
+
+  // Focus the Next/Finish button when an answer is selected
+  useEffect(() => {
+    if (selectedAnswerId && nextButtonRef.current) {
+      setTimeout(() => {
+        nextButtonRef.current?.focus();
+      }, 100);
+    }
+  }, [selectedAnswerId]);
+
+  // Focus the FINISH button immediately on the last question
+  useEffect(() => {
+    if (isLastQuestion && nextButtonRef.current && canGoNext) {
+      setTimeout(() => {
+        nextButtonRef.current?.focus();
+      }, 300); // Small delay to ensure the component is fully rendered
+    }
+  }, [isLastQuestion, canGoNext]);
 
   useEffect(() => {
     trackEvaluationEvent('question_viewed', {
@@ -121,11 +146,17 @@ export default function QuestionCard({
 
     onAnswer(userAnswerData);
 
-    // Auto-advance after feedback (optional)
+    // Auto-advance after feedback (or immediately if last question)
     if (canGoNext) {
+      const delay = isLastQuestion ? 500 : 800;
+      
+      setTimeout(() => {
+        setIsTransitioning(true);
+      }, delay - 200); // Start loading animation 200ms before transition
+      
       setTimeout(() => {
         onNext();
-      }, 2000);
+      }, delay);
     }
   };
 
@@ -137,19 +168,22 @@ export default function QuestionCard({
       message = `🎉 Excellent! +${points.toFixed(1)} points`;
       toast.success(message, { 
         icon: icon,
-        description: 'Great choice for property value!'
+        description: 'Great choice for property value!',
+        duration: 1500,
       });
     } else if (percentage >= 50) {
       message = `👍 Good choice! +${points.toFixed(1)} points`;
       toast.info(message, {
         icon: <Star className="w-5 h-5" />,
-        description: 'Solid answer, room for improvement.'
+        description: 'Solid answer, room for improvement.',
+        duration: 1500,
       });
     } else {
       message = `⚠️ Could be better. +${points.toFixed(1)} points`;
       toast.warning(message, {
         icon: <AlertTriangle className="w-5 h-5" />,
-        description: 'Consider this for future properties.'
+        description: 'Consider this for future properties.',
+        duration: 1500,
       });
     }
   };
@@ -226,9 +260,26 @@ export default function QuestionCard({
 
       {/* Question Card */}
       <div className="flex-1 w-full max-w-4xl mx-auto">
-        <Card className="shadow-2xl border-2 animate-in fade-in slide-in-from-bottom-4 duration-500">
+        <Card className="shadow-2xl border-2 relative">
+          {isTransitioning && (
+            <div className="absolute inset-0 bg-background/80 backdrop-blur-sm z-10 flex items-center justify-center rounded-lg">
+              <div className="flex items-center gap-3 text-foreground">
+                <div className="animate-spin rounded-full h-6 w-6 border-2 border-primary border-t-transparent"></div>
+                <span className="text-sm font-medium">Loading next question...</span>
+              </div>
+            </div>
+          )}
           <CardHeader className="pb-6">
             <div className="flex items-start justify-between mb-4">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={onBack}
+                className="hover:bg-gray-100 dark:hover:bg-gray-800 -ml-2"
+              >
+                <ArrowLeft className="w-4 h-4 mr-2" />
+                Back
+              </Button>
               <Badge variant="outline" className="text-sm">
                 Weight: {Math.round(question.weight * 100)}%
               </Badge>
@@ -288,7 +339,7 @@ export default function QuestionCard({
                         </div>
                         
                         {showAnswerFeedback && (
-                          <div className="mt-2 animate-in fade-in slide-in-from-top-2 duration-300">
+                          <div className="mt-2">
                             <p className="text-sm text-muted-foreground">
                               Points earned: {(answer.weight * question.weight).toFixed(1)} / {(Math.max(...question.answers.map(a => a.weight)) * question.weight).toFixed(1)}
                             </p>
@@ -322,11 +373,16 @@ export default function QuestionCard({
                 </Button>
                 
                 <Button
+                  ref={nextButtonRef}
                   onClick={onNext}
                   disabled={!canGoNext}
-                  className="flex items-center gap-2 bg-primary hover:bg-primary/90"
+                  className={`flex items-center gap-2 ${
+                    isLastQuestion
+                      ? 'bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white font-semibold shadow-lg hover:shadow-xl transition-all duration-200 ring-2 ring-green-500/20 hover:ring-green-500/40'
+                      : 'bg-primary hover:bg-primary/90'
+                  }`}
                 >
-                  Next
+                  {isLastQuestion ? 'Finish' : 'Next'}
                   <ArrowRight className="w-4 h-4" />
                 </Button>
               </div>
@@ -337,7 +393,7 @@ export default function QuestionCard({
 
       {/* Level Up Notification */}
       {justAnswered && currentLevel.isNewLevel && (
-        <div className="fixed bottom-6 right-6 animate-in slide-in-from-bottom-4 duration-500">
+        <div className="fixed bottom-6 right-6">
           <Card className="bg-gradient-to-r from-yellow-400 to-yellow-600 text-white border-0 shadow-xl">
             <CardContent className="p-4 flex items-center gap-3">
               <Award className="w-6 h-6" />

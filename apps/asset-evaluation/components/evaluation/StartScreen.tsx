@@ -85,12 +85,12 @@ export default function StartScreen({ propertyData, onStart }: StartScreenProps)
         <Card className="bg-card/50 backdrop-blur-sm border-2 shadow-2xl">
           <CardContent className="p-8 text-center space-y-8">
             {/* Header Icon */}
-            <div className="mx-auto w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center animate-in zoom-in-50 duration-500 delay-300">
+            <div className="mx-auto w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center">
               <Home className="w-10 h-10 text-primary" />
             </div>
 
             {/* Title */}
-            <div className="space-y-4 animate-in fade-in duration-500 delay-400">
+            <div className="space-y-4">
               <h1 className="text-3xl md:text-4xl font-bold text-foreground">
                 Property Evaluation
               </h1>
@@ -99,8 +99,20 @@ export default function StartScreen({ propertyData, onStart }: StartScreenProps)
               </p>
             </div>
 
+            {/* Start Button - Moved to top */}
+            <div>
+              <Button
+                onClick={handleStart}
+                size="lg"
+                className="w-full max-w-md h-14 text-lg font-semibold bg-primary hover:bg-primary-dark transition-all duration-200 hover:scale-105"
+              >
+                <Play className="w-6 h-6 mr-3" />
+                Start Evaluation
+              </Button>
+            </div>
+
             {/* Statistics Cards */}
-            <div className="grid grid-cols-3 gap-2 md:gap-4 animate-in fade-in slide-in-from-bottom-4 duration-500 delay-600">
+            <div className="grid grid-cols-3 gap-2 md:gap-4">
               <Card className="p-2 md:p-4 bg-background/50">
                 <div className="flex flex-col md:flex-row items-center md:gap-3 text-center md:text-left">
                   <CheckCircle2 className="w-6 h-6 md:w-8 md:h-8 text-primary mb-1 md:mb-0" />
@@ -133,7 +145,7 @@ export default function StartScreen({ propertyData, onStart }: StartScreenProps)
             </div>
 
             {/* Categories Preview */}
-            <div className="space-y-4 animate-in fade-in duration-500 delay-700">
+            <div className="space-y-4">
               <h3 className="text-lg font-semibold text-foreground">
                 Evaluation Categories
               </h3>
@@ -141,8 +153,7 @@ export default function StartScreen({ propertyData, onStart }: StartScreenProps)
                 {propertyData.categories.map((category, index) => (
                   <div
                     key={category.id}
-                    className="flex items-center gap-2 p-3 bg-background/30 rounded-lg animate-in fade-in slide-in-from-left-4 duration-300"
-                    style={{ animationDelay: `${800 + index * 100}ms` }}
+                    className="flex items-center gap-2 p-3 bg-background/30 rounded-lg"
                   >
                     <div className="w-2 h-2 bg-primary rounded-full" />
                     <span className="font-medium text-foreground">{category.name}</span>
@@ -155,7 +166,7 @@ export default function StartScreen({ propertyData, onStart }: StartScreenProps)
             </div>
 
             {/* Gamification Preview */}
-            <div className="space-y-4 animate-in fade-in duration-500 delay-900">
+            <div className="space-y-4">
               <h3 className="text-lg font-semibold text-foreground">
                 Unlock Achievements
               </h3>
@@ -180,20 +191,8 @@ export default function StartScreen({ propertyData, onStart }: StartScreenProps)
               </div>
             </div>
 
-            {/* Start Button */}
-            <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 delay-1000">
-              <Button
-                onClick={handleStart}
-                size="lg"
-                className="w-full max-w-md h-14 text-lg font-semibold bg-primary hover:bg-primary-dark transition-all duration-200 hover:scale-105"
-              >
-                <Play className="w-6 h-6 mr-3" />
-                Start Evaluation
-              </Button>
-            </div>
-
             {/* Footer Note */}
-            <p className="text-sm text-muted-foreground animate-in fade-in duration-500 delay-1100">
+            <p className="text-sm text-muted-foreground">
               💡 Your progress is automatically saved. You can return anytime to complete the evaluation.
             </p>
           </CardContent>
