@@ -136,5 +136,126 @@
   },
   "notes": "Notițe suplimentare",
   "notesPlaceholder": "Adaugă observații sau comentarii suplimentare despre această proprietate...",
-  "footerNote": "💡 Progresul tău este salvat automat. Poți reveni oricând pentru a finaliza evaluarea."
+  "footerNote": "💡 Progresul tău este salvat automat. Poți reveni oricând pentru a finaliza evaluarea.",
+  "messages": {
+    "linkCopied": "Link copiat în clipboard!",
+    "propertyUpdated": "Proprietatea a fost actualizată cu succes!",
+    "updateFailed": "Actualizarea proprietății a eșuat. Te rugăm să încerci din nou."
+  },
+  "stats": {
+    "totalEvaluations": "Total Evaluări",
+    "averageScore": "Scor Mediu",
+    "bestScore": "Cel Mai Bun Scor",
+    "completionRate": "Rata de Finalizare"
+  },
+  "filters": {
+    "sortBy": "Sortează după",
+    "dateAdded": "Data Adăugării",
+    "score": "Scor",
+    "propertyType": "Tipul Proprietății",
+    "filter": "Filtrează",
+    "allTypes": "Toate Tipurile"
+  },
+  "overallScore": "Scor General",
+  "completion": "Finalizare",
+  "level": "Nivel",
+  "results": {
+    "strengths": "Puncte Forte",
+    "improvements": "Zone de Îmbunătățire",
+    "excellentScore": "Scor general excelent",
+    "comprehensiveEvaluation": "Evaluare completă finalizată",
+    "expertLevel": "Evaluare la nivel de expert",
+    "detailedLocation": "Evaluare detaliată a locației",
+    "viewDetails": "Vezi Detaliile",
+    "improveInsulation": "Îmbunătățește izolația termică",
+    "improveWindows": "Modernizează ferestrele și ușile",
+    "improveElectrical": "Modernizează sistemul electric",
+    "improvePlumbing": "Actualizează instalația sanitară",
+    "improveUtilities": "Îmbunătățește sistemele de utilități"
+  },
+  "emptyState": {
+    "noProperties": "Nu există proprietăți evaluate încă",
+    "firstPropertyDescription": "Începe prin adăugarea primei tale proprietăți pentru a obține informații personalizate și a-ți urmări portofoliul imobiliar.",
+    "addFirstProperty": "Adaugă Prima Ta Proprietate"
+  },
+  "gamification": {
+    "keepGoing": "Continuă! Construiești un portofoliu impresionant.",
+    "addMoreProperties": "Adaugă încă {{count}} {{propertyWord}} pentru a debloca analize avansate.",
+    "property": "proprietate",
+    "properties": "proprietăți"
+  },
+  "actions": {
+    "editDetails": "Editează Detaliile",
+    "share": "Distribuie",
+    "delete": "Șterge"
+  },
+  "startScreen": {
+    "backToHome": "Înapoi Acasă",
+    "title": "Evaluare Proprietate",
+    "subtitle": "Obține informații complete despre {{propertyType}} ta cu sistemul nostru detaliat de evaluare.",
+    "startButton": "Începe Evaluarea",
+    "statistics": {
+      "questions": "Întrebări",
+      "minutes": "Minute",
+      "maxScore": "Scor Maxim"
+    },
+    "categories": {
+      "title": "Ce Vom Evalua",
+      "questionsCount": "{{count}} întrebări"
+    },
+    "achievements": {
+      "title": "Deblochează Realizări",
+      "beginner": "Începător",
+      "beginnerRange": "0-40%",
+      "expert": "Expert",
+      "expertRange": "41-80%",
+      "master": "Maestru",
+      "masterRange": "81-100%"
+    },
+    "footerNote": "💡 Progresul tău este salvat automat. Poți reveni oricând pentru a finaliza evaluarea."
+  },
+  "propertyInfoScreen": {
+    "backToDashboard": "Înapoi la Dashboard",
+    "title": "Informații Proprietate",
+    "subtitle": "Spune-ne despre {{propertyType}} ta pentru a începe evaluarea.",
+    "stepIndicator": "Pasul 1 din 2 - Detalii Proprietate",
+    "fields": {
+      "propertyName": {
+        "label": "Numele Proprietății",
+        "placeholder": "Introdu un nume pentru proprietatea ta",
+        "error": "Numele proprietății este obligatoriu"
+      },
+      "location": {
+        "label": "Locația",
+        "placeholder": "Introdu locația proprietății",
+        "helpText": "Oraș, cartier, sau adresă specifică (opțional)"
+      },
+      "surface": {
+        "label": "Suprafața",
+        "placeholder": "Introdu suprafața în m²",
+        "error": "Te rugăm să introduci o suprafață validă"
+      },
+      "floors": {
+        "label": "Numărul de Etaje",
+        "placeholder": "Selectează numărul de etaje",
+        "options": {
+          "1": "1 Etaj",
+          "2": "2 Etaje",
+          "3": "3+ Etaje",
+          "mansarda": "Parter + Mansardă",
+          "other": "Altele"
+        }
+      },
+      "constructionYear": {
+        "label": "Anul Construcției",
+        "placeholder": "Introdu anul construcției",
+        "error": "Te rugăm să introduci un an valid (1800-{{currentYear}})"
+      }
+    },
+    "buttons": {
+      "backToOverview": "Înapoi la Prezentare",
+      "startEvaluation": "Începe Evaluarea"
+    },
+    "helpText": "💡 Aceste informații ne ajută să oferim rezultate de evaluare mai precise."
+  }
 }

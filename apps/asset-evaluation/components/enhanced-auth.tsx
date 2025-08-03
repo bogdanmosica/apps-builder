@@ -29,6 +29,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
+import { triggerAuthRefresh } from '@/hooks/useAuth';
 
 interface AuthFormProps {
   mode: 'signin' | 'signup' | 'forgot-password' | 'verify-email';
@@ -167,6 +168,9 @@ export default function EnhancedAuth({ mode, onModeChange }: AuthFormProps) {
       // Success
       toast.dismiss(loadingToast);
       
+      // Trigger auth refresh for navigation component
+      triggerAuthRefresh();
+      
       // Check user role for appropriate redirect
       const userRole = data.user?.role || 'member';
       const isAdminUser = userRole === 'owner' || userRole === 'admin';
@@ -175,10 +179,10 @@ export default function EnhancedAuth({ mode, onModeChange }: AuthFormProps) {
         mode === 'signin'
           ? isAdminUser 
             ? 'Welcome back! Redirecting to your dashboard...'
-            : 'Welcome back! Redirecting...'
+            : 'Welcome back! Redirecting to your evaluations...'
           : isAdminUser
             ? 'Account created successfully! Redirecting to dashboard...'
-            : 'Account created successfully! Redirecting...'
+            : 'Account created successfully! Redirecting to evaluations...'
       );
 
       // Small delay to show success message before redirect
@@ -186,7 +190,7 @@ export default function EnhancedAuth({ mode, onModeChange }: AuthFormProps) {
         if (isAdminUser) {
           router.push('/dashboard');
         } else {
-          router.push('/'); // Redirect regular users to marketing page
+          router.push('/'); // Redirect regular users to evaluations overview page
         }
       }, 1000);
     } catch (error) {

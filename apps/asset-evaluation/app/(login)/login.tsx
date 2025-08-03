@@ -34,7 +34,7 @@ export function Login({ mode = 'signin' }: { mode?: 'signin' | 'signup' }) {
             toast.success('You are already signed in!', {
               description: isAdminUser 
                 ? 'Redirecting to your dashboard...'
-                : 'Redirecting to home page...',
+                : 'Redirecting to your evaluations...',
             });
 
             setTimeout(() => {
@@ -42,7 +42,7 @@ export function Login({ mode = 'signin' }: { mode?: 'signin' | 'signup' }) {
                 if (isAdminUser) {
                   router.push('/dashboard');
                 } else {
-                  router.push('/');
+                  router.push('/evaluation'); // Redirect regular users to evaluations
                 }
               }
             }, 1000);

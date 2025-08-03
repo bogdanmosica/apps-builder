@@ -98,8 +98,9 @@ export default function StartScreen({ propertyData, onStart }: StartScreenProps)
                 {t('startScreen.title', { ns: 'evaluation' })}
               </h1>
               <p className="text-lg text-muted-foreground max-w-md mx-auto">
-                {t('evaluation.startScreen.subtitle', { 
-                  propertyType: getPropertyTypeName(propertyData, currentLanguage).toLowerCase() 
+                {t('startScreen.subtitle', { 
+                  propertyType: getPropertyTypeName(propertyData, currentLanguage).toLowerCase(),
+                  ns: 'evaluation' 
                 })}
               </p>
             </div>
@@ -163,7 +164,7 @@ export default function StartScreen({ propertyData, onStart }: StartScreenProps)
                     <div className="w-2 h-2 bg-primary rounded-full" />
                     <span className="font-medium text-foreground">{getCategoryName(category, currentLanguage)}</span>
                     <Badge variant="secondary" className="ml-auto text-xs">
-                      {t('evaluation.startScreen.categories.questionsCount', { count: category.questions.length })}
+                      {t('startScreen.categories.questionsCount', { count: category.questions.length, ns: 'evaluation' })}
                     </Badge>
                   </div>
                 ))}

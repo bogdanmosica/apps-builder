@@ -473,18 +473,18 @@ export default function EvaluationsOverview({ evaluations, stats, isLoggedIn, us
                           <DropdownMenuContent align="end">
                             <DropdownMenuItem onClick={() => handleEditEvaluation(evaluation)}>
                               <Edit className="w-4 h-4 mr-2" />
-                              Edit Details
+                              {t('actions.editDetails')}
                             </DropdownMenuItem>
                             <DropdownMenuItem onClick={() => handleShareEvaluation(evaluation)}>
                               <Share className="w-4 h-4 mr-2" />
-                              Share
+                              {t('actions.share')}
                             </DropdownMenuItem>
                             <DropdownMenuItem 
                               className="text-red-600"
                               onClick={() => handleDeleteEvaluation(evaluation)}
                             >
                               <Trash2 className="w-4 h-4 mr-2" />
-                              Delete
+                              {t('actions.delete')}
                             </DropdownMenuItem>
                           </DropdownMenuContent>
                         </DropdownMenu>

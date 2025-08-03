@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 import { DropdownMenuItem } from '@workspace/ui/components/dropdown-menu';
 import { LogOut, Loader2 } from 'lucide-react';
+import { triggerAuthRefresh } from '@/hooks/useAuth';
 
 export function LogoutButton() {
   const router = useRouter();
@@ -25,6 +26,9 @@ export function LogoutButton() {
       });
 
       if (response.ok) {
+        // Trigger auth refresh to update navigation
+        triggerAuthRefresh();
+        
         toast.success('Successfully logged out!', { id: 'logout' });
         router.push('/');
         router.refresh();

@@ -11,23 +11,49 @@ import {
 } from '@workspace/ui/components/dropdown-menu';
 import { Icons } from '@workspace/ui/components/icons';
 import { LogoutButton } from './logout-button';
-import { Home, Plus, Building } from 'lucide-react';
+import { Home, Plus, Building, User } from 'lucide-react';
 import Link from 'next/link';
 import { useTheme } from 'next-themes';
 import { useTranslation } from 'react-i18next';
+import { useAuth } from '@/hooks/useAuth';
+import { useEffect, useState } from 'react';
 import LanguageSwitcher from './LanguageSwitcher';
 
 interface NavigationProps {
-  isLoggedIn: boolean;
-  userRole: string | null;
+  isLoggedIn?: boolean;
+  userRole?: string | null;
 }
 
-export default function Navigation({ isLoggedIn, userRole }: NavigationProps) {
+export default function Navigation({ 
+  isLoggedIn: propIsLoggedIn, 
+  userRole: propUserRole 
+}: NavigationProps) {
   const { setTheme } = useTheme();
   const { t } = useTranslation(['common', 'evaluation', 'navigation', 'property']);
+  const { isLoggedIn: hookIsLoggedIn, user, isLoading } = useAuth();
+  const [isScrolled, setIsScrolled] = useState(false);
+
+  // Use hook data if available, fallback to props
+  const isLoggedIn = !isLoading ? hookIsLoggedIn : propIsLoggedIn;
+  const userRole = user?.role || propUserRole;
+
+  // Handle scroll effect for navigation bar
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrollTop = window.scrollY;
+      setIsScrolled(scrollTop > 10);
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   return (
-    <div className='sticky top-0 z-50 w-full flex justify-center bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm border-b border-gray-200 dark:border-gray-700'>
+    <div className={`sticky top-0 z-50 w-full flex justify-center transition-all duration-200 ${
+      isScrolled 
+        ? 'bg-white/95 dark:bg-gray-900/95 backdrop-blur-md shadow-md' 
+        : 'bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm'
+    } border-b border-gray-200 dark:border-gray-700`}>
       <div className='w-full max-w-6xl px-4 py-4 flex items-center justify-between'>
         <div className='flex items-center space-x-2'>
           <Home className='h-8 w-8 text-blue-600 dark:text-blue-400' />
@@ -42,7 +68,12 @@ export default function Navigation({ isLoggedIn, userRole }: NavigationProps) {
           {/* Language Switcher - Always visible */}
           <LanguageSwitcher />
           
-          {isLoggedIn ? (
+          {isLoading ? (
+            // Loading state
+            <div className="flex items-center space-x-2">
+              <div className="w-8 h-8 bg-gray-200 dark:bg-gray-700 rounded-full animate-pulse"></div>
+            </div>
+          ) : isLoggedIn ? (
             <div className='flex items-center space-x-4'>
               {/* Add Property Dropdown */}
               <DropdownMenu>
@@ -71,7 +102,7 @@ export default function Navigation({ isLoggedIn, userRole }: NavigationProps) {
               </DropdownMenu>
 
               {userRole === 'owner' || userRole === 'admin' ? (
-                <Button asChild variant="outline">
+                <Button asChild variant="outline" size="sm">
                   <Link href='/dashboard'>{t('dashboard', { ns: 'navigation' })}</Link>
                 </Button>
               ) : null}
@@ -85,12 +116,17 @@ export default function Navigation({ isLoggedIn, userRole }: NavigationProps) {
                     className='overflow-hidden rounded-full'
                   >
                     <div className='h-8 w-8 rounded-full bg-primary flex items-center justify-center text-primary-foreground text-sm'>
-                      U
+                      {user?.firstName ? user.firstName.charAt(0).toUpperCase() : <User className="h-4 w-4" />}
                     </div>
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align='end'>
-                  <DropdownMenuLabel>{t('profile', { ns: 'navigation' })}</DropdownMenuLabel>
+                  <DropdownMenuLabel>
+                    {user?.firstName && user?.lastName 
+                      ? `${user.firstName} ${user.lastName}`
+                      : user?.email || t('profile', { ns: 'navigation' })
+                    }
+                  </DropdownMenuLabel>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem asChild>
                     <Link href='/evaluation'>{t('title', { ns: 'evaluation' })}</Link>

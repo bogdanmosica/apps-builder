@@ -136,5 +136,126 @@
   },
   "notes": "Additional notes",
   "notesPlaceholder": "Add any additional observations or comments about this property...",
-  "footerNote": "💡 Your progress is automatically saved. You can return anytime to complete the evaluation."
+  "footerNote": "💡 Your progress is automatically saved. You can return anytime to complete the evaluation.",
+  "messages": {
+    "linkCopied": "Link copied to clipboard!",
+    "propertyUpdated": "Property updated successfully!",
+    "updateFailed": "Failed to update property. Please try again."
+  },
+  "stats": {
+    "totalEvaluations": "Total Evaluations",
+    "averageScore": "Average Score",
+    "bestScore": "Best Score",
+    "completionRate": "Completion Rate"
+  },
+  "filters": {
+    "sortBy": "Sort by",
+    "dateAdded": "Date Added",
+    "score": "Score",
+    "propertyType": "Property Type",
+    "filter": "Filter",
+    "allTypes": "All Types"
+  },
+  "overallScore": "Overall Score",
+  "completion": "Completion",
+  "level": "Level",
+  "results": {
+    "strengths": "Strengths",
+    "improvements": "Areas for Improvement",
+    "excellentScore": "Excellent overall score",
+    "comprehensiveEvaluation": "Comprehensive evaluation completed",
+    "expertLevel": "Expert level evaluation",
+    "detailedLocation": "Detailed location assessment",
+    "viewDetails": "View Details",
+    "improveInsulation": "Improve thermal insulation",
+    "improveWindows": "Upgrade windows and doors",
+    "improveElectrical": "Modernize electrical system",
+    "improvePlumbing": "Update plumbing installation",
+    "improveUtilities": "Enhance utility systems"
+  },
+  "emptyState": {
+    "noProperties": "No properties evaluated yet",
+    "firstPropertyDescription": "Start by adding your first property to get personalized insights and track your real estate portfolio.",
+    "addFirstProperty": "Add Your First Property"
+  },
+  "gamification": {
+    "keepGoing": "Keep going! You're building an impressive portfolio.",
+    "addMoreProperties": "Add {{count}} more {{propertyWord}} to unlock advanced analytics.",
+    "property": "property",
+    "properties": "properties"
+  },
+  "actions": {
+    "editDetails": "Edit Details",
+    "share": "Share",
+    "delete": "Delete"
+  },
+  "startScreen": {
+    "backToHome": "Back to Home",
+    "title": "Property Evaluation",
+    "subtitle": "Get comprehensive insights about your {{propertyType}} with our detailed evaluation system.",
+    "startButton": "Start Evaluation",
+    "statistics": {
+      "questions": "Questions",
+      "minutes": "Minutes",
+      "maxScore": "Max Score"
+    },
+    "categories": {
+      "title": "What We'll Evaluate",
+      "questionsCount": "{{count}} questions"
+    },
+    "achievements": {
+      "title": "Unlock Achievements",
+      "beginner": "Beginner",
+      "beginnerRange": "0-40%",
+      "expert": "Expert",
+      "expertRange": "41-80%",
+      "master": "Master",
+      "masterRange": "81-100%"
+    },
+    "footerNote": "💡 Your progress is automatically saved. You can return anytime to complete the evaluation."
+  },
+  "propertyInfoScreen": {
+    "backToDashboard": "Back to Dashboard",
+    "title": "Property Information",
+    "subtitle": "Tell us about your {{propertyType}} to get started with the evaluation.",
+    "stepIndicator": "Step 1 of 2 - Property Details",
+    "fields": {
+      "propertyName": {
+        "label": "Property Name",
+        "placeholder": "Enter a name for your property",
+        "error": "Property name is required"
+      },
+      "location": {
+        "label": "Location",
+        "placeholder": "Enter the property location",
+        "helpText": "City, neighborhood, or specific address (optional)"
+      },
+      "surface": {
+        "label": "Surface Area",
+        "placeholder": "Enter surface area in m²",
+        "error": "Please enter a valid surface area"
+      },
+      "floors": {
+        "label": "Number of Floors",
+        "placeholder": "Select number of floors",
+        "options": {
+          "1": "1 Floor",
+          "2": "2 Floors",
+          "3": "3+ Floors",
+          "mansarda": "Ground + Attic",
+          "other": "Other"
+        }
+      },
+      "constructionYear": {
+        "label": "Construction Year",
+        "placeholder": "Enter construction year",
+        "error": "Please enter a valid year (1800-{{currentYear}})"
+      }
+    },
+    "buttons": {
+      "backToOverview": "Back to Overview",
+      "startEvaluation": "Start Evaluation"
+    },
+    "helpText": "💡 This information helps us provide more accurate evaluation results."
+  }
 }

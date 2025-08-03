@@ -59,7 +59,7 @@ export default function PropertyInfoScreen({
     if (formData.constructionYear !== undefined) {
       const currentYear = new Date().getFullYear();
       if (formData.constructionYear < 1900 || formData.constructionYear > currentYear) {
-        newErrors.constructionYear = t('evaluation.propertyInfoScreen.fields.constructionYear.error', { currentYear });
+        newErrors.constructionYear = t('propertyInfoScreen.fields.constructionYear.error', { currentYear, ns: 'evaluation' });
       }
     }
 
@@ -111,7 +111,7 @@ export default function PropertyInfoScreen({
               {t('propertyInfoScreen.title', { ns: 'evaluation' })}
             </CardTitle>
             <p className="text-muted-foreground mt-2">
-              {t('evaluation.propertyInfoScreen.subtitle', { propertyType: propertyTypeName.toLowerCase() })}
+              {t('propertyInfoScreen.subtitle', { propertyType: propertyTypeName.toLowerCase(), ns: 'evaluation' })}
             </p>
             <div className="flex items-center justify-center gap-2 mt-4">
               <div className="w-8 h-2 bg-primary rounded-full"></div>
