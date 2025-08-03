@@ -46,6 +46,7 @@ export async function verifyToken(input: string) {
 export async function getSession() {
   const cookieStore = await cookies();
   const session = cookieStore.get('session')?.value;
+  
   if (!session) return null;
   
   try {
@@ -65,10 +66,14 @@ export async function setSession(user: NewUser) {
     expires: expiresInOneDay.toISOString(),
   };
   const encryptedSession = await signToken(session);
-  (await cookies()).set('session', encryptedSession, {
+  
+  // Set cookie with mobile-friendly settings
+  const cookieStore = await cookies();
+  cookieStore.set('session', encryptedSession, {
     expires: expiresInOneDay,
     httpOnly: true,
-    secure: true,
+    secure: process.env.NODE_ENV === 'production', // Only secure in production
     sameSite: 'lax',
+    path: '/', // Ensure cookie is available site-wide
   });
 }
