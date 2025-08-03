@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   Dialog,
   DialogContent,
@@ -11,6 +12,7 @@ import {
 } from '@workspace/ui/components/dialog';
 import { Button } from '@workspace/ui/components/button';
 import { toast } from 'sonner';
+import PropertyInfoScreen, { PropertyInfo } from './PropertyInfoScreen';
 import StartScreen from './StartScreen';
 import QuestionCard from './QuestionCard';
 import FinalScreen from './FinalScreen';
@@ -20,19 +22,24 @@ import {
   EvaluationResult,
   calculateEvaluationResult,
   trackEvaluationEvent,
+  getPropertyTypeName,
 } from '@/lib/evaluation-utils';
 
 interface EvaluationFlowProps {
   propertyData: PropertyTypeWithCategories;
 }
 
-type Screen = 'start' | 'questions' | 'final';
+type Screen = 'start' | 'propertyInfo' | 'questions' | 'final';
 
 export default function EvaluationFlow({ propertyData }: EvaluationFlowProps) {
+  const { i18n } = useTranslation();
+  const currentLanguage = i18n.language as 'ro' | 'en';
+  
   const [currentScreen, setCurrentScreen] = useState<Screen>('start');
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [userAnswers, setUserAnswers] = useState<UserAnswer[]>([]);
   const [evaluationResult, setEvaluationResult] = useState<EvaluationResult | null>(null);
+  const [propertyInfo, setPropertyInfo] = useState<PropertyInfo | null>(null);
   const [showResumeDialog, setShowResumeDialog] = useState(false);
   const [savedSession, setSavedSession] = useState<{
     answers: UserAnswer[];
@@ -97,6 +104,22 @@ export default function EvaluationFlow({ propertyData }: EvaluationFlowProps) {
     }
   }, [propertyData.id, totalQuestions]);
 
+  // Load saved property info from localStorage
+  useEffect(() => {
+    const savedPropertyInfo = localStorage.getItem(`property-info-${propertyData.id}`);
+    if (savedPropertyInfo) {
+      try {
+        const info = JSON.parse(savedPropertyInfo);
+        setPropertyInfo(info);
+        // Property info is loaded but we don't automatically skip screens
+        // User still needs to go through the flow: start → propertyInfo → questions
+      } catch (error) {
+        console.error('Failed to load property info:', error);
+        localStorage.removeItem(`property-info-${propertyData.id}`);
+      }
+    }
+  }, [propertyData.id]);
+
   const handleContinueEvaluation = () => {
     if (savedSession) {
       setUserAnswers(savedSession.answers || []);
@@ -111,6 +134,7 @@ export default function EvaluationFlow({ propertyData }: EvaluationFlowProps) {
   const handleStartFreshEvaluation = () => {
     // User chose to start fresh - clear old data
     localStorage.removeItem(`evaluation-${propertyData.id}`);
+    localStorage.removeItem(`property-info-${propertyData.id}`);
     console.log('🆕 Starting fresh evaluation');
     setShowResumeDialog(false);
     setSavedSession(null);
@@ -127,8 +151,9 @@ export default function EvaluationFlow({ propertyData }: EvaluationFlowProps) {
   }, [propertyData.id]);
 
   // Save evaluation results to database (async)
-  const saveToDatabaseAsync = useCallback(async (answers: UserAnswer[], propertyData: PropertyTypeWithCategories, result: EvaluationResult) => {
+  const saveToDatabaseAsync = useCallback(async (answers: UserAnswer[], propertyData: PropertyTypeWithCategories, result: EvaluationResult, propInfo: PropertyInfo | null) => {
     try {
+      console.log('🚀 Sending propertyInfo to API:', propInfo);
       const response = await fetch('/api/evaluation/save', {
         method: 'POST',
         headers: {
@@ -137,12 +162,17 @@ export default function EvaluationFlow({ propertyData }: EvaluationFlowProps) {
         body: JSON.stringify({
           userAnswers: answers,
           propertyData: propertyData,
+          propertyInfo: propInfo,
         }),
       });
 
       if (response.ok) {
         const data = await response.json();
         console.log('✅ Evaluation results saved to database:', data.evaluationSessionId);
+        
+        // Clear localStorage after successful save
+        localStorage.removeItem(`evaluation-${propertyData.id}`);
+        localStorage.removeItem(`property-info-${propertyData.id}`);
         
         // Track successful save
         trackEvaluationEvent('evaluation_saved_to_database', {
@@ -170,10 +200,57 @@ export default function EvaluationFlow({ propertyData }: EvaluationFlowProps) {
     }
   }, []);
 
-  const handleStart = () => {
+  const handlePropertyInfoSave = (info: PropertyInfo) => {
+    setPropertyInfo(info);
     setCurrentScreen('questions');
     setCurrentQuestionIndex(0);
+    
+    // Save property info to localStorage for persistence
+    localStorage.setItem(`property-info-${propertyData.id}`, JSON.stringify(info));
+    
+    // Also save the evaluation progress with property info
     saveProgress(userAnswers, 0, 'questions');
+    
+    trackEvaluationEvent('property_info_saved', {
+      propertyType: getPropertyTypeName(propertyData, currentLanguage),
+      hasLocation: !!info.location,
+      hasSurface: !!info.surface,
+      hasFloors: !!info.floors,
+      hasConstructionYear: !!info.constructionYear,
+    });
+    
+    trackEvaluationEvent('evaluation_started', {
+      propertyType: getPropertyTypeName(propertyData, currentLanguage),
+      totalQuestions,
+      propertyInfo: {
+        hasName: !!info.name,
+        hasLocation: !!info.location,
+        hasSurface: !!info.surface,
+        hasFloors: !!info.floors,
+        hasConstructionYear: !!info.constructionYear,
+      },
+    });
+  };
+
+  const handleStart = () => {
+    // Clear any existing localStorage data for a fresh start
+    localStorage.removeItem(`evaluation-${propertyData.id}`);
+    localStorage.removeItem(`property-info-${propertyData.id}`);
+    
+    setCurrentScreen('propertyInfo');
+    
+    trackEvaluationEvent('start_clicked', {
+      propertyType: getPropertyTypeName(propertyData, currentLanguage),
+      totalQuestions,
+    });
+  };
+
+  const handleBackToStart = () => {
+    setCurrentScreen('start');
+    
+    trackEvaluationEvent('back_to_start', {
+      propertyType: getPropertyTypeName(propertyData, currentLanguage),
+    });
   };
 
   const handleAnswer = (answer: UserAnswer) => {
@@ -203,7 +280,7 @@ export default function EvaluationFlow({ propertyData }: EvaluationFlowProps) {
       saveProgress(userAnswers, currentQuestionIndex, 'final');
       
       // Save to database
-      saveToDatabaseAsync(userAnswers, propertyData, result);
+      saveToDatabaseAsync(userAnswers, propertyData, result, propertyInfo);
     }
   };
 
@@ -258,7 +335,7 @@ export default function EvaluationFlow({ propertyData }: EvaluationFlowProps) {
     localStorage.removeItem(`evaluation-${propertyData.id}`);
     
     trackEvaluationEvent('evaluation_restarted', {
-      propertyType: propertyData.name,
+      propertyType: getPropertyTypeName(propertyData, currentLanguage),
       previousScore: evaluationResult?.percentage || 0,
     });
   };
@@ -266,7 +343,7 @@ export default function EvaluationFlow({ propertyData }: EvaluationFlowProps) {
   const handleShare = () => {
     if (!evaluationResult) return;
     
-    const shareText = `I just evaluated my ${propertyData.name.toLowerCase()} and scored ${Math.round(evaluationResult.percentage)}%! 🏠✨`;
+    const shareText = `I just evaluated my ${getPropertyTypeName(propertyData, currentLanguage).toLowerCase()} and scored ${Math.round(evaluationResult.percentage)}%! 🏠✨`;
     
     if (navigator.share) {
       navigator.share({
@@ -321,6 +398,17 @@ export default function EvaluationFlow({ propertyData }: EvaluationFlowProps) {
 
   if (currentScreen === 'start') {
     return <StartScreen propertyData={propertyData} onStart={handleStart} />;
+  }
+
+  if (currentScreen === 'propertyInfo') {
+    return (
+      <PropertyInfoScreen
+        propertyTypeName={getPropertyTypeName(propertyData, currentLanguage)}
+        onSave={handlePropertyInfoSave}
+        onBack={handleBackToStart}
+        initialData={propertyInfo || undefined}
+      />
+    );
   }
 
   if (currentScreen === 'final' && evaluationResult) {
@@ -399,7 +487,7 @@ function generateTextReport(result: EvaluationResult, propertyData: PropertyType
   
   let report = `PROPERTY EVALUATION REPORT\n`;
   report += `Generated: ${date}\n`;
-  report += `Property Type: ${propertyData.name}\n`;
+  report += `Property Type: ${getPropertyTypeName(propertyData, 'en')}\n`;
   report += `\n`;
   
   report += `OVERALL SCORE\n`;

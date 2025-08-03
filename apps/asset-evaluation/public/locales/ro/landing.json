@@ -1,0 +1,178 @@
+{
+  "hero": {
+    "title": "Evaluează-ți proprietatea ca un expert",
+    "subtitle": "Descoperă valoarea reală a investiției tale imobiliare cu ghiduri detaliate și analize profesionale.",
+    "cta": "Începe Evaluarea Gratuită",
+    "watchDemo": "Urmărește Demo",
+    "mainTitle": "Nu Mai Cumpăra Case",
+    "mainTitleHighlight": "Fără Îndrumire",
+    "mainSubtitle": "Ești pe punctul de a cheltui sute de mii de dolari. Nu te baza pe intuiții. Folosește checklist-urile noastre inteligente pentru a evalua fiecare proprietate ca un profesionist și a lua decizii cu încredere.",
+    "ctaMain": "Începe Checklist-ul Tău Inteligent",
+    "ctaDashboard": "Deschide Checklist-urile Mele",
+    "benefits": "✓ Gratuit pentru început • ✓ Funcționează offline • ✓ Nu necesită agent imobiliar"
+  },
+  "howItWorks": {
+    "title": "Cum Funcționează în 3 Pași Simpli",
+    "subtitle": "Adaugă proprietăți, evaluează cu checklist-uri inteligente și compară pentru a lua cea mai bună decizie",
+    "step1": {
+      "title": "1. Adaugă Proprietăți",
+      "description": "Salvează proprietăți de pe orice site de anunturi sau adaugă detalii manual",
+      "details": "Doar copiază un URL de anunț sau completează formularul nostru rapid. Vom organiza totul pentru tine."
+    },
+    "step2": {
+      "title": "2. Evaluare Inteligentă",
+      "description": "Folosește checklist-urile noastre ghidate în timpul vizitelor la proprietăți",
+      "details": "Întrebările noastre inteligente te ajută să observi ce contează cel mai mult pentru situația ta."
+    },
+    "step3": {
+      "title": "3. Comparare Inteligentă",
+      "description": "Vezi comparații alăturat cu scoruri calculate",
+      "details": "Comparațiile vizuale fac ușor să vezi care proprietate se potrivește cu adevărat cel mai bine."
+    },
+    "demoButton": "Vezi Exemplu de Proprietate"
+  },
+  "comparison": {
+    "title": "Compară Proprietățile Ca un Profesionist",
+    "subtitle": "Vezi cum sistemul nostru inteligent de punctaj te ajută să iei decizii obiective",
+    "metrics": {
+      "beds": "dormitoare",
+      "baths": "băi",
+      "location": "Locație",
+      "condition": "Stare",
+      "priceValue": "Valoare Preț"
+    },
+    "pros": "Pro-uri:",
+    "cons": "Contre:",
+    "demoButton": "Testează cu Proprietate Mock",
+    "demoSubtext": "Încearcă sistemul nostru de evaluare cu date de probă"
+  },
+  "collaboration": {
+    "title": "Nu Căuta Casa Singur",
+    "subtitle": "Invită-ți partenerul, familia sau prietenii de încredere să colaboreze la căutarea proprietății",
+    "cardTitle": "Distribuie Lista Ta de Proprietăți",
+    "cardDescription": "Toată lumea poate adăuga notițe, evalua proprietăți și vedea ce contează cel mai mult pentru familie",
+    "inviteTitle": "🔗 Link-ul tău de invitație pentru familie",
+    "inviteDescription": "Distribuie acest link securizat cu membrii familiei pentru a colabora",
+    "copyButton": "Copiază",
+    "copiedButton": "Copiat!",
+    "copy": "Copiază",
+    "copied": "Copiat!",
+    "inviteButton": "Invită-ți Partenerul la Lista Ta",
+    "features": {
+      "shared": {
+        "title": "Evaluări Partajate",
+        "description": "Răspunsurile checklist-ului tuturor într-un singur loc"
+      },
+      "consensus": {
+        "title": "Punctaj de Consens",
+        "description": "Vezi cu ce proprietăți sunt toți de acord"
+      },
+      "saveTime": {
+        "title": "Economisește Timp",
+        "description": "Nu mai sunt chat-uri nesfârșite în grup despre proprietăți"
+      }
+    }
+  },
+  "offline": {
+    "title": "Funcționează Peste Tot, Chiar și Fără Internet",
+    "description": "Datele proprietății se sincronizează când ești online, dar poți folosi checklist-urile în timpul vizitelor la proprietăți chiar și în zone cu servicii mobile slabe.",
+    "onlineSync": "Sincronizare online",
+    "offlineReady": "Pregătit offline"
+  },
+  "security": {
+    "title": "Datele Tale Sunt Protejate",
+    "subtitle": "Nu vindem niciodată informațiile tale",
+    "features": {
+      "encryption": "Criptare de la cap la cap",
+      "noPartnerships": "Fără parteneriate cu agenți imobiliari",
+      "gdpr": "Conformitate GDPR",
+      "deleteAnytime": "Șterge oricând"
+    }
+  },
+  "testimonials": {
+    "title": "Vezi Cum Ajută Oameni Ca Tine",
+    "subtitle": "Cumpărători diferiți, aceleași provocări - vezi cum checklist-urile inteligente ajută",
+    "cta": "Vezi Cum Ajută Oameni Ca Tine",
+    "types": {
+      "firstTime": "Cumpărător pentru Prima Dată",
+      "family": "Familie în Creștere",
+      "investor": "Investitor"
+    },
+    "pain": {
+      "firstTime": "Am fost copleșit de toate proprietățile și nu știam la ce să mă uit",
+      "family": "Trebuia să comparăm școlile, siguranța și spațiul pentru copiii noștri",
+      "investor": "Aveam nevoie de o modalitate sistematică de a evalua proprietățile potențiale de închiriere"
+    },
+    "button": "Vezi Cum Ajută Oameni Ca Tine"
+  },
+  "faq": {
+    "title": "Întrebări Frecvente",
+    "subtitle": "Tot ce trebuie să știi despre evaluarea inteligentă a proprietăților",
+    "q1": {
+      "question": "Vindeți proprietăți sau lucrați cu agenți imobiliari?",
+      "answer": "Nu, suntem complet independenți. Nu vindem proprietăți, nu luăm comisioane și nu avem parteneriate cu agenți imobiliari. Suntem doar un instrument pentru a te ajuta să iei decizii mai bune. Poți folosi orice agent imobiliar vrei, sau deloc."
+    },
+    "q2": {
+      "question": "Este cu adevărat gratuit?",
+      "answer": "Da! Funcționalitățile de bază ale checklist-ului sunt complet gratuite pentru totdeauna. Oferim funcționalități premium precum analize avansate și comparații nelimitate de proprietăți pentru o mică taxă lunară, dar majoritatea oamenilor găsesc că versiunea gratuită are tot ce au nevoie."
+    },
+    "q3": {
+      "question": "Pot să am încredere în voi cu datele căutării mele de proprietăți?",
+      "answer": "Absolut. Datele proprietății tale sunt criptate și private. Nu vindem niciodată informațiile tale și nu le distribuim agenților imobiliari, creditorilor sau oricui altcuiva. Poți exporta sau șterge datele oricând. Facem bani din abonamente premium, nu din informațiile tale personale."
+    },
+    "q4": {
+      "question": "Cum funcționează sistemul de punctaj?",
+      "answer": "Sistemul nostru inteligent de punctaj cântărește diferiți factori bazat pe ce ne spui că este important. Locația, starea, prețul și facilitățile primesc toate punctaje pe o scală de la 1-10, apoi sunt combinate într-un punctaj general. Poți ajusta ponderile pentru a se potrivi priorităților tale."
+    },
+    "q5": {
+      "question": "Ce se întâmplă dacă nu sunt priceput la tehnologie?",
+      "answer": "Nicio problemă! Aplicația este proiectată să fie simplă - doar răspunzi la întrebări despre fiecare proprietate pe care o vizitezi. Dacă poți trimite mesaje sau folosi aplicații de bază, poți folosi aceasta. Plus, funcționează offline, deci nu trebuie să îți faci griji despre conectivitate în timpul vizitelor la proprietăți."
+    },
+    "q6": {
+      "question": "Pot folosi aceasta pentru proprietăți de închiriere sau investiții?",
+      "answer": "Da! Deși am proiectat-o în primul rând pentru cumpărătorii de case, checklist-urile funcționează excelent și pentru evaluarea proprietăților de închiriere. Poți personaliza întrebările și punctajul pentru a te concentra pe criterii de investiție precum randamentul închirierii, costurile de întreținere și atractivitatea pentru chiriași. Funcționalitățile de distribuire în familie funcționează bine și pentru partenerii de investiție sau echipele de administrare a proprietăților."
+    }
+  },
+  "finalCta": {
+    "title": "Preia Controlul Următoarei Tale Vizite la Proprietate",
+    "subtitle": "Nu te mai îndoi de tine. Intră în fiecare proprietate cu un plan, evaluează sistematic și ia decizia cu încredere.",
+    "ctaMain": "Începe Checklist-ul Tău Inteligent Acum",
+    "ctaDashboard": "Deschide Tabloul Meu de Bord",
+    "encouragement": "Nu te mai îndoi de tine. Intră în fiecare proprietate cu un plan, evaluează sistematic și ia decizia cu încredere.",
+    "subtitle2": "Următoarea ta vizită la proprietate ar putea fi cea. Fii pregătit.",
+    "benefits": {
+      "freeStart": "Gratuit pentru început",
+      "privateSecure": "Privat și securizat",
+      "worksOffline": "Funcționează offline",
+      "free": "Gratuit pentru început",
+      "secure": "Privat și securizat",
+      "offline": "Funcționează offline"
+    }
+  },
+  "footer": {
+    "brand": {
+      "short": "Asset Evaluation",
+      "long": "Instrumente inteligente de evaluare a proprietăților pentru decizii încrezătoare de cumpărare a caselor."
+    },
+    "description": "Instrumente inteligente de evaluare a proprietăților pentru decizii încrezătoare de cumpărare a caselor.",
+    "product": {
+      "title": "Produs",
+      "checklists": "Checklist-uri Inteligente",
+      "comparison": "Compararea Proprietăților",
+      "sharing": "Distribuire în Familie"
+    },
+    "resources": {
+      "title": "Resurse",
+      "guide": "Ghid pentru Cumpărătorul Novice",
+      "templates": "Șabloane de Checklist pentru Proprietăți",
+      "analysis": "Instrumente de Analiză a Pieței"
+    },
+    "support": {
+      "title": "Suport",
+      "help": "Centru de Ajutor",
+      "contact": "Contactează-ne",
+      "privacy": "Politica de Confidențialitate"
+    },
+    "copyright": "© 2025 Asset Evaluation. Toate drepturile rezervate. Creat pentru cumpărători inteligenți de case."
+  }
+}

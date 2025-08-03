@@ -1,0 +1,18 @@
+{
+  "title": "Proprietățile Mele",
+  "noProperties": "Nu ai adăugat încă proprietăți",
+  "noPropertiesDescription": "Începe prin a adăuga prima ta proprietate pentru evaluare",
+  "addFirstProperty": "Adaugă Prima Ta Proprietate",
+  "addProperty": "Adaugă Proprietate",
+  "propertiesCount": "{{count}} proprietăți",
+  "recentEvaluations": "Evaluări Recente",
+  "completedEvaluations": "Finalizate",
+  "inProgressEvaluations": "În Progres",
+  "pendingEvaluations": "În Așteptare",
+  "overallScore": "Scor General",
+  "lastUpdated": "Ultima actualizare",
+  "continueEvaluation": "Continuă Evaluarea",
+  "startEvaluation": "Începe Evaluarea",
+  "viewDetails": "Vezi Detalii",
+  "shareProperty": "Distribuie Proprietatea"
+}

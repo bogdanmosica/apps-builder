@@ -74,7 +74,14 @@ export async function saveEvaluationResults(
   userId: number,
   propertyTypeId: number,
   userAnswers: UserAnswer[],
-  evaluationResult: EvaluationResult
+  evaluationResult: EvaluationResult,
+  propertyInfo?: {
+    name?: string;
+    location?: string;
+    surface?: number;
+    floors?: string;
+    constructionYear?: number;
+  }
 ): Promise<number> {
   // Start a transaction to ensure data consistency
   return await db.transaction(async (tx: any) => {
@@ -82,6 +89,11 @@ export async function saveEvaluationResults(
     const [session] = await tx.insert(evaluationSessions).values({
       userId,
       propertyTypeId,
+      propertyName: propertyInfo?.name || null,
+      propertyLocation: propertyInfo?.location || null,
+      propertySurface: propertyInfo?.surface || null,
+      propertyFloors: propertyInfo?.floors || null,
+      propertyConstructionYear: propertyInfo?.constructionYear || null,
       totalScore: Math.round(evaluationResult.totalScore * 100), // Store as integer (multiply by 100 for precision)
       maxPossibleScore: Math.round(evaluationResult.maxPossibleScore * 100),
       percentage: Math.round(evaluationResult.percentage),

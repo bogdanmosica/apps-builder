@@ -6,6 +6,7 @@ import { PerformanceMonitor } from '@/lib/monitoring';
 import { Toaster } from '@workspace/ui/components/sonner';
 import { AnalyticsProvider } from '@/lib/analytics-client';
 import { ThemeProvider } from '@/components/theme-provider';
+import I18nProvider from '@/components/I18nProvider';
 
 // IMPORTANT KEEP THESE LINES IN THIS ORDER
 import '@workspace/ui/globals.css';
@@ -64,26 +65,28 @@ export default function RootLayout({
       className={`bg-white dark:bg-gray-950 text-black dark:text-white ${manrope.className}`}
       suppressHydrationWarning
     >
-      <body className='min-h-[100dvh] bg-gray-50 dark:bg-gray-900'>
+      <body className='min-h-[100dvh] bg-gray-50 dark:bg-gray-900 overflow-x-hidden max-w-full'>
         <PerformanceMonitor />
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-          disableTransitionOnChange
-        >
-          <AnalyticsProvider enableTracking={true} trackAdminPages={false}>
-            <SWRConfig
-              value={{
-                // Remove direct function calls from fallback to avoid static rendering issues
-                // Components will fetch data directly when needed
-              }}
-            >
-              {children}
-            </SWRConfig>
-          </AnalyticsProvider>
-          <Toaster richColors closeButton />
-        </ThemeProvider>
+        <I18nProvider>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
+          >
+            <AnalyticsProvider enableTracking={true} trackAdminPages={false}>
+              <SWRConfig
+                value={{
+                  // Remove direct function calls from fallback to avoid static rendering issues
+                  // Components will fetch data directly when needed
+                }}
+              >
+                {children}
+              </SWRConfig>
+            </AnalyticsProvider>
+            <Toaster richColors closeButton />
+          </ThemeProvider>
+        </I18nProvider>
       </body>
     </html>
   );

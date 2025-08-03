@@ -17,10 +17,20 @@ export async function POST(request: NextRequest) {
 
     // Parse the request body
     const body = await request.json();
-    const { userAnswers, propertyData }: {
+    const { userAnswers, propertyData, propertyInfo }: {
       userAnswers: UserAnswer[];
       propertyData: PropertyTypeWithCategories;
+      propertyInfo?: {
+        name?: string;
+        location?: string;
+        surface?: number;
+        floors?: string;
+        constructionYear?: number;
+      };
     } = body;
+
+    // Debug logging
+    console.log('📝 Saving evaluation with propertyInfo:', propertyInfo);
 
     // Validate required data
     if (!userAnswers || !Array.isArray(userAnswers) || userAnswers.length === 0) {
@@ -45,7 +55,8 @@ export async function POST(request: NextRequest) {
       session.user.id,
       propertyData.id,
       userAnswers,
-      evaluationResult
+      evaluationResult,
+      propertyInfo
     );
 
     return NextResponse.json({

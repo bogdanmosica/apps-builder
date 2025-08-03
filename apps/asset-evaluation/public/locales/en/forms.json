@@ -1,0 +1,28 @@
+{
+  "propertyForm": {
+    "title": "Add New Property",
+    "editTitle": "Edit Property",
+    "propertyType": "Property Type",
+    "selectType": "Select property type",
+    "propertyName": "Property Name",
+    "propertyNamePlaceholder": "e.g., Downtown Apartment or Family House",
+    "propertyAddress": "Address",
+    "propertyAddressPlaceholder": "Enter the full address",
+    "propertyPrice": "Price",
+    "propertyPricePlaceholder": "Enter price (optional)",
+    "propertySize": "Size (m²)",
+    "propertySizePlaceholder": "Total area in square meters",
+    "propertyRooms": "Number of Rooms",
+    "propertyBathrooms": "Number of Bathrooms",
+    "propertyFloors": "Number of Floors",
+    "propertyConstructionYear": "Construction Year",
+    "save": "Save Changes",
+    "cancel": "Cancel"
+  },
+  "deleteConfirmation": {
+    "title": "Confirm Deletion",
+    "message": "Are you sure you want to delete this property? This action cannot be undone.",
+    "confirm": "Yes, Delete",
+    "cancel": "Cancel"
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "home": "Acasă",
+  "about": "Despre noi",
+  "contact": "Contact",
+  "features": "Caracteristici",
+  "pricing": "Prețuri",
+  "login": "Autentificare",
+  "logout": "Deconectare",
+  "register": "Înregistrare",
+  "save": "Salvează",
+  "cancel": "Anulează",
+  "delete": "Șterge",
+  "edit": "Editează",
+  "add": "Adaugă",
+  "close": "Închide",
+  "loading": "Se încarcă...",
+  "error": "Eroare",
+  "success": "Succes",
+  "language": "Limba",
+  "romanian": "Română",
+  "english": "Engleză"
+}

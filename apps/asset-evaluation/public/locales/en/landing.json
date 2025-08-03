@@ -1,0 +1,178 @@
+{
+  "hero": {
+    "title": "Evaluate your property like an expert",
+    "subtitle": "Discover the real value of your real estate investment with detailed guides and professional analysis.",
+    "cta": "Start Free Evaluation",
+    "watchDemo": "Watch Demo",
+    "mainTitle": "Stop Buying Homes",
+    "mainTitleHighlight": "Without Guidance",
+    "mainSubtitle": "You're about to spend hundreds of thousands of dollars. Don't rely on gut feelings. Use our smart checklists to evaluate every property like a pro and make confident decisions.",
+    "ctaMain": "Start Your Smart Checklist",
+    "ctaDashboard": "Open My Checklists",
+    "benefits": "✓ Free to start • ✓ Works offline • ✓ No realtor required"
+  },
+  "howItWorks": {
+    "title": "How It Works in 3 Simple Steps",
+    "subtitle": "Add properties, evaluate with smart checklists, and compare to make the best decision",
+    "step1": {
+      "title": "1. Add Properties",
+      "description": "Save properties from any listing site or add details manually",
+      "details": "Just paste a listing URL or fill out our quick form. We'll organize everything for you."
+    },
+    "step2": {
+      "title": "2. Smart Evaluation",
+      "description": "Use our guided checklists during property visits",
+      "details": "Our smart questions help you notice what matters most for your situation."
+    },
+    "step3": {
+      "title": "3. Smart Compare",
+      "description": "See side-by-side comparisons with calculated scores",
+      "details": "Visual comparisons make it easy to see which property is truly the best fit."
+    },
+    "demoButton": "See Example Property"
+  },
+  "comparison": {
+    "title": "Compare Properties Like a Pro",
+    "subtitle": "See how our smart scoring system helps you make objective decisions",
+    "metrics": {
+      "beds": "beds",
+      "baths": "baths",
+      "location": "Location",
+      "condition": "Condition",
+      "priceValue": "Price Value"
+    },
+    "pros": "Pros:",
+    "cons": "Cons:",
+    "demoButton": "Play with Mock Property",
+    "demoSubtext": "Try our evaluation system with sample data"
+  },
+  "collaboration": {
+    "title": "Don't House Hunt Alone",
+    "subtitle": "Invite your partner, family, or trusted friends to collaborate on your property search",
+    "cardTitle": "Share Your Property Shortlist",
+    "cardDescription": "Everyone can add notes, rate properties, and see what matters most to the family",
+    "inviteTitle": "🔗 Your family invite link",
+    "inviteDescription": "Share this secure link with your family members to collaborate",
+    "copyButton": "Copy",
+    "copiedButton": "Copied!",
+    "copy": "Copy",
+    "copied": "Copied!",
+    "inviteButton": "Invite Your Partner to Your Shortlist",
+    "features": {
+      "shared": {
+        "title": "Shared Evaluations",
+        "description": "Everyone's checklist responses in one place"
+      },
+      "consensus": {
+        "title": "Consensus Scoring",
+        "description": "See which properties everyone agrees on"
+      },
+      "saveTime": {
+        "title": "Save Time",
+        "description": "No more endless group chats about properties"
+      }
+    }
+  },
+  "offline": {
+    "title": "Works Everywhere, Even Without Internet",
+    "description": "Your property data syncs when you're online, but you can still use your checklists during property visits even in areas with poor cell service.",
+    "onlineSync": "Online sync",
+    "offlineReady": "Offline ready"
+  },
+  "security": {
+    "title": "Your Data is Protected",
+    "subtitle": "We never sell your information",
+    "features": {
+      "encryption": "End-to-end encryption",
+      "noPartnerships": "No realtor partnerships",
+      "gdpr": "GDPR compliant",
+      "deleteAnytime": "Delete anytime"
+    }
+  },
+  "testimonials": {
+    "title": "See How It Helps People Like You",
+    "subtitle": "Different buyers, same challenges - see how smart checklists help",
+    "cta": "See How It Helps People Like You",
+    "types": {
+      "firstTime": "First-time Buyer",
+      "family": "Growing Family",
+      "investor": "Investor"
+    },
+    "pain": {
+      "firstTime": "I was overwhelmed by all the properties and didn't know what to look for",
+      "family": "We needed to compare schools, safety, and space for our kids",
+      "investor": "I needed a systematic way to evaluate potential rental properties"
+    },
+    "button": "See How It Helps People Like You"
+  },
+  "faq": {
+    "title": "Frequently Asked Questions",
+    "subtitle": "Everything you need to know about smart property evaluation",
+    "q1": {
+      "question": "Do you sell properties or work with realtors?",
+      "answer": "No, we're completely independent. We don't sell properties, take commissions, or have partnerships with realtors. We're just a tool to help you make better decisions. You can use any realtor you want, or none at all."
+    },
+    "q2": {
+      "question": "Is this really free?",
+      "answer": "Yes! The basic checklist features are completely free forever. We offer premium features like advanced analytics and unlimited property comparisons for a small monthly fee, but most people find the free version has everything they need."
+    },
+    "q3": {
+      "question": "Can I trust you with my property search data?",
+      "answer": "Absolutely. Your property data is encrypted and private. We never sell your information or share it with realtors, lenders, or anyone else. You can export or delete your data anytime. We make money from premium subscriptions, not from your personal information."
+    },
+    "q4": {
+      "question": "How does the scoring system work?",
+      "answer": "Our smart scoring system weighs different factors based on what you tell us is important. Location, condition, price, and amenities all get scored on a 1-10 scale, then combined into an overall score. You can adjust the weightings to match your priorities."
+    },
+    "q5": {
+      "question": "What if I'm not tech-savvy?",
+      "answer": "No problem! The app is designed to be simple - just answer questions about each property you visit. If you can text or use basic apps, you can use this. Plus, it works offline so you don't need to worry about connectivity during property visits."
+    },
+    "q6": {
+      "question": "Can I use this for rental properties or investments?",
+      "answer": "Yes! While we designed it primarily for home buyers, the checklists work great for rental property evaluation too. You can customize the questions and scoring to focus on investment criteria like rental yield, maintenance costs, and tenant appeal. The family sharing features also work well for investment partners or property management teams."
+    }
+  },
+  "finalCta": {
+    "title": "Take Control of Your Next Property Visit",
+    "subtitle": "Stop second-guessing yourself. Walk into every property with a plan, evaluate systematically, and make the decision with confidence.",
+    "ctaMain": "Start Your Smart Checklist Now",
+    "ctaDashboard": "Open My Dashboard",
+    "encouragement": "Stop second-guessing yourself. Walk into every property with a plan, evaluate systematically, and make the decision with confidence.",
+    "subtitle2": "Your next property visit could be the one. Be ready.",
+    "benefits": {
+      "freeStart": "Free to start",
+      "privateSecure": "Private & secure",
+      "worksOffline": "Works offline",
+      "free": "Free to start",
+      "secure": "Private & secure",
+      "offline": "Works offline"
+    }
+  },
+  "footer": {
+    "brand": {
+      "short": "Asset Evaluation",
+      "long": "Smart property evaluation tools for confident home buying decisions."
+    },
+    "description": "Smart property evaluation tools for confident home buying decisions.",
+    "product": {
+      "title": "Product",
+      "checklists": "Smart Checklists",
+      "comparison": "Property Comparison",
+      "sharing": "Family Sharing"
+    },
+    "resources": {
+      "title": "Resources",
+      "guide": "First-Time Buyer Guide",
+      "templates": "Property Checklist Templates",
+      "analysis": "Market Analysis Tools"
+    },
+    "support": {
+      "title": "Support",
+      "help": "Help Center",
+      "contact": "Contact Us",
+      "privacy": "Privacy Policy"
+    },
+    "copyright": "© 2025 Asset Evaluation. All rights reserved. Made for smart home buyers."
+  }
+}

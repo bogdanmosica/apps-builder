@@ -1,0 +1,22 @@
+{
+  "home": "Home",
+  "about": "About",
+  "contact": "Contact",
+  "features": "Features",
+  "pricing": "Pricing",
+  "login": "Login",
+  "logout": "Logout",
+  "register": "Register",
+  "save": "Save",
+  "cancel": "Cancel",
+  "delete": "Delete",
+  "edit": "Edit",
+  "add": "Add",
+  "close": "Close",
+  "loading": "Loading...",
+  "error": "Error",
+  "success": "Success",
+  "language": "Language",
+  "romanian": "Romanian",
+  "english": "English"
+}

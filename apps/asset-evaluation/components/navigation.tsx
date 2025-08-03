@@ -11,9 +11,11 @@ import {
 } from '@workspace/ui/components/dropdown-menu';
 import { Icons } from '@workspace/ui/components/icons';
 import { LogoutButton } from './logout-button';
-import { Home, Plus } from 'lucide-react';
+import { Home, Plus, Building } from 'lucide-react';
 import Link from 'next/link';
 import { useTheme } from 'next-themes';
+import { useTranslation } from 'react-i18next';
+import LanguageSwitcher from './LanguageSwitcher';
 
 interface NavigationProps {
   isLoggedIn: boolean;
@@ -22,6 +24,7 @@ interface NavigationProps {
 
 export default function Navigation({ isLoggedIn, userRole }: NavigationProps) {
   const { setTheme } = useTheme();
+  const { t } = useTranslation(['common', 'evaluation', 'navigation', 'property']);
 
   return (
     <div className='sticky top-0 z-50 w-full flex justify-center bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm border-b border-gray-200 dark:border-gray-700'>
@@ -33,39 +36,45 @@ export default function Navigation({ isLoggedIn, userRole }: NavigationProps) {
           </Link>
         </div>
         <nav className='hidden md:flex items-center space-x-6'>
-          <Link
-            href='/#how-it-works'
-            className='text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors'
-          >
-            How it Works
-          </Link>
-          <Link
-            href='/#testimonials'
-            className='text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors'
-          >
-            User Stories
-          </Link>
-          <Link
-            href='/#faq'
-            className='text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors'
-          >
-            FAQ
-          </Link>
+          {/* Navigation links removed as requested */}
         </nav>
         <div className='flex items-center space-x-2'>
+          {/* Language Switcher - Always visible */}
+          <LanguageSwitcher />
+          
           {isLoggedIn ? (
             <div className='flex items-center space-x-4'>
+              {/* Add Property Dropdown */}
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button size="sm" className="bg-primary hover:bg-primary-dark">
+                    <Plus className="h-4 w-4 mr-1" />
+                    <span className="hidden sm:inline">{t('addProperty', { ns: 'property' })}</span>
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-48">
+                  <DropdownMenuLabel>{t('addProperty', { ns: 'property' })}</DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem asChild>
+                    <Link href='/evaluation?type=house' className="flex items-center">
+                      <Home className="h-4 w-4 mr-2" />
+                      {t('addHouse', { ns: 'property' })}
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link href='/evaluation?type=apartment' className="flex items-center">
+                      <Building className="h-4 w-4 mr-2" />
+                      {t('addApartment', { ns: 'property' })}
+                    </Link>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+
               {userRole === 'owner' || userRole === 'admin' ? (
-                <Button asChild>
-                  <Link href='/dashboard'>Go to Dashboard</Link>
+                <Button asChild variant="outline">
+                  <Link href='/dashboard'>{t('dashboard', { ns: 'navigation' })}</Link>
                 </Button>
-              ) : (
-                <Button asChild size="icon" title="Start Property Evaluation">
-                  <Link href='/evaluation'>
-                    <Plus className="h-4 w-4" />
-                  </Link>
-                </Button>
-              )}
+              ) : null}
               
               {/* User Avatar Dropdown */}
               <DropdownMenu>
@@ -81,16 +90,16 @@ export default function Navigation({ isLoggedIn, userRole }: NavigationProps) {
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align='end'>
-                  <DropdownMenuLabel>My Account</DropdownMenuLabel>
+                  <DropdownMenuLabel>{t('profile', { ns: 'navigation' })}</DropdownMenuLabel>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem asChild>
-                    <Link href='/evaluation'>Property Evaluation</Link>
+                    <Link href='/evaluation'>{t('title', { ns: 'evaluation' })}</Link>
                   </DropdownMenuItem>
-                  <DropdownMenuItem>Profile</DropdownMenuItem>
-                  <DropdownMenuItem>Settings</DropdownMenuItem>
+                  <DropdownMenuItem>{t('profile', { ns: 'navigation' })}</DropdownMenuItem>
+                  <DropdownMenuItem>{t('settings', { ns: 'navigation' })}</DropdownMenuItem>
                   {userRole === 'owner' || userRole === 'admin' ? (
                     <DropdownMenuItem asChild>
-                      <Link href='/dashboard'>Dashboard</Link>
+                      <Link href='/dashboard'>{t('dashboard', { ns: 'navigation' })}</Link>
                     </DropdownMenuItem>
                   ) : null}
                   <DropdownMenuSeparator />
@@ -139,10 +148,10 @@ export default function Navigation({ isLoggedIn, userRole }: NavigationProps) {
                 </DropdownMenuContent>
               </DropdownMenu>
               <Button variant='ghost' asChild>
-                <Link href='/sign-in'>Sign In</Link>
+                <Link href='/sign-in'>{t('login', { ns: 'common' })}</Link>
               </Button>
               <Button asChild>
-                <Link href='/sign-up'>Get Started</Link>
+                <Link href='/sign-up'>{t('register', { ns: 'common' })}</Link>
               </Button>
             </>
           )}

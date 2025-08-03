@@ -1,0 +1,18 @@
+{
+  "types": {
+    "house": "Casă",
+    "apartment": "Apartament"
+  },
+  "addHouse": "Adaugă Casă",
+  "addApartment": "Adaugă Apartament",
+  "addProperty": "Adaugă Proprietate",
+  "propertyName": "Numele proprietății",
+  "propertyLocation": "Locația proprietății",
+  "propertySurface": "Suprafața proprietății",
+  "propertyFloors": "Numărul de etaje",
+  "propertyConstructionYear": "Anul construcției",
+  "propertyDetails": "Detalii proprietate",
+  "editProperty": "Editează proprietatea",
+  "deleteProperty": "Șterge proprietatea",
+  "shareProperty": "Distribuie proprietatea"
+}

@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Button } from '@workspace/ui/components/button';
 import { Card, CardContent } from '@workspace/ui/components/card';
 import { Badge } from '@workspace/ui/components/badge';
@@ -17,7 +18,7 @@ import {
   ArrowLeft,
 } from 'lucide-react';
 import Link from 'next/link';
-import { PropertyTypeWithCategories, trackEvaluationEvent } from '@/lib/evaluation-utils';
+import { PropertyTypeWithCategories, trackEvaluationEvent, getPropertyTypeName, getCategoryName } from '@/lib/evaluation-utils';
 
 interface StartScreenProps {
   propertyData: PropertyTypeWithCategories;
@@ -25,6 +26,8 @@ interface StartScreenProps {
 }
 
 export default function StartScreen({ propertyData, onStart }: StartScreenProps) {
+  const { t, i18n } = useTranslation();
+  const currentLanguage = i18n.language as 'ro' | 'en';
   const [isVisible, setIsVisible] = useState(false);
 
   // Calculate total questions and maximum score
@@ -49,16 +52,16 @@ export default function StartScreen({ propertyData, onStart }: StartScreenProps)
   useEffect(() => {
     setIsVisible(true);
     trackEvaluationEvent('start_screen_viewed', {
-      propertyType: propertyData.name,
+      propertyType: getPropertyTypeName(propertyData, currentLanguage),
       totalQuestions,
       maxScore,
       estimatedTime,
     });
-  }, [propertyData.name, totalQuestions, maxScore, estimatedTime]);
+  }, [getPropertyTypeName(propertyData, currentLanguage), totalQuestions, maxScore, estimatedTime, currentLanguage]);
 
   const handleStart = () => {
     trackEvaluationEvent('evaluation_started', {
-      propertyType: propertyData.name,
+      propertyType: getPropertyTypeName(propertyData, currentLanguage),
       totalQuestions,
     });
     onStart();
@@ -73,7 +76,7 @@ export default function StartScreen({ propertyData, onStart }: StartScreenProps)
           size="icon"
           asChild
           className="h-10 w-10"
-          title="Back to Home"
+          title={t('startScreen.backToHome', { ns: 'evaluation' })}
         >
           <Link href="/">
             <ArrowLeft className="w-5 h-5" />
@@ -92,10 +95,12 @@ export default function StartScreen({ propertyData, onStart }: StartScreenProps)
             {/* Title */}
             <div className="space-y-4">
               <h1 className="text-3xl md:text-4xl font-bold text-foreground">
-                Property Evaluation
+                {t('startScreen.title', { ns: 'evaluation' })}
               </h1>
               <p className="text-lg text-muted-foreground max-w-md mx-auto">
-                Get a comprehensive assessment of your {propertyData.name.toLowerCase()} with our interactive evaluation system
+                {t('evaluation.startScreen.subtitle', { 
+                  propertyType: getPropertyTypeName(propertyData, currentLanguage).toLowerCase() 
+                })}
               </p>
             </div>
 
@@ -107,7 +112,7 @@ export default function StartScreen({ propertyData, onStart }: StartScreenProps)
                 className="w-full max-w-md h-14 text-lg font-semibold bg-primary hover:bg-primary-dark transition-all duration-200 hover:scale-105"
               >
                 <Play className="w-6 h-6 mr-3" />
-                Start Evaluation
+                {t('startScreen.startButton', { ns: 'evaluation' })}
               </Button>
             </div>
 
@@ -118,7 +123,7 @@ export default function StartScreen({ propertyData, onStart }: StartScreenProps)
                   <CheckCircle2 className="w-6 h-6 md:w-8 md:h-8 text-primary mb-1 md:mb-0" />
                   <div>
                     <p className="text-lg md:text-2xl font-bold text-foreground">{totalQuestions}</p>
-                    <p className="text-xs md:text-sm text-muted-foreground">Questions</p>
+                    <p className="text-xs md:text-sm text-muted-foreground">{t('startScreen.statistics.questions', { ns: 'evaluation' })}</p>
                   </div>
                 </div>
               </Card>
@@ -128,7 +133,7 @@ export default function StartScreen({ propertyData, onStart }: StartScreenProps)
                   <Clock className="w-6 h-6 md:w-8 md:h-8 text-primary mb-1 md:mb-0" />
                   <div>
                     <p className="text-lg md:text-2xl font-bold text-foreground">{estimatedTime}</p>
-                    <p className="text-xs md:text-sm text-muted-foreground">Minutes</p>
+                    <p className="text-xs md:text-sm text-muted-foreground">{t('startScreen.statistics.minutes', { ns: 'evaluation' })}</p>
                   </div>
                 </div>
               </Card>
@@ -138,7 +143,7 @@ export default function StartScreen({ propertyData, onStart }: StartScreenProps)
                   <Target className="w-6 h-6 md:w-8 md:h-8 text-primary mb-1 md:mb-0" />
                   <div>
                     <p className="text-lg md:text-2xl font-bold text-foreground">{Math.round(maxScore)}</p>
-                    <p className="text-xs md:text-sm text-muted-foreground">Max Score</p>
+                    <p className="text-xs md:text-sm text-muted-foreground">{t('startScreen.statistics.maxScore', { ns: 'evaluation' })}</p>
                   </div>
                 </div>
               </Card>
@@ -147,7 +152,7 @@ export default function StartScreen({ propertyData, onStart }: StartScreenProps)
             {/* Categories Preview */}
             <div className="space-y-4">
               <h3 className="text-lg font-semibold text-foreground">
-                Evaluation Categories
+                {t('startScreen.categories.title', { ns: 'evaluation' })}
               </h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
                 {propertyData.categories.map((category, index) => (
@@ -156,9 +161,9 @@ export default function StartScreen({ propertyData, onStart }: StartScreenProps)
                     className="flex items-center gap-2 p-3 bg-background/30 rounded-lg"
                   >
                     <div className="w-2 h-2 bg-primary rounded-full" />
-                    <span className="font-medium text-foreground">{category.name}</span>
+                    <span className="font-medium text-foreground">{getCategoryName(category, currentLanguage)}</span>
                     <Badge variant="secondary" className="ml-auto text-xs">
-                      {category.questions.length} questions
+                      {t('evaluation.startScreen.categories.questionsCount', { count: category.questions.length })}
                     </Badge>
                   </div>
                 ))}
@@ -168,32 +173,32 @@ export default function StartScreen({ propertyData, onStart }: StartScreenProps)
             {/* Gamification Preview */}
             <div className="space-y-4">
               <h3 className="text-lg font-semibold text-foreground">
-                Unlock Achievements
+                {t('startScreen.achievements.title', { ns: 'evaluation' })}
               </h3>
               <div className="flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-4">
                 <div className="flex items-center gap-2 px-2 sm:px-3 py-2 bg-gray-100 dark:bg-gray-800 rounded-lg w-full sm:w-auto justify-center">
                   <Home className="w-4 h-4 text-gray-500" />
-                  <span className="text-sm text-gray-600 dark:text-gray-400">Beginner</span>
-                  <span className="text-xs text-gray-500">0-30%</span>
+                  <span className="text-sm text-gray-600 dark:text-gray-400">{t('startScreen.achievements.beginner', { ns: 'evaluation' })}</span>
+                  <span className="text-xs text-gray-500">{t('startScreen.achievements.beginnerRange', { ns: 'evaluation' })}</span>
                 </div>
                 <ArrowRight className="w-4 h-4 text-gray-400 rotate-90 sm:rotate-0" />
                 <div className="flex items-center gap-2 px-2 sm:px-3 py-2 bg-blue-100 dark:bg-blue-900 rounded-lg w-full sm:w-auto justify-center">
                   <Star className="w-4 h-4 text-blue-600" />
-                  <span className="text-sm text-blue-700 dark:text-blue-300">Expert</span>
-                  <span className="text-xs text-blue-500">60%+</span>
+                  <span className="text-sm text-blue-700 dark:text-blue-300">{t('startScreen.achievements.expert', { ns: 'evaluation' })}</span>
+                  <span className="text-xs text-blue-500">{t('startScreen.achievements.expertRange', { ns: 'evaluation' })}</span>
                 </div>
                 <ArrowRight className="w-4 h-4 text-gray-400 rotate-90 sm:rotate-0" />
                 <div className="flex items-center gap-2 px-2 sm:px-3 py-2 bg-yellow-100 dark:bg-yellow-900 rounded-lg w-full sm:w-auto justify-center">
                   <Trophy className="w-4 h-4 text-yellow-600" />
-                  <span className="text-sm text-yellow-700 dark:text-yellow-300">Master</span>
-                  <span className="text-xs text-yellow-500">90%+</span>
+                  <span className="text-sm text-yellow-700 dark:text-yellow-300">{t('startScreen.achievements.master', { ns: 'evaluation' })}</span>
+                  <span className="text-xs text-yellow-500">{t('startScreen.achievements.masterRange', { ns: 'evaluation' })}</span>
                 </div>
               </div>
             </div>
 
             {/* Footer Note */}
             <p className="text-sm text-muted-foreground">
-              💡 Your progress is automatically saved. You can return anytime to complete the evaluation.
+              {t('startScreen.footerNote', { ns: 'evaluation' })}
             </p>
           </CardContent>
         </Card>

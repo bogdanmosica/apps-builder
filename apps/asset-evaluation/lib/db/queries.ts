@@ -1,6 +1,6 @@
 import { desc, and, eq, isNull } from 'drizzle-orm';
 import { db } from './drizzle';
-import { activityLogs, teamMembers, teams, users, userProfiles } from './schema';
+import { activityLogs, teamMembers, teams, users, userProfiles, evaluationSessions, propertyTypes, type EvaluationSession } from './schema';
 import { getSession } from '@/lib/auth/session';
 
 export async function getUser() {
@@ -194,4 +194,59 @@ export async function getTeamForUser() {
   });
 
   return result?.team || null;
+}
+
+// Property Evaluation Queries
+export async function getUserEvaluations() {
+  const user = await getUser();
+  if (!user) {
+    return [];
+  }
+
+  const evaluations = await db.query.evaluationSessions.findMany({
+    where: eq(evaluationSessions.userId, user.id),
+    with: {
+      propertyType: true,
+    },
+    orderBy: desc(evaluationSessions.completedAt),
+  });
+
+  return evaluations;
+}
+
+export async function getUserEvaluationStats() {
+  const user = await getUser();
+  if (!user) {
+    return {
+      totalEvaluations: 0,
+      averageScore: 0,
+      bestScore: 0,
+      completionRate: 0,
+    };
+  }
+
+  const evaluations = await db
+    .select()
+    .from(evaluationSessions)
+    .where(eq(evaluationSessions.userId, user.id));
+
+  if (evaluations.length === 0) {
+    return {
+      totalEvaluations: 0,
+      averageScore: 0,
+      bestScore: 0,
+      completionRate: 0,
+    };
+  }
+
+  const totalScore = evaluations.reduce((sum: number, evaluation: EvaluationSession) => sum + evaluation.percentage, 0);
+  const bestScore = Math.max(...evaluations.map((evaluation: EvaluationSession) => evaluation.percentage));
+  const averageCompletionRate = evaluations.reduce((sum: number, evaluation: EvaluationSession) => sum + evaluation.completionRate, 0);
+
+  return {
+    totalEvaluations: evaluations.length,
+    averageScore: Math.round(totalScore / evaluations.length),
+    bestScore,
+    completionRate: Math.round(averageCompletionRate / evaluations.length),
+  };
 }

@@ -1,0 +1,18 @@
+{
+  "title": "My Properties",
+  "noProperties": "No properties added yet",
+  "noPropertiesDescription": "Start by adding your first property to evaluate",
+  "addFirstProperty": "Add Your First Property",
+  "addProperty": "Add Property",
+  "propertiesCount": "{{count}} properties",
+  "recentEvaluations": "Recent Evaluations",
+  "completedEvaluations": "Completed",
+  "inProgressEvaluations": "In Progress",
+  "pendingEvaluations": "Pending",
+  "overallScore": "Overall Score",
+  "lastUpdated": "Last updated",
+  "continueEvaluation": "Continue Evaluation",
+  "startEvaluation": "Start Evaluation",
+  "viewDetails": "View Details",
+  "shareProperty": "Share Property"
+}

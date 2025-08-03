@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Button } from '@workspace/ui/components/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@workspace/ui/components/card';
 import { Badge } from '@workspace/ui/components/badge';
@@ -25,6 +26,9 @@ import {
   CategoryWithQuestions,
   UserAnswer,
   trackEvaluationEvent,
+  getCategoryName,
+  getQuestionText,
+  getAnswerText,
 } from '@/lib/evaluation-utils';
 
 interface QuestionCardProps {
@@ -60,6 +64,8 @@ export default function QuestionCard({
   maxPossibleScore,
   isLastQuestion = false,
 }: QuestionCardProps) {
+  const { i18n } = useTranslation();
+  const currentLanguage = i18n.language as 'ro' | 'en';
   const [selectedAnswerId, setSelectedAnswerId] = useState<number | null>(
     userAnswer?.answerId || null
   );
@@ -100,12 +106,12 @@ export default function QuestionCard({
     trackEvaluationEvent('question_viewed', {
       questionId: question.id,
       categoryId: category.id,
-      categoryName: category.name,
+      categoryName: getCategoryName(category, currentLanguage),
       questionIndex: currentQuestionIndex,
       totalQuestions,
       progress: Math.round(progress),
     });
-  }, [question.id, category.id, category.name, currentQuestionIndex, totalQuestions, progress]);
+  }, [question.id, category.id, getCategoryName(category, currentLanguage), currentQuestionIndex, totalQuestions, progress, currentLanguage]);
 
   const handleAnswerSelect = (answerId: string) => {
     const answerIdNum = parseInt(answerId);
@@ -237,7 +243,7 @@ export default function QuestionCard({
                 Question {currentQuestionIndex + 1} of {totalQuestions}
               </p>
               <p className="text-xs text-muted-foreground">
-                {category.name}
+                {getCategoryName(category, currentLanguage)}
               </p>
             </div>
           </div>
@@ -281,7 +287,7 @@ export default function QuestionCard({
                 Back
               </Button>
               <Badge variant="outline" className="text-sm">
-                Weight: {Math.round(question.weight * 100)}%
+                Rating weight întrebare: {Math.round(question.weight)}
               </Badge>
               <div className="text-right">
                 <p className="text-xs text-muted-foreground">Max Points</p>
@@ -292,7 +298,7 @@ export default function QuestionCard({
             </div>
             
             <CardTitle className="text-xl md:text-2xl leading-relaxed text-foreground">
-              {question.text}
+              {getQuestionText(question, currentLanguage)}
             </CardTitle>
           </CardHeader>
 
@@ -327,7 +333,7 @@ export default function QuestionCard({
                       <div className="flex-1">
                         <div className="flex items-center justify-between">
                           <span className="text-base font-medium text-foreground">
-                            {answer.text}
+                            {getAnswerText(answer, currentLanguage)}
                           </span>
                           
                           <div className="flex items-center gap-2">

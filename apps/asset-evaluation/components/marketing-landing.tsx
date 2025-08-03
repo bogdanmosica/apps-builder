@@ -1,5 +1,7 @@
 'use client';
 
+import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Button } from '@workspace/ui/components/button';
 import {
   Card,
@@ -42,7 +44,6 @@ import {
 import Link from 'next/link';
 import Navigation from './navigation';
 import PropertyDemo from './property-demo';
-import { useState } from 'react';
 
 interface MarketingLandingProps {
   isLoggedIn: boolean;
@@ -114,6 +115,7 @@ export default function MarketingLanding({
   isLoggedIn,
   userRole,
 }: MarketingLandingProps) {
+  const { t } = useTranslation(['landing', 'common']);
   const [inviteLink] = useState("asseteval.app/join/family-home-search-2024");
   const [copied, setCopied] = useState(false);
 
@@ -138,32 +140,31 @@ export default function MarketingLanding({
               </Badge>
             </div>
             <h1 className='text-5xl md:text-6xl font-bold text-gray-900 dark:text-white mb-6'>
-              Stop Buying Homes
-              <span className='text-blue-600 dark:text-blue-400 block'>Without Guidance</span>
+              {t('hero.mainTitle', { ns: 'landing' })}
+              <span className='text-blue-600 dark:text-blue-400 block'>{t('hero.mainTitleHighlight', { ns: 'landing' })}</span>
             </h1>
             <p className='text-xl text-gray-600 dark:text-gray-300 mb-8 max-w-3xl mx-auto'>
-              You're about to spend hundreds of thousands of dollars. Don't rely on gut feelings. 
-              Use our smart checklists to evaluate every property like a pro and make confident decisions.
+              {t('hero.mainSubtitle', { ns: 'landing' })}
             </p>
             <div className='flex flex-col sm:flex-row gap-4 justify-center'>
               {isLoggedIn ? (
                 <Button size='lg' asChild className='text-lg px-8 py-6 bg-blue-600 hover:bg-blue-700 text-primary'>
                   <Link href='/dashboard'>
                     <CheckSquare className='mr-2 h-5 w-5' />
-                    Open My Checklists
+                    {t('hero.ctaDashboard', { ns: 'landing' })}
                   </Link>
                 </Button>
               ) : (
                 <Button size='lg' asChild className='text-lg px-8 py-6 bg-blue-600 hover:bg-blue-700'>
                   <Link href='/sign-up'>
                     <CheckSquare className='mr-2 h-5 w-5' />
-                    Start Your Smart Checklist
+                    {t('hero.ctaMain', { ns: 'landing' })}
                   </Link>
                 </Button>
               )}
             </div>
             <p className='text-sm text-gray-500 dark:text-gray-400 mt-4'>
-              ✓ Free to start • ✓ Works offline • ✓ No realtor required
+              {t('hero.benefits', { ns: 'landing' })}
             </p>
           </div>
         </div>
@@ -174,10 +175,10 @@ export default function MarketingLanding({
         <div className='container mx-auto'>
           <div className='text-center mb-16'>
             <h2 className='text-4xl font-bold text-gray-900 dark:text-white mb-4'>
-              How It Works in 3 Simple Steps
+              {t('howItWorks.title', { ns: 'landing' })}
             </h2>
             <p className='text-xl text-gray-600 dark:text-gray-300 max-w-2xl mx-auto'>
-              Add properties, evaluate with smart checklists, and compare to make the best decision
+              {t('howItWorks.subtitle', { ns: 'landing' })}
             </p>
           </div>
 
@@ -187,14 +188,14 @@ export default function MarketingLanding({
                 <div className='w-16 h-16 bg-blue-100 dark:bg-blue-900 rounded-full flex items-center justify-center mx-auto mb-4'>
                   <Home className='h-8 w-8 text-blue-600 dark:text-blue-400' />
                 </div>
-                <CardTitle className="text-xl dark:text-white">1. Add Properties</CardTitle>
+                <CardTitle className="text-xl dark:text-white">{t('howItWorks.step1.title', { ns: 'landing' })}</CardTitle>
                 <CardDescription className="dark:text-gray-300">
-                  Save properties from any listing site or add details manually
+                  {t('howItWorks.step1.description', { ns: 'landing' })}
                 </CardDescription>
               </CardHeader>
               <CardContent>
                 <p className="text-gray-600 dark:text-gray-300 text-sm">
-                  Just paste a listing URL or fill out our quick form. We'll organize everything for you.
+                  {t('howItWorks.step1.details', { ns: 'landing' })}
                 </p>
               </CardContent>
             </Card>
@@ -204,14 +205,14 @@ export default function MarketingLanding({
                 <div className='w-16 h-16 bg-green-100 dark:bg-green-900 rounded-full flex items-center justify-center mx-auto mb-4'>
                   <CheckSquare className='h-8 w-8 text-green-600 dark:text-green-400' />
                 </div>
-                <CardTitle className="text-xl dark:text-white">2. Smart Evaluation</CardTitle>
+                <CardTitle className="text-xl dark:text-white">{t('howItWorks.step2.title', { ns: 'landing' })}</CardTitle>
                 <CardDescription className="dark:text-gray-300">
-                  Use our guided checklists during property visits
+                  {t('howItWorks.step2.description', { ns: 'landing' })}
                 </CardDescription>
               </CardHeader>
               <CardContent>
                 <p className="text-gray-600 dark:text-gray-300 text-sm">
-                  Our smart questions help you notice what matters most for your situation.
+                  {t('howItWorks.step2.details', { ns: 'landing' })}
                 </p>
               </CardContent>
             </Card>
@@ -221,14 +222,14 @@ export default function MarketingLanding({
                 <div className='w-16 h-16 bg-purple-100 dark:bg-purple-900 rounded-full flex items-center justify-center mx-auto mb-4'>
                   <BarChart3 className='h-8 w-8 text-purple-600 dark:text-purple-400' />
                 </div>
-                <CardTitle className="text-xl dark:text-white">3. Smart Compare</CardTitle>
+                <CardTitle className="text-xl dark:text-white">{t('howItWorks.step3.title', { ns: 'landing' })}</CardTitle>
                 <CardDescription className="dark:text-gray-300">
-                  See side-by-side comparisons with calculated scores
+                  {t('howItWorks.step3.description', { ns: 'landing' })}
                 </CardDescription>
               </CardHeader>
               <CardContent>
                 <p className="text-gray-600 dark:text-gray-300 text-sm">
-                  Visual comparisons make it easy to see which property is truly the best fit.
+                  {t('howItWorks.step3.details', { ns: 'landing' })}
                 </p>
               </CardContent>
             </Card>
@@ -243,7 +244,7 @@ export default function MarketingLanding({
                   className='text-lg px-8 py-6'
                 >
                   <Play className='mr-2 h-5 w-5' />
-                  See Example Property
+                  {t('howItWorks.demoButton', { ns: 'landing' })}
                 </Button>
               }
             />
@@ -256,10 +257,10 @@ export default function MarketingLanding({
         <div className='container mx-auto'>
           <div className='text-center mb-16'>
             <h2 className='text-4xl font-bold text-gray-900 dark:text-white mb-4'>
-              Compare Properties Like a Pro
+              {t('comparison.title', { ns: 'landing' })}
             </h2>
             <p className='text-xl text-gray-600 dark:text-gray-300 max-w-2xl mx-auto'>
-              See how our smart scoring system helps you make objective decisions
+              {t('comparison.subtitle', { ns: 'landing' })}
             </p>
           </div>
 
@@ -367,12 +368,12 @@ export default function MarketingLanding({
                   className='text-lg px-8 py-6'
                 >
                   <Eye className='mr-2 h-5 w-5' />
-                  Play with Mock Property
+                  {t('comparison.demoButton', { ns: 'landing' })}
                 </Button>
               }
             />
             <p className='text-sm text-gray-500 dark:text-gray-400 mt-2'>
-              Try our evaluation system with sample data
+              {t('comparison.demoSubtext', { ns: 'landing' })}
             </p>
           </div>
         </div>
@@ -383,10 +384,10 @@ export default function MarketingLanding({
         <div className='container mx-auto'>
           <div className='max-w-4xl mx-auto text-center'>
             <h2 className='text-4xl font-bold text-gray-900 dark:text-white mb-4'>
-              Don't House Hunt Alone
+              {t('collaboration.title', { ns: 'landing' })}
             </h2>
             <p className='text-xl text-gray-600 dark:text-gray-300 mb-8'>
-              Invite your partner, family, or trusted friends to collaborate on your property search
+              {t('collaboration.subtitle', { ns: 'landing' })}
             </p>
 
             <Card className='border-0 shadow-lg max-w-2xl mx-auto dark:bg-gray-700'>
@@ -400,19 +401,19 @@ export default function MarketingLanding({
                     <Heart className='h-6 w-6 text-green-600 dark:text-green-400' />
                   </div>
                 </div>
-                <CardTitle className="dark:text-white">Share Your Property Shortlist</CardTitle>
+                <CardTitle className="dark:text-white">{t('collaboration.cardTitle', { ns: 'landing' })}</CardTitle>
                 <CardDescription className="dark:text-gray-300">
-                  Everyone can add notes, rate properties, and see what matters most to the family
+                  {t('collaboration.cardDescription', { ns: 'landing' })}
                 </CardDescription>
               </CardHeader>
               <CardContent>
                 <div className='bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-gray-800 dark:to-gray-700 p-6 rounded-xl border border-blue-100 dark:border-gray-600 mb-6'>
                   <div className='text-center mb-4'>
                     <p className='text-sm font-medium text-blue-700 dark:text-blue-300 mb-2'>
-                      🔗 Your family invite link
+                      🔗 {t('collaboration.inviteTitle', { ns: 'landing' })}
                     </p>
                     <p className='text-xs text-blue-600 dark:text-blue-400 mb-4'>
-                      Share this secure link with your family members to collaborate
+                      {t('collaboration.inviteDescription', { ns: 'landing' })}
                     </p>
                   </div>
                   <div className='flex items-center space-x-3'>
@@ -430,12 +431,12 @@ export default function MarketingLanding({
                       {copied ? (
                         <div className='flex items-center space-x-2'>
                           <CheckCircle className='h-4 w-4 text-green-600' />
-                          <span className='text-sm'>Copied!</span>
+                          <span className='text-sm'>{t('collaboration.copied', { ns: 'landing' })}</span>
                         </div>
                       ) : (
                         <div className='flex items-center space-x-2'>
                           <Copy className='h-4 w-4' />
-                          <span className='text-sm'>Copy</span>
+                          <span className='text-sm'>{t('collaboration.copy', { ns: 'landing' })}</span>
                         </div>
                       )}
                     </Button>
@@ -443,7 +444,7 @@ export default function MarketingLanding({
                 </div>
                 <Button className='w-full bg-blue-600 hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-800 py-3 text-primary'>
                   <UserPlus className='mr-2 h-5 w-5' />
-                  Invite Your Partner to Your Shortlist
+                  {t('collaboration.inviteButton', { ns: 'landing' })}
                 </Button>
               </CardContent>
             </Card>
@@ -453,22 +454,22 @@ export default function MarketingLanding({
                 <div className='w-16 h-16 bg-blue-100 dark:bg-blue-900 rounded-full flex items-center justify-center mx-auto mb-4'>
                   <Users className='h-8 w-8 text-blue-600 dark:text-blue-400' />
                 </div>
-                <h3 className='font-semibold mb-2 text-gray-900 dark:text-white'>Shared Evaluations</h3>
-                <p className='text-sm text-gray-600 dark:text-gray-300'>Everyone's checklist responses in one place</p>
+                <h3 className='font-semibold mb-2 text-gray-900 dark:text-white'>{t('collaboration.features.shared.title', { ns: 'landing' })}</h3>
+                <p className='text-sm text-gray-600 dark:text-gray-300'>{t('collaboration.features.shared.description', { ns: 'landing' })}</p>
               </div>
               <div className='text-center p-6 bg-white dark:bg-gray-700 rounded-xl shadow-sm hover:shadow-md transition-shadow'>
                 <div className='w-16 h-16 bg-green-100 dark:bg-green-900 rounded-full flex items-center justify-center mx-auto mb-4'>
                   <CheckSquare className='h-8 w-8 text-green-600 dark:text-green-400' />
                 </div>
-                <h3 className='font-semibold mb-2 text-gray-900 dark:text-white'>Consensus Scoring</h3>
-                <p className='text-sm text-gray-600 dark:text-gray-300'>See which properties everyone agrees on</p>
+                <h3 className='font-semibold mb-2 text-gray-900 dark:text-white'>{t('collaboration.features.consensus.title', { ns: 'landing' })}</h3>
+                <p className='text-sm text-gray-600 dark:text-gray-300'>{t('collaboration.features.consensus.description', { ns: 'landing' })}</p>
               </div>
               <div className='text-center p-6 bg-white dark:bg-gray-700 rounded-xl shadow-sm hover:shadow-md transition-shadow'>
                 <div className='w-16 h-16 bg-purple-100 dark:bg-purple-900 rounded-full flex items-center justify-center mx-auto mb-4'>
                   <Clock className='h-8 w-8 text-purple-600 dark:text-purple-400' />
                 </div>
-                <h3 className='font-semibold mb-2 text-gray-900 dark:text-white'>Save Time</h3>
-                <p className='text-sm text-gray-600 dark:text-gray-300'>No more endless group chats about properties</p>
+                <h3 className='font-semibold mb-2 text-gray-900 dark:text-white'>{t('collaboration.features.saveTime.title', { ns: 'landing' })}</h3>
+                <p className='text-sm text-gray-600 dark:text-gray-300'>{t('collaboration.features.saveTime.description', { ns: 'landing' })}</p>
               </div>
             </div>
           </div>
@@ -482,20 +483,19 @@ export default function MarketingLanding({
             <div className='grid md:grid-cols-2 gap-8 items-center'>
               <div>
                 <h3 className='text-2xl font-bold text-gray-900 dark:text-white mb-4'>
-                  Works Everywhere, Even Without Internet
+                  {t('offline.title', { ns: 'landing' })}
                 </h3>
                 <p className='text-gray-600 dark:text-gray-300 mb-6'>
-                  Your property data syncs when you're online, but you can still use your checklists 
-                  during property visits even in areas with poor cell service.
+                  {t('offline.description', { ns: 'landing' })}
                 </p>
                 <div className='flex items-center space-x-6'>
                   <div className='flex items-center space-x-2'>
                     <Wifi className='h-5 w-5 text-green-500' />
-                    <span className='text-sm'>Online sync</span>
+                    <span className='text-sm'>{t('offline.onlineSync', { ns: 'landing' })}</span>
                   </div>
                   <div className='flex items-center space-x-2'>
                     <WifiOff className='h-5 w-5 text-blue-500' />
-                    <span className='text-sm'>Offline ready</span>
+                    <span className='text-sm'>{t('offline.offlineReady', { ns: 'landing' })}</span>
                   </div>
                 </div>
               </div>
@@ -505,8 +505,8 @@ export default function MarketingLanding({
                     <div className='flex items-center space-x-3'>
                       <Shield className='h-8 w-8 text-green-500' />
                       <div>
-                        <CardTitle className="text-lg dark:text-white">Your Data is Protected</CardTitle>
-                        <CardDescription>We never sell your information</CardDescription>
+                        <CardTitle className="text-lg dark:text-white">{t('security.title', { ns: 'landing' })}</CardTitle>
+                        <CardDescription>{t('security.subtitle', { ns: 'landing' })}</CardDescription>
                       </div>
                     </div>
                   </CardHeader>
@@ -514,19 +514,19 @@ export default function MarketingLanding({
                     <ul className='space-y-2 text-sm'>
                       <li className='flex items-center'>
                         <CheckCircle className='h-4 w-4 text-green-500 mr-2' />
-                        End-to-end encryption
+                        {t('security.features.encryption', { ns: 'landing' })}
                       </li>
                       <li className='flex items-center'>
                         <CheckCircle className='h-4 w-4 text-green-500 mr-2' />
-                        No realtor partnerships
+                        {t('security.features.noPartnerships', { ns: 'landing' })}
                       </li>
                       <li className='flex items-center'>
                         <CheckCircle className='h-4 w-4 text-green-500 mr-2' />
-                        GDPR compliant
+                        {t('security.features.gdpr', { ns: 'landing' })}
                       </li>
                       <li className='flex items-center'>
                         <CheckCircle className='h-4 w-4 text-green-500 mr-2' />
-                        Delete anytime
+                        {t('security.features.deleteAnytime', { ns: 'landing' })}
                       </li>
                     </ul>
                   </CardContent>
@@ -542,10 +542,10 @@ export default function MarketingLanding({
         <div className='container mx-auto'>
           <div className='text-center mb-16'>
             <h2 className='text-4xl font-bold text-gray-900 dark:text-white mb-4'>
-              See How It Helps People Like You
+              {t('testimonials.title', { ns: 'landing' })}
             </h2>
             <p className='text-xl text-gray-600 dark:text-gray-300'>
-              Different buyers, same challenges - see how smart checklists help
+              {t('testimonials.subtitle', { ns: 'landing' })}
             </p>
           </div>
 
@@ -582,7 +582,7 @@ export default function MarketingLanding({
 
           <div className='text-center mt-12'>
             <Button variant='outline' size='lg'>
-              See How It Helps People Like You
+              {t('testimonials.cta', { ns: 'landing' })}
             </Button>
           </div>
         </div>
@@ -594,75 +594,65 @@ export default function MarketingLanding({
           <div className='max-w-3xl mx-auto'>
             <div className='text-center mb-16'>
               <h2 className='text-4xl font-bold text-gray-900 dark:text-white mb-4'>
-                Frequently Asked Questions
+                {t('faq.title', { ns: 'landing' })}
               </h2>
               <p className='text-xl text-gray-600 dark:text-gray-300'>
-                Everything you need to know about smart property evaluation
+                {t('faq.subtitle', { ns: 'landing' })}
               </p>
             </div>
 
             <Accordion type="single" collapsible className="space-y-4">
               <AccordionItem value="item-1" className="border border-gray-200 rounded-lg px-6">
                 <AccordionTrigger className="text-left font-semibold">
-                  Do you sell properties or work with realtors?
+                  {t('faq.q1.question', { ns: 'landing' })}
                 </AccordionTrigger>
                 <AccordionContent className="text-gray-600 dark:text-gray-300 pt-2">
-                  No, we're completely independent. We don't sell properties, take commissions, or have partnerships with realtors. 
-                  We're just a tool to help you make better decisions. You can use any realtor you want, or none at all.
+                  {t('faq.q1.answer', { ns: 'landing' })}
                 </AccordionContent>
               </AccordionItem>
 
               <AccordionItem value="item-2" className="border border-gray-200 rounded-lg px-6">
                 <AccordionTrigger className="text-left font-semibold">
-                  Is this really free?
+                  {t('faq.q2.question', { ns: 'landing' })}
                 </AccordionTrigger>
                 <AccordionContent className="text-gray-600 dark:text-gray-300 pt-2">
-                  Yes! The basic checklist features are completely free forever. We offer premium features like advanced analytics 
-                  and unlimited property comparisons for a small monthly fee, but most people find the free version has everything they need.
+                  {t('faq.q2.answer', { ns: 'landing' })}
                 </AccordionContent>
               </AccordionItem>
 
               <AccordionItem value="item-3" className="border border-gray-200 rounded-lg px-6">
                 <AccordionTrigger className="text-left font-semibold">
-                  Can I trust you with my property search data?
+                  {t('faq.q3.question', { ns: 'landing' })}
                 </AccordionTrigger>
                 <AccordionContent className="text-gray-600 dark:text-gray-300 pt-2">
-                  Absolutely. Your property data is encrypted and private. We never sell your information or share it with realtors, 
-                  lenders, or anyone else. You can export or delete your data anytime. We make money from premium subscriptions, 
-                  not from your personal information.
+                  {t('faq.q3.answer', { ns: 'landing' })}
                 </AccordionContent>
               </AccordionItem>
 
               <AccordionItem value="item-4" className="border border-gray-200 rounded-lg px-6">
                 <AccordionTrigger className="text-left font-semibold">
-                  How does the scoring system work?
+                  {t('faq.q4.question', { ns: 'landing' })}
                 </AccordionTrigger>
                 <AccordionContent className="text-gray-600 dark:text-gray-300 pt-2">
-                  Our smart scoring system weighs different factors based on what you tell us is important. Location, condition, 
-                  price, and amenities all get scored on a 1-10 scale, then combined into an overall score. You can adjust the 
-                  weightings to match your priorities.
+                  {t('faq.q4.answer', { ns: 'landing' })}
                 </AccordionContent>
               </AccordionItem>
 
               <AccordionItem value="item-5" className="border border-gray-200 rounded-lg px-6">
                 <AccordionTrigger className="text-left font-semibold">
-                  What if I'm not tech-savvy?
+                  {t('faq.q5.question', { ns: 'landing' })}
                 </AccordionTrigger>
                 <AccordionContent className="text-gray-600 dark:text-gray-300 pt-2">
-                  No problem! The app is designed to be simple - just answer questions about each property you visit. 
-                  If you can text or use basic apps, you can use this. Plus, it works offline so you don't need to worry 
-                  about connectivity during property visits.
+                  {t('faq.q5.answer', { ns: 'landing' })}
                 </AccordionContent>
               </AccordionItem>
 
               <AccordionItem value="item-6" className="last:border-b border border-gray-200 rounded-lg px-6">
                 <AccordionTrigger className="text-left font-semibold">
-                  Can I use this for rental properties or investments?
+                  {t('faq.q6.question', { ns: 'landing' })}
                 </AccordionTrigger>
                 <AccordionContent className="text-gray-600 dark:text-gray-300 pt-2">
-                  Yes! While we designed it primarily for home buyers, the checklists work great for rental property evaluation too. 
-                  You can customize the questions and scoring to focus on investment criteria like rental yield, maintenance costs, 
-                  and tenant appeal. The family sharing features also work well for investment partners or property management teams.
+                  {t('faq.q6.answer', { ns: 'landing' })}
                 </AccordionContent>
               </AccordionItem>
             </Accordion>
@@ -675,11 +665,10 @@ export default function MarketingLanding({
         <div className='container mx-auto text-center'>
           <div className='max-w-4xl mx-auto'>
             <h2 className='text-4xl md:text-5xl font-bold mb-6'>
-              Take Control of Your Next Property Visit
+              {t('finalCta.title', { ns: 'landing' })}
             </h2>
             <p className='text-xl mb-8 opacity-90 max-w-2xl mx-auto'>
-              Stop second-guessing yourself. Walk into every property with a plan, 
-              evaluate systematically, and make the decision with confidence.
+              {t('finalCta.subtitle', { ns: 'landing' })}
             </p>
             <div className='flex flex-col sm:flex-row gap-4 justify-center mb-6'>
               {isLoggedIn ? (
@@ -691,7 +680,7 @@ export default function MarketingLanding({
                 >
                   <Link href='/dashboard'>
                     <CheckSquare className='mr-2 h-5 w-5' />
-                    Open My Dashboard
+                    {t('finalCta.ctaDashboard', { ns: 'landing' })}
                   </Link>
                 </Button>
               ) : (
@@ -703,26 +692,26 @@ export default function MarketingLanding({
                 >
                   <Link href='/sign-up'>
                     <CheckSquare className='mr-2 h-5 w-5' />
-                    Start Your Smart Checklist Now
+                    {t('finalCta.ctaMain', { ns: 'landing' })}
                   </Link>
                 </Button>
               )}
             </div>
             <p className='text-sm opacity-75 mb-8'>
-              Your next property visit could be the one. Be ready.
+              {t('finalCta.encouragement', { ns: 'landing' })}
             </p>
             <div className='flex items-center justify-center space-x-8 text-sm opacity-75'>
               <span className='flex items-center'>
                 <CheckCircle className='h-4 w-4 mr-2' />
-                Free to start
+                {t('finalCta.benefits.free', { ns: 'landing' })}
               </span>
               <span className='flex items-center'>
                 <Shield className='h-4 w-4 mr-2' />
-                Private & secure
+                {t('finalCta.benefits.secure', { ns: 'landing' })}
               </span>
               <span className='flex items-center'>
                 <WifiOff className='h-4 w-4 mr-2' />
-                Works offline
+                {t('finalCta.benefits.offline', { ns: 'landing' })}
               </span>
             </div>
           </div>
@@ -736,75 +725,75 @@ export default function MarketingLanding({
             <div>
               <div className='flex items-center space-x-2 mb-4'>
                 <Home className='h-6 w-6' />
-                <span className='text-xl font-bold'>Asset Evaluation</span>
+                <span className='text-xl font-bold'>{t('footer.brand.short', { ns: 'landing' })}</span>
               </div>
               <p className='text-gray-400 dark:text-gray-500'>
-                Smart property evaluation tools for confident home buying decisions.
+                {t('footer.description', { ns: 'landing' })}
               </p>
             </div>
             <div>
-              <h3 className='font-semibold mb-4'>Product</h3>
+              <h3 className='font-semibold mb-4'>{t('footer.product.title', { ns: 'landing' })}</h3>
               <ul className='space-y-2 text-gray-400 dark:text-gray-500'>
                 <li>
                   <Link href='#' className='hover:text-white dark:hover:text-gray-200 transition-colors'>
-                    Smart Checklists
+                    {t('footer.product.checklists', { ns: 'landing' })}
                   </Link>
                 </li>
                 <li>
                   <Link href='#' className='hover:text-white dark:hover:text-gray-200 transition-colors'>
-                    Property Comparison
+                    {t('footer.product.comparison', { ns: 'landing' })}
                   </Link>
                 </li>
                 <li>
                   <Link href='#' className='hover:text-white dark:hover:text-gray-200 transition-colors'>
-                    Family Sharing
+                    {t('footer.product.sharing', { ns: 'landing' })}
                   </Link>
                 </li>
               </ul>
             </div>
             <div>
-              <h3 className='font-semibold mb-4'>Resources</h3>
+              <h3 className='font-semibold mb-4'>{t('footer.resources.title', { ns: 'landing' })}</h3>
               <ul className='space-y-2 text-gray-400 dark:text-gray-500'>
                 <li>
                   <Link href='#' className='hover:text-white dark:hover:text-gray-200 transition-colors'>
-                    First-Time Buyer Guide
+                    {t('footer.resources.guide', { ns: 'landing' })}
                   </Link>
                 </li>
                 <li>
                   <Link href='#' className='hover:text-white dark:hover:text-gray-200 transition-colors'>
-                    Property Checklist Templates
+                    {t('footer.resources.templates', { ns: 'landing' })}
                   </Link>
                 </li>
                 <li>
                   <Link href='#' className='hover:text-white dark:hover:text-gray-200 transition-colors'>
-                    Market Analysis Tools
+                    {t('footer.resources.analysis', { ns: 'landing' })}
                   </Link>
                 </li>
               </ul>
             </div>
             <div>
-              <h3 className='font-semibold mb-4'>Support</h3>
+              <h3 className='font-semibold mb-4'>{t('footer.support.title', { ns: 'landing' })}</h3>
               <ul className='space-y-2 text-gray-400 dark:text-gray-500'>
                 <li>
                   <Link href='#' className='hover:text-white dark:hover:text-gray-200 transition-colors'>
-                    Help Center
+                    {t('footer.support.help', { ns: 'landing' })}
                   </Link>
                 </li>
                 <li>
                   <Link href='#' className='hover:text-white dark:hover:text-gray-200 transition-colors'>
-                    Contact Us
+                    {t('footer.support.contact', { ns: 'landing' })}
                   </Link>
                 </li>
                 <li>
                   <Link href='#' className='hover:text-white dark:hover:text-gray-200 transition-colors'>
-                    Privacy Policy
+                    {t('footer.support.privacy', { ns: 'landing' })}
                   </Link>
                 </li>
               </ul>
             </div>
           </div>
           <div className='border-t border-gray-800 dark:border-gray-700 mt-8 pt-8 text-center text-gray-400 dark:text-gray-500'>
-            <p>&copy; 2025 Asset Evaluation. All rights reserved. Made for smart home buyers.</p>
+            <p>{t('footer.copyright', { ns: 'landing' })}</p>
           </div>
         </div>
       </footer>

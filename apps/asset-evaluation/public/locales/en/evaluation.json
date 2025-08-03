@@ -1,0 +1,140 @@
+{
+  "title": "Property Evaluation",
+  "myEvaluations": "My evaluations",
+  "startEvaluation": "Start evaluation",
+  "completeEvaluation": "Complete evaluation",
+  "evaluationProgress": "Evaluation progress",
+  "categories": {
+    "exterior": "Exterior",
+    "interior": "Interior",
+    "utilities": "Utilities",
+    "location": "Location",
+    "general": "General"
+  },
+  "exterior": {
+    "title": "Exterior Evaluation",
+    "description": "Evaluate the exterior aspects of the property",
+    "roof": {
+      "title": "Roof condition",
+      "description": "How is the roof condition?"
+    },
+    "walls": {
+      "title": "Wall condition",
+      "description": "How is the exterior wall condition?"
+    },
+    "windows": {
+      "title": "Windows",
+      "description": "How are the windows?"
+    },
+    "doors": {
+      "title": "Doors",
+      "description": "How are the exterior doors?"
+    },
+    "garden": {
+      "title": "Garden/Yard",
+      "description": "How is the garden or yard space?"
+    }
+  },
+  "interior": {
+    "title": "Interior Evaluation",
+    "description": "Evaluate the interior aspects of the property",
+    "floors": {
+      "title": "Floor condition",
+      "description": "How are the floors throughout the property?"
+    },
+    "walls": {
+      "title": "Interior walls",
+      "description": "How are the interior walls and finishes?"
+    },
+    "ceiling": {
+      "title": "Ceiling condition",
+      "description": "How are the ceilings?"
+    },
+    "kitchen": {
+      "title": "Kitchen",
+      "description": "How is the kitchen condition and functionality?"
+    },
+    "bathroom": {
+      "title": "Bathroom",
+      "description": "How are the bathrooms?"
+    },
+    "storage": {
+      "title": "Storage space",
+      "description": "How adequate is the storage space?"
+    }
+  },
+  "utilities": {
+    "title": "Utilities Evaluation",
+    "description": "Evaluate the utility systems of the property",
+    "electricity": {
+      "title": "Electrical system",
+      "description": "How is the electrical installation?"
+    },
+    "plumbing": {
+      "title": "Plumbing",
+      "description": "How is the plumbing system?"
+    },
+    "heating": {
+      "title": "Heating system",
+      "description": "How is the heating system?"
+    },
+    "insulation": {
+      "title": "Insulation",
+      "description": "How is the thermal insulation?"
+    },
+    "ventilation": {
+      "title": "Ventilation",
+      "description": "How is the ventilation system?"
+    }
+  },
+  "location": {
+    "title": "Location Evaluation",
+    "description": "Evaluate the location and surroundings",
+    "neighborhood": {
+      "title": "Neighborhood",
+      "description": "How is the neighborhood?"
+    },
+    "transport": {
+      "title": "Transportation",
+      "description": "How accessible is public transportation?"
+    },
+    "amenities": {
+      "title": "Nearby amenities",
+      "description": "How are the nearby amenities (shops, schools, etc.)?"
+    },
+    "noise": {
+      "title": "Noise level",
+      "description": "How is the noise level in the area?"
+    },
+    "safety": {
+      "title": "Safety",
+      "description": "How safe does the area feel?"
+    }
+  },
+  "general": {
+    "title": "General Evaluation",
+    "description": "Overall impressions and additional considerations",
+    "overall": {
+      "title": "Overall impression",
+      "description": "What is your overall impression of this property?"
+    },
+    "value": {
+      "title": "Value for money",
+      "description": "Do you think the price is fair for what's offered?"
+    },
+    "potential": {
+      "title": "Improvement potential",
+      "description": "What potential do you see for improvements?"
+    }
+  },
+  "scores": {
+    "excellent": "Excellent",
+    "good": "Good",
+    "average": "Average",
+    "poor": "Poor",
+    "critical": "Critical"
+  },
+  "notes": "Additional notes",
+  "notesPlaceholder": "Add any additional observations or comments about this property...",
+  "footerNote": "💡 Your progress is automatically saved. You can return anytime to complete the evaluation."
+}

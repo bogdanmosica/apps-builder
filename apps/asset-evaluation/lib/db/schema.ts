@@ -949,14 +949,16 @@ export type NewContentMedia = typeof contentMedia.$inferInsert;
 // Property Evaluation Tables
 export const propertyTypes = pgTable('property_types', {
   id: serial('id').primaryKey(),
-  name: text('name').notNull().unique(),
+  name_ro: text('name_ro').notNull().unique(), // Romanian version (default)
+  name_en: text('name_en'), // English version
   createdAt: timestamp('created_at').notNull().defaultNow(),
   updatedAt: timestamp('updated_at').notNull().defaultNow(),
 });
 
 export const questionCategories = pgTable('question_categories', {
   id: serial('id').primaryKey(),
-  name: text('name').notNull(),
+  name_ro: text('name_ro').notNull(), // Romanian version (default)
+  name_en: text('name_en'), // English version
   propertyTypeId: integer('property_type_id')
     .notNull()
     .references(() => propertyTypes.id),
@@ -966,7 +968,8 @@ export const questionCategories = pgTable('question_categories', {
 
 export const questions = pgTable('questions', {
   id: serial('id').primaryKey(),
-  text: text('text').notNull(),
+  text_ro: text('text_ro').notNull(), // Romanian version (default)
+  text_en: text('text_en'), // English version
   weight: integer('weight').notNull(),
   categoryId: integer('category_id')
     .notNull()
@@ -977,7 +980,8 @@ export const questions = pgTable('questions', {
 
 export const answers = pgTable('answers', {
   id: serial('id').primaryKey(),
-  text: text('text').notNull(),
+  text_ro: text('text_ro').notNull(), // Romanian version (default)
+  text_en: text('text_en'), // English version
   weight: integer('weight').notNull(),
   questionId: integer('question_id')
     .notNull()
@@ -995,6 +999,13 @@ export const evaluationSessions = pgTable('evaluation_sessions', {
   propertyTypeId: integer('property_type_id')
     .notNull()
     .references(() => propertyTypes.id),
+  // Property Information
+  propertyName: varchar('property_name', { length: 100 }),
+  propertyLocation: varchar('property_location', { length: 255 }),
+  propertySurface: integer('property_surface'), // in square meters
+  propertyFloors: varchar('property_floors', { length: 20 }),
+  propertyConstructionYear: integer('property_construction_year'),
+  // Evaluation Results
   totalScore: integer('total_score').notNull(),
   maxPossibleScore: integer('max_possible_score').notNull(),
   percentage: integer('percentage').notNull(), // stored as integer (0-100)

@@ -1,0 +1,18 @@
+{
+  "types": {
+    "house": "House",
+    "apartment": "Apartment"
+  },
+  "addHouse": "Add House",
+  "addApartment": "Add Apartment",
+  "addProperty": "Add Property",
+  "propertyName": "Property name",
+  "propertyLocation": "Property location",
+  "propertySurface": "Property surface area",
+  "propertyFloors": "Number of floors",
+  "propertyConstructionYear": "Construction year",
+  "propertyDetails": "Property details",
+  "editProperty": "Edit property",
+  "deleteProperty": "Delete property",
+  "shareProperty": "Share property"
+}

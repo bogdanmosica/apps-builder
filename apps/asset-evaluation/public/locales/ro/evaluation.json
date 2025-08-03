@@ -1,0 +1,140 @@
+{
+  "title": "Evaluare Proprietate",
+  "myEvaluations": "Evaluările mele",
+  "startEvaluation": "Începe evaluarea",
+  "completeEvaluation": "Finalizează evaluarea",
+  "evaluationProgress": "Progresul evaluării",
+  "categories": {
+    "exterior": "Exterior",
+    "interior": "Interior",
+    "utilities": "Utilități",
+    "location": "Locație",
+    "general": "General"
+  },
+  "exterior": {
+    "title": "Evaluare Exterior",
+    "description": "Evaluează aspectele exterioare ale proprietății",
+    "roof": {
+      "title": "Starea acoperișului",
+      "description": "Cum este starea acoperișului?"
+    },
+    "walls": {
+      "title": "Starea pereților",
+      "description": "Cum este starea pereților exteriori?"
+    },
+    "windows": {
+      "title": "Ferestrele",
+      "description": "Cum sunt ferestrele?"
+    },
+    "doors": {
+      "title": "Ușile",
+      "description": "Cum sunt ușile exterioare?"
+    },
+    "garden": {
+      "title": "Grădina/Curtea",
+      "description": "Cum este spațiul din grădină sau curte?"
+    }
+  },
+  "interior": {
+    "title": "Evaluare Interior",
+    "description": "Evaluează aspectele interioare ale proprietății",
+    "floors": {
+      "title": "Starea podelelor",
+      "description": "Cum sunt podelele în toată proprietatea?"
+    },
+    "walls": {
+      "title": "Pereții interiori",
+      "description": "Cum sunt pereții interiori și finisajele?"
+    },
+    "ceiling": {
+      "title": "Starea tavanului",
+      "description": "Cum sunt tavanele?"
+    },
+    "kitchen": {
+      "title": "Bucătăria",
+      "description": "Cum este starea și funcționalitatea bucătăriei?"
+    },
+    "bathroom": {
+      "title": "Baia",
+      "description": "Cum sunt băile?"
+    },
+    "storage": {
+      "title": "Spațiul de depozitare",
+      "description": "Cât de adecvat este spațiul de depozitare?"
+    }
+  },
+  "utilities": {
+    "title": "Evaluare Utilități",
+    "description": "Evaluează sistemele de utilități ale proprietății",
+    "electricity": {
+      "title": "Sistemul electric",
+      "description": "Cum este instalația electrică?"
+    },
+    "plumbing": {
+      "title": "Instalația sanitară",
+      "description": "Cum este sistemul de instalații sanitare?"
+    },
+    "heating": {
+      "title": "Sistemul de încălzire",
+      "description": "Cum este sistemul de încălzire?"
+    },
+    "insulation": {
+      "title": "Izolația",
+      "description": "Cum este izolația termică?"
+    },
+    "ventilation": {
+      "title": "Ventilația",
+      "description": "Cum este sistemul de ventilație?"
+    }
+  },
+  "location": {
+    "title": "Evaluare Locație",
+    "description": "Evaluează locația și împrejurimile",
+    "neighborhood": {
+      "title": "Cartierul",
+      "description": "Cum este cartierul?"
+    },
+    "transport": {
+      "title": "Transportul",
+      "description": "Cât de accesibil este transportul public?"
+    },
+    "amenities": {
+      "title": "Facilitățile din apropiere",
+      "description": "Cum sunt facilitățile din apropiere (magazine, școli, etc.)?"
+    },
+    "noise": {
+      "title": "Nivelul de zgomot",
+      "description": "Cum este nivelul de zgomot în zonă?"
+    },
+    "safety": {
+      "title": "Siguranța",
+      "description": "Cât de sigură pare zona?"
+    }
+  },
+  "general": {
+    "title": "Evaluare Generală",
+    "description": "Impresii generale și considerații suplimentare",
+    "overall": {
+      "title": "Impresia generală",
+      "description": "Care este impresia ta generală despre această proprietate?"
+    },
+    "value": {
+      "title": "Raportul calitate-preț",
+      "description": "Crezi că prețul este corect pentru ceea ce se oferă?"
+    },
+    "potential": {
+      "title": "Potențialul de îmbunătățire",
+      "description": "Ce potențial vezi pentru îmbunătățiri?"
+    }
+  },
+  "scores": {
+    "excellent": "Excelent",
+    "good": "Bun",
+    "average": "Mediu",
+    "poor": "Slab",
+    "critical": "Critic"
+  },
+  "notes": "Notițe suplimentare",
+  "notesPlaceholder": "Adaugă observații sau comentarii suplimentare despre această proprietate...",
+  "footerNote": "💡 Progresul tău este salvat automat. Poți reveni oricând pentru a finaliza evaluarea."
+}

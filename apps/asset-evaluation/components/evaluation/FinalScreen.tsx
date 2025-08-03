@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Button } from '@workspace/ui/components/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@workspace/ui/components/card';
 import { Badge } from '@workspace/ui/components/badge';
@@ -20,12 +21,15 @@ import {
   AlertTriangle,
   Target,
   ArrowLeft,
+  List,
+  Plus,
 } from 'lucide-react';
 import Link from 'next/link';
 import {
   EvaluationResult,
   PropertyTypeWithCategories,
   trackEvaluationEvent,
+  getPropertyTypeName,
 } from '@/lib/evaluation-utils';
 
 interface FinalScreenProps {
@@ -43,6 +47,8 @@ export default function FinalScreen({
   onShare,
   onDownload,
 }: FinalScreenProps) {
+  const { i18n } = useTranslation();
+  const currentLanguage = i18n.language as 'ro' | 'en';
   const [showConfetti, setShowConfetti] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
 
@@ -63,9 +69,9 @@ export default function FinalScreen({
       badge: result.badge,
       completionRate: Math.round(result.completionRate),
       categoriesCount: result.categoryScores.length,
-      propertyType: propertyData.name,
+      propertyType: getPropertyTypeName(propertyData, currentLanguage),
     });
-  }, [result, propertyData.name]);
+  }, [result, getPropertyTypeName(propertyData, currentLanguage), currentLanguage]);
 
   const getBadgeIcon = (level: string) => {
     switch (level) {
@@ -312,6 +318,30 @@ export default function FinalScreen({
               Download Report
             </Button>
           )}
+
+          <Button
+            asChild
+            variant="default"
+            size="lg"
+            className="w-full md:w-auto flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white"
+          >
+            <Link href="/dashboard">
+              <List className="w-5 h-5" />
+              View All Properties
+            </Link>
+          </Button>
+
+          <Button
+            asChild
+            variant="outline"
+            size="lg"
+            className="w-full md:w-auto flex items-center gap-2 border-blue-500 text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-950"
+          >
+            <Link href="/evaluation">
+              <Plus className="w-5 h-5" />
+              Add New Property
+            </Link>
+          </Button>
         </div>
 
         {/* Footer */}

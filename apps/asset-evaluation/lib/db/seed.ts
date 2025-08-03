@@ -16,21 +16,25 @@ import { hashPassword } from '@/lib/auth/session';
 import { eq } from 'drizzle-orm';
 
 interface QuestionData {
-  text: string;
+  text_ro: string;
+  text_en: string;
   weight: number;
   answers: Array<{
-    text: string;
+    text_ro: string;
+    text_en: string;
     weight: number;
   }>;
 }
 
 interface CategoryData {
-  name: string;
+  name_ro: string;
+  name_en: string;
   questions: QuestionData[];
 }
 
 interface PropertyTypeData {
-  name: string;
+  name_ro: string;
+  name_en: string;
   categories: CategoryData[];
 }
 
@@ -40,174 +44,197 @@ async function seedQuestions() {
   // Property evaluation questions data
   const propertyTypesData: PropertyTypeData[] = [
     {
-      name: 'House',
+      name_ro: 'Casă',
+      name_en: 'House',
       categories: [
         {
-          name: 'Utilități',
+          name_ro: 'Utilități',
+          name_en: 'Utilities',
           questions: [
             {
-              text: 'Este terenul racordat la apă, canal, curent și gaz?',
+              text_ro: 'Este terenul racordat la apă, canal, curent și gaz?',
+              text_en: 'Is the land connected to water, sewage, electricity and gas?',
               weight: 10,
               answers: [
-                { text: 'Da, integral racordat', weight: 10 },
-                { text: 'Parțial racordat (doar la poartă)', weight: 5 },
-                { text: 'Nu este racordat', weight: 0 },
+                { text_ro: 'Da, integral racordat', text_en: 'Yes, fully connected', weight: 10 },
+                { text_ro: 'Parțial racordat (doar la poartă)', text_en: 'Partially connected (only at gate)', weight: 5 },
+                { text_ro: 'Nu este racordat', text_en: 'Not connected', weight: 0 },
               ],
             },
             {
-              text: 'Unde se află utilitățile? Sunt trase în curte sau doar la poartă?',
+              text_ro: 'Unde se află utilitățile? Sunt trase în curte sau doar la poartă?',
+              text_en: 'Where are the utilities located? Are they drawn in the yard or only at the gate?',
               weight: 8,
               answers: [
-                { text: 'În curte, aproape de casă', weight: 10 },
-                { text: 'La poartă, cu posibilitate de prelungire', weight: 7 },
-                { text: 'Nespecificat sau incert', weight: 0 },
+                { text_ro: 'În curte, aproape de casă', text_en: 'In the yard, close to the house', weight: 10 },
+                { text_ro: 'La poartă, cu posibilitate de prelungire', text_en: 'At the gate, with extension possibility', weight: 7 },
+                { text_ro: 'Nespecificat sau incert', text_en: 'Unspecified or uncertain', weight: 0 },
               ],
             },
           ],
         },
         {
-          name: 'Fundația',
+          name_ro: 'Fundația',
+          name_en: 'Foundation',
           questions: [
             {
-              text: 'Fundația a fost executată pe un pământ bine compactat?',
+              text_ro: 'Fundația a fost executată pe un pământ bine compactat?',
+              text_en: 'Was the foundation built on well-compacted soil?',
               weight: 9,
               answers: [
-                { text: 'Da, pământul a fost compactat corespunzător', weight: 10 },
-                { text: 'Parțial compactat', weight: 5 },
-                { text: 'Nu a fost compactat corespunzător', weight: 0 },
+                { text_ro: 'Da, pământul a fost compactat corespunzător', text_en: 'Yes, the soil was properly compacted', weight: 10 },
+                { text_ro: 'Parțial compactat', text_en: 'Partially compacted', weight: 5 },
+                { text_ro: 'Nu a fost compactat corespunzător', text_en: 'Not properly compacted', weight: 0 },
               ],
             },
             {
-              text: 'Au fost folosite materiale de protecție sub prima placă (pietriș, polistiren, hidroizolație)?',
+              text_ro: 'Au fost folosite materiale de protecție sub prima placă (pietriș, polistiren, hidroizolație)?',
+              text_en: 'Were protection materials used under the first slab (gravel, polystyrene, waterproofing)?',
               weight: 9,
               answers: [
-                { text: 'Da, toate materialele recomandate au fost folosite', weight: 10 },
-                { text: 'Doar unele dintre materiale', weight: 5 },
-                { text: 'Nu, nu au fost folosite materiale de protecție', weight: 0 },
+                { text_ro: 'Da, toate materialele recomandate au fost folosite', text_en: 'Yes, all recommended materials were used', weight: 10 },
+                { text_ro: 'Doar unele dintre materiale', text_en: 'Only some materials', weight: 5 },
+                { text_ro: 'Nu, nu au fost folosite materiale de protecție', text_en: 'No, no protection materials were used', weight: 0 },
               ],
             },
           ],
         },
         {
-          name: 'Structura',
+          name_ro: 'Structura',
+          name_en: 'Structure',
           questions: [
             {
-              text: 'Ce tip de beton a fost folosit la turnarea elementelor structurale?',
+              text_ro: 'Ce tip de beton a fost folosit la turnarea elementelor structurale?',
+              text_en: 'What type of concrete was used for casting structural elements?',
               weight: 10,
               answers: [
-                { text: 'Beton de înaltă rezistență (ex. C30/C35)', weight: 10 },
-                { text: 'Beton standard (ex. C20)', weight: 7 },
-                { text: 'Nu sunt sigure specificațiile betonului', weight: 0 },
+                { text_ro: 'Beton de înaltă rezistență (ex. C30/C35)', text_en: 'High-strength concrete (e.g. C30/C35)', weight: 10 },
+                { text_ro: 'Beton standard (ex. C20)', text_en: 'Standard concrete (e.g. C20)', weight: 7 },
+                { text_ro: 'Nu sunt sigure specificațiile betonului', text_en: 'Concrete specifications are uncertain', weight: 0 },
               ],
             },
             {
-              text: 'Câte bare de fier sunt utilizate în stâlpi și grinzi?',
+              text_ro: 'Câte bare de fier sunt utilizate în stâlpi și grinzi?',
+              text_en: 'How many steel bars are used in columns and beams?',
               weight: 8,
               answers: [
-                { text: 'Respectă normele și recomandările tehnice', weight: 10 },
-                { text: 'Numărul de bare este sub recomandat', weight: 5 },
-                { text: 'Nu sunt prezente armături corespunzătoare', weight: 0 },
+                { text_ro: 'Respectă normele și recomandările tehnice', text_en: 'Meets standards and technical recommendations', weight: 10 },
+                { text_ro: 'Numărul de bare este sub recomandat', text_en: 'Number of bars is below recommended', weight: 5 },
+                { text_ro: 'Nu sunt prezente armături corespunzătoare', text_en: 'No appropriate reinforcement present', weight: 0 },
               ],
             },
           ],
         },
         {
-          name: 'Ferestre',
+          name_ro: 'Ferestre',
+          name_en: 'Windows',
           questions: [
             {
-              text: 'Ferestrele sunt echipate cu benzi de etanșeitate pentru eficiență termică?',
+              text_ro: 'Ferestrele sunt echipate cu benzi de etanșeitate pentru eficiență termică?',
+              text_en: 'Are windows equipped with sealing strips for thermal efficiency?',
               weight: 8,
               answers: [
-                { text: 'Da, sunt complet etanșe', weight: 10 },
-                { text: 'Parțial, doar unele ferestre au benzi de etanșeitate', weight: 5 },
-                { text: 'Nu, lipsesc aceste detalii', weight: 0 },
+                { text_ro: 'Da, sunt complet etanșe', text_en: 'Yes, they are completely sealed', weight: 10 },
+                { text_ro: 'Parțial, doar unele ferestre au benzi de etanșeitate', text_en: 'Partially, only some windows have sealing strips', weight: 5 },
+                { text_ro: 'Nu, lipsesc aceste detalii', text_en: 'No, these details are missing', weight: 0 },
               ],
             },
             {
-              text: 'Ce tip de termopan a fost instalat la ferestre?',
+              text_ro: 'Ce tip de termopan a fost instalat la ferestre?',
+              text_en: 'What type of double glazing was installed on windows?',
               weight: 7,
               answers: [
-                { text: 'Termopan cu izolație termică și fonică superioară', weight: 10 },
-                { text: 'Termopan standard', weight: 5 },
-                { text: 'Nu sunt instalate geamuri termopan', weight: 0 },
+                { text_ro: 'Termopan cu izolație termică și fonică superioară', text_en: 'Double glazing with superior thermal and acoustic insulation', weight: 10 },
+                { text_ro: 'Termopan standard', text_en: 'Standard double glazing', weight: 5 },
+                { text_ro: 'Nu sunt instalate geamuri termopan', text_en: 'No double glazing installed', weight: 0 },
               ],
             },
           ],
         },
         {
-          name: 'Termosistem și tencuială exterioară',
+          name_ro: 'Termosistem și tencuială exterioară',
+          name_en: 'Thermal Insulation System and Exterior Plaster',
           questions: [
             {
-              text: 'Ce tip de material izolant a fost folosit (polistiren, vată bazaltică)?',
+              text_ro: 'Ce tip de material izolant a fost folosit (polistiren, vată bazaltică)?',
+              text_en: 'What type of insulating material was used (polystyrene, basalt wool)?',
               weight: 9,
               answers: [
-                { text: 'Material de înaltă performanță (ex. vată bazaltică)', weight: 10 },
-                { text: 'Polistiren de calitate medie', weight: 7 },
-                { text: 'Izolație de calitate inferioară sau absentă', weight: 0 },
+                { text_ro: 'Material de înaltă performanță (ex. vată bazaltică)', text_en: 'High-performance material (e.g. basalt wool)', weight: 10 },
+                { text_ro: 'Polistiren de calitate medie', text_en: 'Medium quality polystyrene', weight: 7 },
+                { text_ro: 'Izolație de calitate inferioară sau absentă', text_en: 'Poor quality or absent insulation', weight: 0 },
               ],
             },
             {
-              text: 'Ce grosime are stratul de izolație termică?',
+              text_ro: 'Ce grosime are stratul de izolație termică?',
+              text_en: 'What thickness is the thermal insulation layer?',
               weight: 8,
               answers: [
-                { text: 'Grosime conform normelor (minim 10–15 cm)', weight: 10 },
-                { text: 'Grosime sub recomandat', weight: 5 },
-                { text: 'Informație nedeterminată', weight: 0 },
+                { text_ro: 'Grosime conform normelor (minim 10–15 cm)', text_en: 'Thickness according to standards (minimum 10–15 cm)', weight: 10 },
+                { text_ro: 'Grosime sub recomandat', text_en: 'Thickness below recommended', weight: 5 },
+                { text_ro: 'Informație nedeterminată', text_en: 'Information undetermined', weight: 0 },
               ],
             },
             {
-              text: 'Ce tip de tencuială exterioară a fost aplicat?',
+              text_ro: 'Ce tip de tencuială exterioară a fost aplicat?',
+              text_en: 'What type of exterior plaster was applied?',
               weight: 7,
               answers: [
-                { text: 'Tencuială decorativă de calitate superioară', weight: 10 },
-                { text: 'Tencuială standard', weight: 5 },
-                { text: 'Tencuială de calitate inferioară', weight: 0 },
+                { text_ro: 'Tencuială decorativă de calitate superioară', text_en: 'Superior quality decorative plaster', weight: 10 },
+                { text_ro: 'Tencuială standard', text_en: 'Standard plaster', weight: 5 },
+                { text_ro: 'Tencuială de calitate inferioară', text_en: 'Poor quality plaster', weight: 0 },
               ],
             },
           ],
         },
         {
-          name: 'Instalații electrice și sanitare',
+          name_ro: 'Instalații electrice și sanitare',
+          name_en: 'Electrical and Plumbing Systems',
           questions: [
             {
-              text: 'Tabloul electric respectă normele (număr de circuite, diferențial, protecții)?',
+              text_ro: 'Tabloul electric respectă normele (număr de circuite, diferențial, protecții)?',
+              text_en: 'Does the electrical panel meet standards (number of circuits, differential, protections)?',
               weight: 9,
               answers: [
-                { text: 'Da, toate specificațiile sunt conforme', weight: 10 },
-                { text: 'Parțial, unele circuite nu sunt optim configurate', weight: 5 },
-                { text: 'Nu sunt conforme normelor', weight: 0 },
+                { text_ro: 'Da, toate specificațiile sunt conforme', text_en: 'Yes, all specifications are compliant', weight: 10 },
+                { text_ro: 'Parțial, unele circuite nu sunt optim configurate', text_en: 'Partially, some circuits are not optimally configured', weight: 5 },
+                { text_ro: 'Nu sunt conforme normelor', text_en: 'Not compliant with standards', weight: 0 },
               ],
             },
             {
-              text: 'Cum este realizată instalația sanitară?',
+              text_ro: 'Cum este realizată instalația sanitară?',
+              text_en: 'How is the plumbing system implemented?',
               weight: 8,
               answers: [
-                { text: 'În sistem centralizat, conform normelor', weight: 10 },
-                { text: 'Sistem modular, dar cu unele deficiențe', weight: 5 },
-                { text: 'Instalație de calitate inferioară sau neconformă', weight: 0 },
+                { text_ro: 'În sistem centralizat, conform normelor', text_en: 'In centralized system, according to standards', weight: 10 },
+                { text_ro: 'Sistem modular, dar cu unele deficiențe', text_en: 'Modular system, but with some deficiencies', weight: 5 },
+                { text_ro: 'Instalație de calitate inferioară sau neconformă', text_en: 'Poor quality or non-compliant installation', weight: 0 },
               ],
             },
           ],
         },
         {
-          name: 'Acoperiș',
+          name_ro: 'Acoperiș',
+          name_en: 'Roof',
           questions: [
             {
-              text: 'Acoperișul are o structură solidă (ex. șarpantă, placă peste etaj etc.)?',
+              text_ro: 'Acoperișul are o structură solidă (ex. șarpantă, placă peste etaj etc.)?',
+              text_en: 'Does the roof have a solid structure (e.g. truss, slab over floor, etc.)?',
               weight: 9,
               answers: [
-                { text: 'Da, structura este robustă și conformă', weight: 10 },
-                { text: 'Structura prezintă unele deficiențe', weight: 5 },
-                { text: 'Structura este neconformă sau nesigură', weight: 0 },
+                { text_ro: 'Da, structura este robustă și conformă', text_en: 'Yes, the structure is robust and compliant', weight: 10 },
+                { text_ro: 'Structura prezintă unele deficiențe', text_en: 'The structure has some deficiencies', weight: 5 },
+                { text_ro: 'Structura este neconformă sau nesigură', text_en: 'The structure is non-compliant or unsafe', weight: 0 },
               ],
             },
             {
-              text: 'Ce materiale au fost folosite la executarea acoperișului?',
+              text_ro: 'Ce materiale au fost folosite la executarea acoperișului?',
+              text_en: 'What materials were used for roof construction?',
               weight: 8,
               answers: [
-                { text: 'Materiale de înaltă calitate, cu eficiență termică', weight: 10 },
-                { text: 'Materiale standard, dar conforme', weight: 5 },
-                { text: 'Materiale de calitate inferioară', weight: 0 },
+                { text_ro: 'Materiale de înaltă calitate, cu eficiență termică', text_en: 'High-quality materials with thermal efficiency', weight: 10 },
+                { text_ro: 'Materiale standard, dar conforme', text_en: 'Standard materials, but compliant', weight: 5 },
+                { text_ro: 'Materiale de calitate inferioară', text_en: 'Poor quality materials', weight: 0 },
               ],
             },
           ],
@@ -225,36 +252,39 @@ async function seedQuestions() {
     await db.delete(propertyTypes);
 
     for (const propertyTypeData of propertyTypesData) {
-      console.log(`📝 Creating property type: ${propertyTypeData.name}`);
+      console.log(`📝 Creating property type: ${propertyTypeData.name_ro} / ${propertyTypeData.name_en}`);
       
       // Insert property type
       const [propertyType] = await db
         .insert(propertyTypes)
         .values({
-          name: propertyTypeData.name,
+          name_ro: propertyTypeData.name_ro,
+          name_en: propertyTypeData.name_en,
         } as NewPropertyType)
         .returning();
 
       for (const categoryData of propertyTypeData.categories) {
-        console.log(`  📂 Creating category: ${categoryData.name}`);
+        console.log(`  📂 Creating category: ${categoryData.name_ro} / ${categoryData.name_en}`);
         
         // Insert question category
         const [category] = await db
           .insert(questionCategories)
           .values({
-            name: categoryData.name,
+            name_ro: categoryData.name_ro,
+            name_en: categoryData.name_en,
             propertyTypeId: propertyType.id,
           } as NewQuestionCategory)
           .returning();
 
         for (const questionData of categoryData.questions) {
-          console.log(`    ❓ Creating question: ${questionData.text.substring(0, 50)}...`);
+          console.log(`    ❓ Creating question: ${questionData.text_ro.substring(0, 50)}...`);
           
           // Insert question
           const [question] = await db
             .insert(questions)
             .values({
-              text: questionData.text,
+              text_ro: questionData.text_ro,
+              text_en: questionData.text_en,
               weight: questionData.weight,
               categoryId: category.id,
             } as NewQuestion)
@@ -262,7 +292,8 @@ async function seedQuestions() {
 
           // Insert answers for this question
           const answerValues = questionData.answers.map((answerData) => ({
-            text: answerData.text,
+            text_ro: answerData.text_ro,
+            text_en: answerData.text_en,
             weight: answerData.weight,
             questionId: question.id,
           } as NewAnswer));

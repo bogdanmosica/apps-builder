@@ -1,0 +1,16 @@
+{
+  "title": "Key Features",
+  "subtitle": "Everything you need for a complete property evaluation",
+  "detailed": {
+    "title": "Detailed Analysis",
+    "description": "Complete evaluation by categories: utilities, foundation, structure, and many more."
+  },
+  "expert": {
+    "title": "Expert Guides",
+    "description": "Questions developed by construction and real estate specialists."
+  },
+  "reports": {
+    "title": "Professional Reports",
+    "description": "Export results in PDF formats for presentations and documentation."
+  }
+}

@@ -2,14 +2,16 @@
 
 export interface PropertyType {
   id: number;
-  name: string;
+  name_ro: string;
+  name_en: string | null;
   createdAt: Date;
   updatedAt: Date;
 }
 
 export interface QuestionCategory {
   id: number;
-  name: string;
+  name_ro: string;
+  name_en: string | null;
   propertyTypeId: number;
   createdAt: Date;
   updatedAt: Date;
@@ -17,7 +19,8 @@ export interface QuestionCategory {
 
 export interface Question {
   id: number;
-  text: string;
+  text_ro: string;
+  text_en: string | null;
   weight: number;
   categoryId: number;
   createdAt: Date;
@@ -26,7 +29,8 @@ export interface Question {
 
 export interface Answer {
   id: number;
-  text: string;
+  text_ro: string;
+  text_en: string | null;
   weight: number;
   questionId: number;
   createdAt: Date;
@@ -72,10 +76,39 @@ export interface EvaluationResult {
   completionRate: number;
 }
 
+// Utility functions to get localized text
+export function getLocalizedText(
+  textRo: string, 
+  textEn: string | null, 
+  language: 'ro' | 'en' = 'ro'
+): string {
+  if (language === 'en' && textEn) {
+    return textEn;
+  }
+  return textRo;
+}
+
+export function getPropertyTypeName(propertyType: PropertyType, language: 'ro' | 'en' = 'ro'): string {
+  return getLocalizedText(propertyType.name_ro, propertyType.name_en, language);
+}
+
+export function getCategoryName(category: QuestionCategory, language: 'ro' | 'en' = 'ro'): string {
+  return getLocalizedText(category.name_ro, category.name_en, language);
+}
+
+export function getQuestionText(question: Question, language: 'ro' | 'en' = 'ro'): string {
+  return getLocalizedText(question.text_ro, question.text_en, language);
+}
+
+export function getAnswerText(answer: Answer, language: 'ro' | 'en' = 'ro'): string {
+  return getLocalizedText(answer.text_ro, answer.text_en, language);
+}
+
 // Calculate evaluation result based on user answers
 export function calculateEvaluationResult(
   userAnswers: UserAnswer[],
-  propertyData: PropertyTypeWithCategories
+  propertyData: PropertyTypeWithCategories,
+  language: 'ro' | 'en' = 'ro'
 ): EvaluationResult {
   const categoryScores: CategoryScore[] = [];
   let totalScore = 0;
@@ -105,7 +138,7 @@ export function calculateEvaluationResult(
 
     categoryScores.push({
       categoryId: category.id,
-      categoryName: category.name,
+      categoryName: getCategoryName(category, language),
       score: categoryScore,
       maxScore: categoryMaxScore,
       percentage: categoryPercentage,
