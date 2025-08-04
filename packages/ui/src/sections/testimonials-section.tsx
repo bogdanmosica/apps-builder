@@ -2,7 +2,7 @@ import { JSX } from 'react';
 import { HomeTestimonialsList } from '@workspace/ui/sections/testimonials-list';
 
 interface HomeTestimonialsSectionProps {
-  marketingConfig?: Record<string, any>;
+  marketingConfig?: Record<string, unknown>;
 }
 export function HomeTestimonialsSection({
   marketingConfig = {

@@ -5,7 +5,7 @@ import '@workspace/ui/sections/hero-section.css';
 import { JSX } from 'react';
 
 interface HomeHeroSectionProps {
-  siteConfig?: Record<string, any>;
+  siteConfig?: Record<string, unknown>;
 }
 
 export function HomeHeroSection({
@@ -27,6 +27,7 @@ export function HomeHeroSection({
           className='rounded-2xl bg-muted px-4 py-1.5 text-sm font-medium'
           href={siteConfig?.links?.twitter}
           target='_blank'
+          rel='noreferrer'
         >
           Follow along on Twitter
         </a>

@@ -1,4 +1,4 @@
-import js from "@eslint/js"
+import js from "./js.js"
 import eslintConfigPrettier from "eslint-config-prettier"
 import onlyWarn from "eslint-plugin-only-warn"
 import turboPlugin from "eslint-plugin-turbo"
