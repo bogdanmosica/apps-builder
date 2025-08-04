@@ -8,6 +8,8 @@
     "db:seed": "npx tsx lib/db/seed.ts",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
+    "db:migrate:prod": "node scripts/migrate.js",
+    "db:fix-schema": "node -e \"const {drizzle} = require('drizzle-orm/neon-http'); const {neon} = require('@neondatabase/serverless'); const fs = require('fs'); const sql = neon(process.env.DATABASE_URL || process.env.POSTGRES_URL); fs.readFileSync('./fix-evaluation-schema.sql', 'utf8').split('-->').forEach(async stmt => { if(stmt.trim()) await sql(stmt.trim()); });\"",
     "db:studio": "drizzle-kit studio",
     "test": "jest",
     "test:translations": "jest tests/translation-keys.test.js",
