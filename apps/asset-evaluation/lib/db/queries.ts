@@ -6,6 +6,7 @@ import { getSession } from '@/lib/auth/session';
 export async function getUser() {
   try {
     const sessionData = await getSession();
+    
     if (
       !sessionData ||
       !sessionData.user ||

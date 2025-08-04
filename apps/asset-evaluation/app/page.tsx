@@ -1,7 +1,5 @@
 import { getUser, getUserEvaluations, getUserEvaluationStats } from '@/lib/db/queries';
-import MarketingLanding from '@/components/marketing-landing';
-import EvaluationsOverview from '@/components/evaluations/EvaluationsOverview';
-import AuthWrapper from '@/components/auth-wrapper';
+import ClientAuthPage from '@/components/client-auth-page';
 
 // Force dynamic rendering for pages that check user authentication
 export const dynamic = 'force-dynamic';
@@ -40,27 +38,13 @@ export default async function RootPage() {
     userRole = null;
   }
 
-  // Show evaluations overview for logged-in users
-  if (isLoggedIn) {
-    return (
-      <AuthWrapper isLoggedIn={isLoggedIn}>
-        <EvaluationsOverview 
-          evaluations={evaluations} 
-          stats={stats}
-          isLoggedIn={isLoggedIn}
-          userRole={userRole}
-        />
-      </AuthWrapper>
-    );
-  }
-
-  // Show marketing landing for non-authenticated users
+  // Return the client-side authentication page that will handle showing the correct content
   return (
-    <AuthWrapper isLoggedIn={isLoggedIn}>
-      <MarketingLanding 
-        isLoggedIn={isLoggedIn} 
-        userRole={userRole} 
-      />
-    </AuthWrapper>
+    <ClientAuthPage
+      initialIsLoggedIn={isLoggedIn}
+      initialUserRole={userRole}
+      initialEvaluations={evaluations}
+      initialStats={stats}
+    />
   );
 }

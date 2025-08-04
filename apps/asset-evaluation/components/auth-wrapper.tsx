@@ -11,11 +11,12 @@ interface AuthWrapperProps {
 export default function AuthWrapper({ isLoggedIn, children }: AuthWrapperProps) {
   const router = useRouter();
   const [isClient, setIsClient] = useState(false);
+  const [authChecked, setAuthChecked] = useState(false);
 
   useEffect(() => {
     setIsClient(true);
     
-    // Check authentication on client side for mobile compatibility
+    // Always check authentication on client side for mobile devices
     const checkClientAuth = async () => {
       try {
         const response = await fetch('/api/user', {
@@ -23,31 +24,57 @@ export default function AuthWrapper({ isLoggedIn, children }: AuthWrapperProps) 
           credentials: 'include',
           headers: {
             'Cache-Control': 'no-cache',
+            'Pragma': 'no-cache',
           },
         });
         
         const isAuthenticated = response.ok;
         
-        // If there's a mismatch between server and client auth state, refresh
-        if (isLoggedIn !== isAuthenticated) {
-          router.refresh();
+        // Debug logging for mobile
+        const isMobile = /Mobi|Android/i.test(navigator.userAgent);
+        if (isMobile) {
+          console.log('Mobile auth check:', {
+            serverIsLoggedIn: isLoggedIn,
+            clientIsAuthenticated: isAuthenticated,
+            responseStatus: response.status,
+            mismatch: isLoggedIn !== isAuthenticated
+          });
         }
+        
+        // If there's a mismatch between server and client auth state, handle it
+        if (isLoggedIn !== isAuthenticated) {
+          if (isAuthenticated && !isLoggedIn) {
+            // Client shows user is authenticated but server doesn't - force refresh
+            console.log('Client authenticated but server not - refreshing');
+            window.location.reload();
+          } else if (!isAuthenticated && isLoggedIn) {
+            // Server shows user is authenticated but client doesn't - force refresh
+            console.log('Server authenticated but client not - refreshing');
+            window.location.reload();
+          }
+        }
+        
+        setAuthChecked(true);
       } catch (error) {
         console.error('Client auth check failed:', error);
+        setAuthChecked(true);
       }
     };
 
-    // Only run client-side auth check on mobile devices
-    const isMobile = typeof window !== 'undefined' && /Mobi|Android/i.test(navigator.userAgent);
-    if (isMobile) {
-      // Add a small delay to avoid race conditions
-      setTimeout(checkClientAuth, 100);
-    }
+    // Check on all devices, but especially important for mobile
+    setTimeout(checkClientAuth, 100);
   }, [isLoggedIn, router]);
 
-  // Show loading state briefly while client-side check completes
-  if (!isClient) {
-    return <div className="min-h-screen flex items-center justify-center">Loading...</div>;
+  // Show loading state while checking authentication
+  if (!isClient || !authChecked) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
+          <p className="mt-2 text-sm text-muted-foreground">Loading...</p>
+        </div>
+      </div>
+    );
   }
 
   return <>{children}</>;
