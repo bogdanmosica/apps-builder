@@ -36,7 +36,7 @@ export function BillingForm({
 
   function onSubmit(event: FormEvent<HTMLFormElement>): void {
     event.preventDefault();
-    setIsLoading(!isLoading);
+    setIsLoading(true);
 
     // Get a Stripe session URL.
     fetch('/api/users/stripe')
@@ -58,6 +58,9 @@ export function BillingForm({
       })
       .catch((error: Error) => {
         toast(error.message);
+      })
+      .finally(() => {
+        setIsLoading(false);
       });
   }
 
