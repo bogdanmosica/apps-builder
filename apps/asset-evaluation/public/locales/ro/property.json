@@ -6,6 +6,7 @@
   "addHouse": "Adaugă Casă",
   "addApartment": "Adaugă Apartament",
   "addProperty": "Adaugă Proprietate",
+  "noPropertyTypes": "Nu sunt tipuri de proprietăți disponibile",
   "propertyName": "Numele proprietății",
   "propertyLocation": "Locația proprietății",
   "propertySurface": "Suprafața proprietății",

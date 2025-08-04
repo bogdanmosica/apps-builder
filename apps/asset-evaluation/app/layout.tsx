@@ -74,7 +74,7 @@ export default function RootLayout({
             enableSystem
             disableTransitionOnChange
           >
-            <AnalyticsProvider enableTracking={true} trackAdminPages={false}>
+            <AnalyticsProvider enableTracking={false} trackAdminPages={false}>
               <SWRConfig
                 value={{
                   // Remove direct function calls from fallback to avoid static rendering issues

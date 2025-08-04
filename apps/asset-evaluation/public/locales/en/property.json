@@ -6,6 +6,7 @@
   "addHouse": "Add House",
   "addApartment": "Add Apartment",
   "addProperty": "Add Property",
+  "noPropertyTypes": "No property types available",
   "propertyName": "Property name",
   "propertyLocation": "Property location",
   "propertySurface": "Property surface area",

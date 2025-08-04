@@ -29,6 +29,15 @@ export default function ClientAuthPage({
   };
 
   useEffect(() => {
+    // Temporarily disable authentication check to stop infinite reload
+    // TODO: Fix authentication state mismatch properly
+    console.log('Auth check disabled to prevent infinite reload', {
+      initialIsLoggedIn,
+      timestamp: new Date().toISOString()
+    });
+    setIsReady(true);
+
+    /* ORIGINAL CODE - DISABLED TO PREVENT INFINITE RELOAD:
     const checkAuthentication = async () => {
       try {
         // Add timeout to prevent endless waiting
@@ -71,6 +80,7 @@ export default function ClientAuthPage({
     const timer = setTimeout(checkAuthentication, 500);
     
     return () => clearTimeout(timer);
+    */
   }, [initialIsLoggedIn]);
 
   // Show loading state while checking authentication

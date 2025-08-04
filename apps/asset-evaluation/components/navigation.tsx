@@ -11,13 +11,14 @@ import {
 } from '@workspace/ui/components/dropdown-menu';
 import { Icons } from '@workspace/ui/components/icons';
 import { LogoutButton } from './logout-button';
-import { Home, Plus, Building, User } from 'lucide-react';
+import { Home, User } from 'lucide-react';
 import Link from 'next/link';
 import { useTheme } from 'next-themes';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '@/hooks/useAuth';
 import { useEffect, useState } from 'react';
 import LanguageSwitcher from './LanguageSwitcher';
+import { AddPropertyButton } from './shared/AddPropertyButton';
 
 interface NavigationProps {
   isLoggedIn?: boolean;
@@ -76,30 +77,11 @@ export default function Navigation({
           ) : isLoggedIn ? (
             <div className='flex items-center space-x-4'>
               {/* Add Property Dropdown */}
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button size="sm" className="bg-primary hover:bg-primary-dark">
-                    <Plus className="h-4 w-4 mr-1" />
-                    <span className="hidden sm:inline">{t('addProperty', { ns: 'property' })}</span>
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-48">
-                  <DropdownMenuLabel>{t('addProperty', { ns: 'property' })}</DropdownMenuLabel>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem asChild>
-                    <Link href='/evaluation?type=house' className="flex items-center">
-                      <Home className="h-4 w-4 mr-2" />
-                      {t('addHouse', { ns: 'property' })}
-                    </Link>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem asChild>
-                    <Link href='/evaluation?type=apartment' className="flex items-center">
-                      <Building className="h-4 w-4 mr-2" />
-                      {t('addApartment', { ns: 'property' })}
-                    </Link>
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
+              <AddPropertyButton 
+                size="sm"
+                className="bg-primary hover:bg-primary-dark"
+                hideTextOnMobile={true}
+              />
 
               {userRole === 'owner' || userRole === 'admin' ? (
                 <Button asChild variant="outline" size="sm">

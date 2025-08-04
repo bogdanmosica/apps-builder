@@ -32,6 +32,7 @@ import Navigation from '../navigation';
 import EditPropertyDialog from './EditPropertyDialog';
 import DeleteConfirmationDialog from './DeleteConfirmationDialog';
 import { toast } from 'sonner';
+import { AddPropertyButton } from '../shared/AddPropertyButton';
 
 interface EvaluationData {
   id: number;
@@ -629,30 +630,11 @@ export default function EvaluationsOverview({ evaluations, stats, isLoggedIn, us
                 <p className="text-text-muted mb-6">
                   {t('emptyState.firstPropertyDescription')}
                 </p>
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button className="bg-primary hover:bg-primary-dark h-12 px-8 text-lg font-semibold">
-                      <Plus className="w-5 h-5 mr-2" />
-                      {t('emptyState.addFirstProperty')}
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="center" className="w-48">
-                    <DropdownMenuLabel>{t('types.house', { ns: 'property' })}</DropdownMenuLabel>
-                    <DropdownMenuSeparator />
-                    <DropdownMenuItem asChild>
-                      <Link href='/evaluation?type=house' className="flex items-center">
-                        <Home className="h-4 w-4 mr-2" />
-                        {t('addHouse', { ns: 'property' })}
-                      </Link>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem asChild>
-                      <Link href='/evaluation?type=apartment' className="flex items-center">
-                        <Building className="h-4 w-4 mr-2" />
-                        {t('addApartment', { ns: 'property' })}
-                      </Link>
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
+                <AddPropertyButton
+                  className="bg-primary hover:bg-primary-dark h-12 px-8 text-lg font-semibold"
+                  hideTextOnMobile={false}
+                  buttonText={t('emptyState.addFirstProperty')}
+                />
               </div>
             </CardContent>
           </Card>
@@ -674,29 +656,11 @@ export default function EvaluationsOverview({ evaluations, stats, isLoggedIn, us
                     })}
                   </p>
                 </div>
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button variant="outline" className="border-primary text-primary hover:bg-primary hover:text-white flex-shrink-0">
-                      {t('addProperty', { ns: 'property' })}
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end" className="w-48">
-                    <DropdownMenuLabel>{t('types.house', { ns: 'property' })}</DropdownMenuLabel>
-                    <DropdownMenuSeparator />
-                    <DropdownMenuItem asChild>
-                      <Link href='/evaluation?type=house' className="flex items-center">
-                        <Home className="h-4 w-4 mr-2" />
-                        {t('addHouse', { ns: 'property' })}
-                      </Link>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem asChild>
-                      <Link href='/evaluation?type=apartment' className="flex items-center">
-                        <Building className="h-4 w-4 mr-2" />
-                        {t('addApartment', { ns: 'property' })}
-                      </Link>
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
+                <AddPropertyButton
+                  variant="outline"
+                  className="border-primary text-primary hover:bg-primary hover:text-white flex-shrink-0"
+                  hideTextOnMobile={false}
+                />
               </div>
             </CardContent>
           </Card>
@@ -704,30 +668,8 @@ export default function EvaluationsOverview({ evaluations, stats, isLoggedIn, us
       </div>
 
       {/* Mobile FAB */}
-      <div className="md:hidden fixed bottom-6 right-6 z-50">
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button className="h-14 w-14 rounded-full bg-primary hover:bg-primary-dark shadow-lg">
-              <Plus className="w-6 h-6" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-48 mb-4">
-            <DropdownMenuLabel>{t('addProperty', { ns: 'property' })}</DropdownMenuLabel>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem asChild>
-              <Link href='/evaluation?type=house' className="flex items-center">
-                <Home className="h-4 w-4 mr-2" />
-                {t('addHouse', { ns: 'property' })}
-              </Link>
-            </DropdownMenuItem>
-            <DropdownMenuItem asChild>
-              <Link href='/evaluation?type=apartment' className="flex items-center">
-                <Building className="h-4 w-4 mr-2" />
-                {t('addApartment', { ns: 'property' })}
-              </Link>
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+      <div className="md:hidden">
+        <AddPropertyButton variant="fab" />
       </div>
 
       {/* Edit Property Dialog */}

@@ -40,7 +40,14 @@ function EvaluationLoading() {
 }
 
 // Main evaluation component
-async function EvaluationContent() {
+async function EvaluationContent({
+  searchParams,
+}: {
+  searchParams: Promise<{ type?: string }>
+}) {
+  // Await the searchParams promise
+  const params = await searchParams;
+  
   try {
     const propertyTypes = await getPropertyTypesWithData();
     
@@ -48,9 +55,23 @@ async function EvaluationContent() {
       throw new Error('No property types found. Please seed the database first.');
     }
 
-    // For now, use the first property type (House)
-    // In a real app, you might let users select the property type
-    const selectedPropertyType = propertyTypes[0];
+    // Get the property type from the URL parameter, or use the first one as fallback
+    let selectedPropertyType;
+    
+    if (params.type) {
+      // If type is provided, try to find it by ID or name
+      const typeId = parseInt(params.type);
+      selectedPropertyType = propertyTypes.find(pt => 
+        pt.id === typeId || 
+        pt.name_ro.toLowerCase() === params.type?.toLowerCase() ||
+        pt.name_en?.toLowerCase() === params.type?.toLowerCase()
+      );
+    }
+    
+    // Fallback to first property type if not found or not specified
+    if (!selectedPropertyType) {
+      selectedPropertyType = propertyTypes[0];
+    }
 
     if (!selectedPropertyType.categories || selectedPropertyType.categories.length === 0) {
       throw new Error('No categories found for this property type.');
@@ -89,10 +110,14 @@ async function EvaluationContent() {
 }
 
 // Main page component
-export default function EvaluationPage() {
+export default function EvaluationPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ type?: string }>
+}) {
   return (
     <Suspense fallback={<EvaluationLoading />}>
-      <EvaluationContent />
+      <EvaluationContent searchParams={searchParams} />
     </Suspense>
   );
 }
