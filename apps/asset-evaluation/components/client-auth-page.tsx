@@ -22,7 +22,10 @@ export default function ClientAuthPage({
   useEffect(() => {
     const checkAuthentication = async () => {
       try {
-        // Check authentication status on client side
+        // Add timeout to prevent endless waiting
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
+
         const response = await fetch('/api/user', {
           method: 'GET',
           credentials: 'include',
@@ -30,8 +33,10 @@ export default function ClientAuthPage({
             'Cache-Control': 'no-cache',
             'Pragma': 'no-cache',
           },
+          signal: controller.signal,
         });
 
+        clearTimeout(timeoutId);
         const clientIsLoggedIn = response.ok;
         
         // If there's a mismatch, reload the page to get fresh server-side data
@@ -48,6 +53,7 @@ export default function ClientAuthPage({
         setIsReady(true);
       } catch (error) {
         console.error('Authentication check failed:', error);
+        // On error (including timeout), proceed with server-side data
         setIsReady(true);
       }
     };

@@ -19,24 +19,27 @@ let db: any;
 let client: postgres.Sql<{}> | null = null;
 
 try {
-  if (!process.env.POSTGRES_URL) {
+  // Check for database URL in order of preference
+  const databaseUrl = process.env.DATABASE_URL || process.env.POSTGRES_URL;
+  
+  if (!databaseUrl) {
     if (isDevelopment) {
-      console.warn('⚠️  No POSTGRES_URL found. Landing page will work, but user features disabled.');
+      console.warn('⚠️  No DATABASE_URL or POSTGRES_URL found. Landing page will work, but user features disabled.');
       
       // Create a mock database for development when no DB is available
       db = createMockDatabase();
     } else {
-      throw new Error('POSTGRES_URL environment variable is not set');
+      throw new Error('DATABASE_URL or POSTGRES_URL environment variable is not set');
     }
   } else {
     if (isProduction || process.env.USE_NEON === 'true') {
       // Use Neon for production or when explicitly configured
-      const sql = neon(process.env.POSTGRES_URL!);
+      const sql = neon(databaseUrl);
       db = drizzleNeon({ client: sql, schema: schema });
       console.log('🗄️  Database connected via Neon (serverless)');
     } else {
       // Use local postgres connection for development
-      client = connectionSingleton || postgres(process.env.POSTGRES_URL, {
+      client = connectionSingleton || postgres(databaseUrl, {
         max: 1, // Limit to 1 connection for development
         idle_timeout: 20, // Close idle connections after 20 seconds
         max_lifetime: 60 * 30, // Close connections after 30 minutes
