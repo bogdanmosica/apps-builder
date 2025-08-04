@@ -41,6 +41,22 @@ interface PropertyTypeData {
 async function seedQuestions() {
   console.log('🌱 Starting questions seed process...');
 
+  try {
+    // Check if already seeded to make this idempotent
+    const existingPropertyTypes = await db.select().from(propertyTypes);
+    if (existingPropertyTypes.length > 0) {
+      console.log('✅ Property types already exist, skipping questions seed...');
+      console.log(`📊 Found ${existingPropertyTypes.length} property types`);
+      return;
+    }
+
+    console.log('📝 No property types found, proceeding with seed...');
+  } catch (error) {
+    console.error('❌ Error checking existing property types:', error);
+    // Continue with seeding if we can't check (maybe table doesn't exist yet)
+    console.log('⚠️ Continuing with seed process...');
+  }
+
   // Property evaluation questions data
   const propertyTypesData: PropertyTypeData[] = [
     {
@@ -244,12 +260,7 @@ async function seedQuestions() {
   ];
 
   try {
-    // Clear existing data (in reverse order due to foreign key constraints)
-    console.log('🗑️  Clearing existing questions data...');
-    await db.delete(answers);
-    await db.delete(questions);
-    await db.delete(questionCategories);
-    await db.delete(propertyTypes);
+    console.log('� Starting property types creation...');
 
     for (const propertyTypeData of propertyTypesData) {
       console.log(`📝 Creating property type: ${propertyTypeData.name_ro} / ${propertyTypeData.name_en}`);
@@ -337,10 +348,22 @@ async function seedQuestions() {
 async function seed() {
   const email = 'admin@admin.com';
   const password = 'admin123';
-  const passwordHash = await hashPassword(password);
 
   console.log('🚀 Starting complete database seed process...');
+  console.log(`📅 Environment: ${process.env.NODE_ENV || 'development'}`);
+  console.log(`🌐 Database URL configured: ${!!process.env.DATABASE_URL}`);
+  console.log(`� Postgres URL configured: ${!!process.env.POSTGRES_URL}`);
+  console.log(`☁️ Vercel environment: ${!!process.env.VERCEL}`);
   console.log('');
+
+  try {
+    // Test database connection first
+    console.log('🔍 Testing database connection...');
+    await db.select().from(users).limit(1);
+    console.log('✅ Database connection successful');
+
+    // Hash password
+    const passwordHash = await hashPassword(password);
 
   // First, seed the questions data
   await seedQuestions();
@@ -417,7 +440,22 @@ async function seed() {
   console.log('✅ Questions database populated with property evaluation data');
   console.log('✅ Admin user and team created');
   console.log('');
+  console.log('🎉 Database seed completed successfully!');
   console.log('You can now login and start using the property evaluation system!');
+  
+  } catch (error) {
+    console.error('❌ Seed process failed:', error);
+    console.error('Error details:', {
+      message: error instanceof Error ? error.message : 'Unknown error',
+      stack: error instanceof Error ? error.stack : 'No stack trace',
+      timestamp: new Date().toISOString(),
+      databaseUrl: !!process.env.DATABASE_URL,
+      postgresUrl: !!process.env.POSTGRES_URL,
+      nodeEnv: process.env.NODE_ENV,
+      vercel: !!process.env.VERCEL
+    });
+    throw error; // Re-throw to ensure build fails if seed fails
+  }
 }
 
 seed()

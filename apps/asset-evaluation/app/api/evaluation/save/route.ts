@@ -5,9 +5,13 @@ import { calculateEvaluationResult } from '@/lib/evaluation-utils';
 import type { UserAnswer, PropertyTypeWithCategories } from '@/lib/evaluation-utils';
 
 export async function POST(request: NextRequest) {
+  let session: any = null;
+  let userAnswers: UserAnswer[] = [];
+  let propertyData: PropertyTypeWithCategories | null = null;
+  
   try {
     // Get the current user session
-    const session = await getSession();
+    session = await getSession();
     if (!session?.user?.id) {
       return NextResponse.json(
         { error: 'Authentication required' },
@@ -17,7 +21,7 @@ export async function POST(request: NextRequest) {
 
     // Parse the request body
     const body = await request.json();
-    const { userAnswers, propertyData, propertyInfo }: {
+    const requestData: {
       userAnswers: UserAnswer[];
       propertyData: PropertyTypeWithCategories;
       propertyInfo?: {
@@ -28,6 +32,10 @@ export async function POST(request: NextRequest) {
         constructionYear?: number;
       };
     } = body;
+    
+    userAnswers = requestData.userAnswers;
+    propertyData = requestData.propertyData;
+    const propertyInfo = requestData.propertyInfo;
 
     // Debug logging
     console.log('📝 Saving evaluation with propertyInfo:', propertyInfo);
@@ -71,22 +79,51 @@ export async function POST(request: NextRequest) {
     // Provide more specific error messages
     let errorMessage = 'Failed to save evaluation results';
     let statusCode = 500;
+    let details = error instanceof Error ? error.message : 'Unknown error';
     
     if (error instanceof Error) {
-      if (error.message.includes('Database connection failed')) {
-        errorMessage = 'Database connection error. Please try again later.';
-        statusCode = 503; // Service Unavailable
-      } else if (error.message.includes('Database schema error')) {
-        errorMessage = 'Database configuration error. Please contact support.';
-        statusCode = 500;
-      } else if (error.message.includes('Authentication required')) {
+      const message = error.message.toLowerCase();
+      
+      if (message.includes('foreign key constraint') || message.includes('violates foreign key')) {
+        if (message.includes('property_type_id')) {
+          errorMessage = 'Invalid property type';
+          details = 'The selected property type does not exist in the database. Please refresh the page and try again.';
+          statusCode = 400;
+        } else if (message.includes('user_id')) {
+          errorMessage = 'User authentication error';
+          details = 'Your user session is invalid. Please log in again.';
+          statusCode = 401;
+        } else {
+          errorMessage = 'Data integrity error';
+          details = 'Please check that all referenced data exists.';
+          statusCode = 400;
+        }
+      } else if (message.includes('connect') || message.includes('econnrefused')) {
+        errorMessage = 'Database connection error';
+        details = 'Unable to connect to the database. Please try again later.';
+        statusCode = 503;
+      } else if (message.includes('authentication') || message.includes('unauthorized')) {
         errorMessage = 'Authentication required';
+        details = 'Please log in to save evaluation results.';
         statusCode = 401;
+      } else if (message.includes('relation') || message.includes('does not exist')) {
+        errorMessage = 'Database configuration error';
+        details = 'Database tables are missing. Please contact support.';
+        statusCode = 500;
       }
     }
     
+    // Log detailed error for debugging
+    console.error('Detailed error info:', {
+      originalError: error,
+      userAnswersCount: userAnswers?.length,
+      propertyTypeId: propertyData?.id,
+      userId: session?.user?.id,
+      timestamp: new Date().toISOString()
+    });
+    
     return NextResponse.json(
-      { error: errorMessage, details: error instanceof Error ? error.message : 'Unknown error' },
+      { error: errorMessage, details },
       { status: statusCode }
     );
   }
