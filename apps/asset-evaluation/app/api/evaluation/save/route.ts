@@ -67,9 +67,27 @@ export async function POST(request: NextRequest) {
 
   } catch (error) {
     console.error('Error saving evaluation results:', error);
+    
+    // Provide more specific error messages
+    let errorMessage = 'Failed to save evaluation results';
+    let statusCode = 500;
+    
+    if (error instanceof Error) {
+      if (error.message.includes('Database connection failed')) {
+        errorMessage = 'Database connection error. Please try again later.';
+        statusCode = 503; // Service Unavailable
+      } else if (error.message.includes('Database schema error')) {
+        errorMessage = 'Database configuration error. Please contact support.';
+        statusCode = 500;
+      } else if (error.message.includes('Authentication required')) {
+        errorMessage = 'Authentication required';
+        statusCode = 401;
+      }
+    }
+    
     return NextResponse.json(
-      { error: 'Failed to save evaluation results' },
-      { status: 500 }
+      { error: errorMessage, details: error instanceof Error ? error.message : 'Unknown error' },
+      { status: statusCode }
     );
   }
 }
