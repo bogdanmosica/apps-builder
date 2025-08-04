@@ -171,7 +171,14 @@
     "improveWindows": "Upgrade windows and doors",
     "improveElectrical": "Modernize electrical system",
     "improvePlumbing": "Update plumbing installation",
-    "improveUtilities": "Enhance utility systems"
+    "improveUtilities": "Enhance utility systems",
+    "addLocationDetails": "Add location details to get more accurate insights",
+    "completeAllQuestions": "Complete all questions for better accuracy",
+    "lowScoreGeneral": "Consider major structural improvements",
+    "mediumScoreGeneral": "Focus on specific improvement areas",
+    "improveFoundation": "Foundation needs attention",
+    "improveStructure": "Structure could be strengthened",
+    "improveRoof": "Roof maintenance required"
   },
   "emptyState": {
     "noProperties": "No properties evaluated yet",

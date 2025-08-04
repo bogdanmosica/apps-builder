@@ -171,7 +171,14 @@
     "improveWindows": "Modernizează ferestrele și ușile",
     "improveElectrical": "Modernizează sistemul electric",
     "improvePlumbing": "Actualizează instalația sanitară",
-    "improveUtilities": "Îmbunătățește sistemele de utilități"
+    "improveUtilities": "Îmbunătățește sistemele de utilități",
+    "addLocationDetails": "Adaugă detalii despre locație pentru informații mai precise",
+    "completeAllQuestions": "Completează toate întrebările pentru o precizie mai bună",
+    "lowScoreGeneral": "Consideră îmbunătățiri structurale majore",
+    "mediumScoreGeneral": "Concentrează-te pe zone specifice de îmbunătățire",
+    "improveFoundation": "Fundația necesită atenție",
+    "improveStructure": "Structura ar putea fi întărită",
+    "improveRoof": "Acoperișul necesită întreținere"
   },
   "emptyState": {
     "noProperties": "Nu există proprietăți evaluate încă",
