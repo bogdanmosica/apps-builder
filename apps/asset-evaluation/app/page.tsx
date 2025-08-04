@@ -28,14 +28,26 @@ export default async function RootPage() {
         getUserEvaluationStats(),
       ]);
       
-      evaluations = userEvaluations;
-      stats = userStats;
+      evaluations = userEvaluations || [];
+      stats = userStats || {
+        totalEvaluations: 0,
+        averageScore: 0,
+        bestScore: 0,
+        completionRate: 0,
+      };
     }
   } catch (error) {
     // Handle database connection errors gracefully
-    console.log('Database connection error, showing landing page for non-authenticated users');
+    console.error('Database connection error, showing landing page for non-authenticated users:', error);
     isLoggedIn = false;
     userRole = null;
+    evaluations = [];
+    stats = {
+      totalEvaluations: 0,
+      averageScore: 0,
+      bestScore: 0,
+      completionRate: 0,
+    };
   }
 
   // Return the client-side authentication page that will handle showing the correct content

@@ -19,6 +19,15 @@ export default function ClientAuthPage({
 }: ClientAuthPageProps) {
   const [isReady, setIsReady] = useState(false);
 
+  // Safely handle potentially null/undefined props
+  const safeEvaluations = Array.isArray(initialEvaluations) ? initialEvaluations : [];
+  const safeStats = initialStats && typeof initialStats === 'object' ? initialStats : {
+    totalEvaluations: 0,
+    averageScore: 0,
+    bestScore: 0,
+    completionRate: 0,
+  };
+
   useEffect(() => {
     const checkAuthentication = async () => {
       try {
@@ -80,8 +89,8 @@ export default function ClientAuthPage({
   if (initialIsLoggedIn) {
     return (
       <EvaluationsOverview 
-        evaluations={initialEvaluations} 
-        stats={initialStats}
+        evaluations={safeEvaluations} 
+        stats={safeStats}
         isLoggedIn={initialIsLoggedIn}
         userRole={initialUserRole}
       />
