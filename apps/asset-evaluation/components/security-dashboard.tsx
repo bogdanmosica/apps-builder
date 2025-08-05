@@ -301,9 +301,9 @@ function ThreatCard({ threat }: { threat: (typeof securityData.threats)[0] }) {
       case 'medium':
         return 'bg-yellow-100 text-yellow-800 border-yellow-200';
       case 'low':
-        return 'bg-blue-100 text-blue-800 border-blue-200';
+        return 'bg-blue-100 text-blue-800 border-blue-200 dark:bg-blue-900/20 dark:text-blue-300 dark:border-blue-800';
       default:
-        return 'bg-gray-100 text-gray-800 border-gray-200';
+        return 'bg-gray-100 text-gray-800 border-gray-200 dark:bg-gray-800 dark:text-gray-300 dark:border-gray-700';
     }
   };
 
@@ -314,9 +314,9 @@ function ThreatCard({ threat }: { threat: (typeof securityData.threats)[0] }) {
       case 'blocked':
         return 'bg-green-100 text-green-800';
       case 'mitigated':
-        return 'bg-blue-100 text-blue-800';
+        return 'bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-300';
       default:
-        return 'bg-gray-100 text-gray-800';
+        return 'bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-300';
     }
   };
 
@@ -329,7 +329,7 @@ function ThreatCard({ threat }: { threat: (typeof securityData.threats)[0] }) {
       case 'medium':
         return <Info className='h-5 w-5 text-yellow-600' />;
       default:
-        return <Info className='h-5 w-5 text-blue-600' />;
+        return <Info className='h-5 w-5 text-blue-600 dark:text-blue-400' />;
     }
   };
 
@@ -340,8 +340,8 @@ function ThreatCard({ threat }: { threat: (typeof securityData.threats)[0] }) {
           <div className='flex items-center space-x-3'>
             {getSeverityIcon(threat.severity)}
             <div>
-              <h3 className='font-medium text-gray-900'>{threat.type}</h3>
-              <p className='text-sm text-gray-500'>
+              <h3 className='font-medium text-foreground'>{threat.type}</h3>
+              <p className='text-sm text-muted-foreground'>
                 Source: {threat.source} → Target: {threat.target}
               </p>
             </div>
@@ -358,21 +358,21 @@ function ThreatCard({ threat }: { threat: (typeof securityData.threats)[0] }) {
 
         <div className='grid grid-cols-2 gap-4 text-sm'>
           <div>
-            <span className='text-gray-600'>Attempts:</span>
+            <span className='text-muted-foreground'>Attempts:</span>
             <span className='font-medium ml-2'>{threat.attempts}</span>
           </div>
           <div>
-            <span className='text-gray-600'>Location:</span>
+            <span className='text-muted-foreground'>Location:</span>
             <span className='font-medium ml-2'>{threat.geoLocation}</span>
           </div>
           <div>
-            <span className='text-gray-600'>First Seen:</span>
+            <span className='text-muted-foreground'>First Seen:</span>
             <span className='font-medium ml-2'>
               {new Date(threat.firstSeen).toLocaleTimeString()}
             </span>
           </div>
           <div>
-            <span className='text-gray-600'>Last Seen:</span>
+            <span className='text-muted-foreground'>Last Seen:</span>
             <span className='font-medium ml-2'>
               {new Date(threat.lastSeen).toLocaleTimeString()}
             </span>
@@ -386,7 +386,7 @@ function ThreatCard({ threat }: { threat: (typeof securityData.threats)[0] }) {
             ) : (
               <XCircle className='h-4 w-4 text-red-600' />
             )}
-            <span className='text-sm text-gray-600'>
+            <span className='text-sm text-muted-foreground'>
               {threat.blocked ? 'Blocked' : 'Active'}
             </span>
           </div>
@@ -418,9 +418,9 @@ function VulnerabilityRow({
       case 'medium':
         return 'bg-yellow-100 text-yellow-800';
       case 'low':
-        return 'bg-blue-100 text-blue-800';
+        return 'bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-300';
       default:
-        return 'bg-gray-100 text-gray-800';
+        return 'bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-300';
     }
   };
 
@@ -433,7 +433,7 @@ function VulnerabilityRow({
       case 'fixed':
         return 'bg-green-100 text-green-800';
       default:
-        return 'bg-gray-100 text-gray-800';
+        return 'bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-300';
     }
   };
 
@@ -442,7 +442,7 @@ function VulnerabilityRow({
       <TableCell>
         <div>
           <div className='font-medium'>{vulnerability.title}</div>
-          <div className='text-sm text-gray-500'>
+          <div className='text-sm text-muted-foreground'>
             {vulnerability.description}
           </div>
         </div>
@@ -552,7 +552,7 @@ function ComplianceCard({
     <Card className='hover:shadow-md transition-shadow'>
       <CardContent className='p-6'>
         <div className='flex items-center justify-between mb-4'>
-          <h3 className='text-lg font-semibold text-gray-900'>
+          <h3 className='text-lg font-semibold text-foreground'>
             {compliance.standard}
           </h3>
           <Badge className={getStatusColor(compliance.status)}>
@@ -622,7 +622,7 @@ export default function SecurityDashboard() {
       <div className='p-6 space-y-6'>
         <div className='flex items-center justify-between'>
           <div>
-            <h1 className='text-3xl font-bold text-gray-900 flex items-center space-x-2'>
+            <h1 className='text-3xl font-bold text-foreground flex items-center space-x-2'>
               <Shield className='h-8 w-8 text-blue-600' />
               <span>Security Dashboard</span>
             </h1>
@@ -724,7 +724,7 @@ export default function SecurityDashboard() {
               <div className='flex items-center justify-between'>
                 <div>
                   <p className='text-sm font-medium text-gray-600'>Last Scan</p>
-                  <p className='text-sm font-bold text-gray-900'>
+                  <p className='text-sm font-bold text-foreground'>
                     {new Date(
                       securityData.overview.lastScan
                     ).toLocaleDateString()}
@@ -747,7 +747,7 @@ export default function SecurityDashboard() {
 
           <TabsContent value='threats' className='space-y-6'>
             <div className='flex items-center justify-between'>
-              <h3 className='text-lg font-semibold text-gray-900'>
+              <h3 className='text-lg font-semibold text-foreground'>
                 Security Threats
               </h3>
               <div className='flex items-center space-x-2'>

@@ -55,7 +55,7 @@ i18n
     resources,
     fallbackLng: 'ro', // Default to Romanian
     lng: 'ro', // Default language
-    debug: process.env.NODE_ENV === 'development',
+    debug: false, // Disable verbose console output
     
     // Default namespace
     defaultNS: 'common',

@@ -10,6 +10,7 @@ import {
   DropdownMenuTrigger,
 } from '@workspace/ui/components/dropdown-menu';
 import { Input } from '@workspace/ui/components/input';
+import { Icons } from '@workspace/ui/components/icons';
 import {
   Sheet,
   SheetContent,
@@ -17,7 +18,6 @@ import {
 } from '@workspace/ui/components/sheet';
 import {
   Search,
-  Bell,
   PanelLeft,
   Package,
   Home,
@@ -26,19 +26,18 @@ import {
   Network,
   Shield,
   Settings,
-  Users,
   Activity,
-  House,
   LogOut,
   Loader2,
   BarChart3,
   CreditCard,
-  MessageSquare,
   FileText,
   CheckSquare,
+  MessageCircleQuestion,
 } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter, usePathname } from 'next/navigation';
+import { useTheme } from 'next-themes';
 import { toast } from 'sonner';
 import { useState } from 'react';
 import { cn } from '@workspace/ui/lib/utils';
@@ -47,6 +46,7 @@ function DashboardHeader() {
   const router = useRouter();
   const pathname = usePathname();
   const [isLoggingOut, setIsLoggingOut] = useState(false);
+  const { setTheme } = useTheme();
 
   // Helper function to check if a link is active
   const isActive = (href: string) => {
@@ -105,23 +105,11 @@ function DashboardHeader() {
             <SheetContent side='left' className='sm:max-w-xs'>
               <nav className='grid gap-6 text-lg font-medium'>
                 <div className='flex items-center space-x-2 mb-4'>
-                  <Package className='h-8 w-8 text-primary' />
-                  <span className='text-2xl font-bold text-gray-900'>
-                    SaaS Starter
+                  <Home className='h-8 w-8 text-primary' />
+                  <span className='text-2xl font-bold text-foreground'>
+                    Asset Evaluation
                   </span>
                 </div>
-                <Link
-                  href='/'
-                  className={cn(
-                    'flex items-center gap-4 px-2.5 py-2 rounded-md transition-colors',
-                    isActive('/') 
-                      ? 'bg-primary/10 text-primary font-semibold border-l-4 border-primary' 
-                      : 'text-muted-foreground hover:text-foreground hover:bg-muted'
-                  )}
-                >
-                  <House className='h-5 w-5' aria-hidden='true' />
-                  Home
-                </Link>
                 <Link
                   href='/dashboard'
                   className={cn(
@@ -133,18 +121,6 @@ function DashboardHeader() {
                 >
                   <Home className='h-5 w-5' aria-hidden='true' />
                   Dashboard
-                </Link>
-                <Link
-                  href='/dashboard/team'
-                  className={cn(
-                    'flex items-center gap-4 px-2.5 py-2 rounded-md transition-colors',
-                    isActive('/dashboard/team') 
-                      ? 'bg-primary/10 text-primary font-semibold border-l-4 border-primary' 
-                      : 'text-muted-foreground hover:text-foreground hover:bg-muted'
-                  )}
-                >
-                  <Users className='h-5 w-5' aria-hidden='true' />
-                  Team
                 </Link>
                 <Link
                   href='/dashboard/analytics'
@@ -220,28 +196,28 @@ function DashboardHeader() {
                   Billing
                 </Link>
                 <Link
-                  href='/dashboard/communication'
+                  href='/dashboard/questions'
                   className={cn(
                     'flex items-center gap-4 px-2.5 py-2 rounded-md transition-colors',
-                    isActive('/dashboard/communication') 
+                    isActive('/dashboard/questions') 
                       ? 'bg-primary/10 text-primary font-semibold border-l-4 border-primary' 
                       : 'text-muted-foreground hover:text-foreground hover:bg-muted'
                   )}
                 >
-                  <MessageSquare className='h-5 w-5' aria-hidden='true' />
-                  Communication
+                  <MessageCircleQuestion className='h-5 w-5' aria-hidden='true' />
+                  Q&A Management
                 </Link>
                 <Link
-                  href='/dashboard/content'
+                  href='/dashboard/property-types'
                   className={cn(
                     'flex items-center gap-4 px-2.5 py-2 rounded-md transition-colors',
-                    isActive('/dashboard/content') 
+                    isActive('/dashboard/property-types') 
                       ? 'bg-primary/10 text-primary font-semibold border-l-4 border-primary' 
                       : 'text-muted-foreground hover:text-foreground hover:bg-muted'
                   )}
                 >
-                  <FileText className='h-5 w-5' aria-hidden='true' />
-                  Content
+                  <Package className='h-5 w-5' aria-hidden='true' />
+                  Property Types
                 </Link>
                 <Link
                   href='/todo'
@@ -285,9 +261,9 @@ function DashboardHeader() {
 
           {/* Logo */}
           <div className='flex items-center space-x-2'>
-            <Package className='h-8 w-8 text-primary' />
-            <Link href='/dashboard' className='text-2xl font-bold text-gray-900 hover:text-gray-700 transition-colors'>
-              SaaS Starter
+            <Home className='h-8 w-8 text-primary' />
+            <Link href='/dashboard' className='text-2xl font-bold text-foreground hover:text-foreground/80 transition-colors'>
+              Asset Evaluation
             </Link>
           </div>
         </div>
@@ -295,45 +271,23 @@ function DashboardHeader() {
         {/* Desktop Navigation */}
         <nav className='hidden md:flex items-center space-x-6 text-sm font-medium'>
           <Link
-            href='/'
-            className={cn(
-              'pb-2 border-b-2 transition-colors',
-              isActive('/') 
-                ? 'text-primary border-primary font-semibold' 
-                : 'text-gray-600 hover:text-gray-900 border-transparent hover:border-gray-300'
-            )}
-          >
-            Home
-          </Link>
-          <Link
             href='/dashboard'
             className={cn(
-              'pb-2 border-b-2 transition-colors',
+              'py-1 px-2 border-b-2 transition-colors',
               isActive('/dashboard') 
                 ? 'text-primary border-primary font-semibold' 
-                : 'text-gray-600 hover:text-gray-900 border-transparent hover:border-gray-300'
+                : 'text-muted-foreground hover:text-foreground border-transparent hover:border-muted-foreground'
             )}
           >
             Dashboard
           </Link>
           <Link
-            href='/dashboard/team'
-            className={cn(
-              'pb-2 border-b-2 transition-colors',
-              isActive('/dashboard/team') 
-                ? 'text-primary border-primary font-semibold' 
-                : 'text-gray-600 hover:text-gray-900 border-transparent hover:border-gray-300'
-            )}
-          >
-            Team
-          </Link>
-          <Link
             href='/dashboard/analytics'
             className={cn(
-              'pb-2 border-b-2 transition-colors',
+              'py-1 px-2 border-b-2 transition-colors',
               isActive('/dashboard/analytics') 
                 ? 'text-primary border-primary font-semibold' 
-                : 'text-gray-600 hover:text-gray-900 border-transparent hover:border-gray-300'
+                : 'text-muted-foreground hover:text-foreground border-transparent hover:border-muted-foreground'
             )}
           >
             Analytics
@@ -353,10 +307,10 @@ function DashboardHeader() {
           <Link
             href='/dashboard/ai-insights'
             className={cn(
-              'pb-2 border-b-2 transition-colors',
+              'py-1 px-2 border-b-2 transition-colors',
               isActive('/dashboard/ai-insights') 
                 ? 'text-primary border-primary font-semibold' 
-                : 'text-gray-600 hover:text-gray-900 border-transparent hover:border-gray-300'
+                : 'text-muted-foreground hover:text-foreground border-transparent hover:border-muted-foreground'
             )}
           >
             AI Insights
@@ -364,43 +318,32 @@ function DashboardHeader() {
           <Link
             href='/dashboard/integrations'
             className={cn(
-              'pb-2 border-b-2 transition-colors',
+              'py-1 px-2 border-b-2 transition-colors',
               isActive('/dashboard/integrations') 
                 ? 'text-primary border-primary font-semibold' 
-                : 'text-gray-600 hover:text-gray-900 border-transparent hover:border-gray-300'
+                : 'text-muted-foreground hover:text-foreground border-transparent hover:border-muted-foreground'
             )}
           >
             Integrations
           </Link>
           <Link
-            href='/dashboard/communication'
+            href='/dashboard/questions'
             className={cn(
-              'pb-2 border-b-2 transition-colors',
-              isActive('/dashboard/communication') 
+              'py-1 px-2 border-b-2 transition-colors',
+              isActive('/dashboard/questions') 
                 ? 'text-primary border-primary font-semibold' 
-                : 'text-gray-600 hover:text-gray-900 border-transparent hover:border-gray-300'
+                : 'text-muted-foreground hover:text-foreground border-transparent hover:border-muted-foreground'
             )}
           >
-            Communication
-          </Link>
-          <Link
-            href='/dashboard/content'
-            className={cn(
-              'pb-2 border-b-2 transition-colors',
-              isActive('/dashboard/content') 
-                ? 'text-primary border-primary font-semibold' 
-                : 'text-gray-600 hover:text-gray-900 border-transparent hover:border-gray-300'
-            )}
-          >
-            Content
+            Q&A Management
           </Link>
           <Link
             href='/dashboard/security'
             className={cn(
-              'pb-2 border-b-2 transition-colors',
+              'py-1 px-2 border-b-2 transition-colors',
               isActive('/dashboard/security') 
                 ? 'text-primary border-primary font-semibold' 
-                : 'text-gray-600 hover:text-gray-900 border-transparent hover:border-gray-300'
+                : 'text-muted-foreground hover:text-foreground border-transparent hover:border-muted-foreground'
             )}
           >
             Security
@@ -408,10 +351,10 @@ function DashboardHeader() {
           <Link
             href='/dashboard/settings'
             className={cn(
-              'pb-2 border-b-2 transition-colors',
+              'py-1 px-2 border-b-2 transition-colors',
               isActive('/dashboard/settings') 
                 ? 'text-primary border-primary font-semibold' 
-                : 'text-gray-600 hover:text-gray-900 border-transparent hover:border-gray-300'
+                : 'text-muted-foreground hover:text-foreground border-transparent hover:border-muted-foreground'
             )}
           >
             Settings
@@ -432,10 +375,30 @@ function DashboardHeader() {
             />
           </div>
 
-          <Button variant='outline' size='icon' className='h-9 w-9'>
-            <Bell className='h-4 w-4' aria-hidden='true' />
-            <span className='sr-only'>Notifications</span>
-          </Button>
+          {/* Theme Toggle Button */}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant='outline' size='icon' className='h-9 w-9'>
+                <Icons.Sun className='rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0' />
+                <Icons.Moon className='absolute rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100' />
+                <span className='sr-only'>Toggle theme</span>
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align='end'>
+              <DropdownMenuItem onClick={() => setTheme('light')}>
+                <Icons.Sun className='mr-2 h-4 w-4' />
+                <span>Light</span>
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setTheme('dark')}>
+                <Icons.Moon className='mr-2 h-4 w-4' />
+                <span>Dark</span>
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setTheme('system')}>
+                <Icons.Laptop className='mr-2 h-4 w-4' />
+                <span>System</span>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
 
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -454,9 +417,6 @@ function DashboardHeader() {
               <DropdownMenuSeparator />
               <DropdownMenuItem asChild>
                 <Link href='/dashboard/settings'>Profile</Link>
-              </DropdownMenuItem>
-              <DropdownMenuItem asChild>
-                <Link href='/dashboard/team'>Team Settings</Link>
               </DropdownMenuItem>
               <DropdownMenuItem asChild>
                 <Link href='/billing'>Billing</Link>

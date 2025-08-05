@@ -217,8 +217,8 @@ function MetricCard({
       <CardContent className='p-6'>
         <div className='flex items-center justify-between'>
           <div className='space-y-2'>
-            <p className='text-sm font-medium text-gray-600'>{title}</p>
-            <p className='text-2xl font-bold text-gray-900'>
+            <p className='text-sm font-medium text-muted-foreground'>{title}</p>
+            <p className='text-2xl font-bold text-foreground'>
               {formatValue(value)}
             </p>
             {trendValue && (
@@ -233,14 +233,14 @@ function MetricCard({
                 >
                   {Math.round(Math.abs(trendValue) * 10) / 10}%
                 </span>
-                <span className='text-gray-500'>vs last month</span>
+                <span className='text-muted-foreground'>vs last month</span>
               </div>
             )}
             {description && (
-              <p className='text-xs text-gray-500'>{description}</p>
+              <p className='text-xs text-muted-foreground'>{description}</p>
             )}
           </div>
-          <Icon className='h-8 w-8 text-blue-600' />
+          <Icon className='h-8 w-8 text-blue-600 dark:text-blue-400' />
         </div>
       </CardContent>
     </Card>
@@ -261,24 +261,24 @@ function TopPagesTable({ data }: { data: AnalyticsData | null }) {
       {data.topPages.map((page, index) => (
         <div
           key={page.path}
-          className='flex items-center justify-between p-3 bg-gray-50 rounded-lg'
+          className='flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-800 rounded-lg'
         >
           <div className='flex items-center space-x-3'>
-            <div className='flex items-center justify-center w-6 h-6 bg-blue-100 text-blue-600 rounded-full text-sm font-medium'>
+            <div className='flex items-center justify-center w-6 h-6 bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 rounded-full text-sm font-medium'>
               {index + 1}
             </div>
             <div>
-              <p className='font-medium text-gray-900'>{page.path}</p>
-              <p className='text-sm text-gray-500'>
+              <p className='font-medium text-foreground'>{page.path}</p>
+              <p className='text-sm text-muted-foreground'>
                 {page.uniqueViews.toLocaleString()} unique views
               </p>
             </div>
           </div>
           <div className='text-right'>
-            <p className='font-medium text-gray-900'>
+            <p className='font-medium text-foreground'>
               {page.views.toLocaleString()}
             </p>
-            <p className='text-sm text-gray-500'>total views</p>
+            <p className='text-sm text-muted-foreground'>total views</p>
           </div>
         </div>
       ))}
@@ -311,9 +311,9 @@ function RealtimeUsers({ data }: { data: AnalyticsData | null }) {
         {data.realtimeData.topActivePages.map((page) => (
           <div
             key={page.path}
-            className='flex items-center justify-between p-3 bg-green-50 rounded-lg'
+            className='flex items-center justify-between p-3 bg-green-50 dark:bg-green-900/20 rounded-lg'
           >
-            <span className='text-sm font-medium text-gray-900'>
+            <span className='text-sm font-medium text-foreground'>
               {page.path}
             </span>
             <span className='text-sm text-green-600'>
@@ -340,18 +340,18 @@ function CountryBreakdown({ data }: { data: AnalyticsData | null }) {
       {data.demographics.countries.map((country) => (
         <div key={country.name} className='flex items-center justify-between'>
           <div className='flex items-center space-x-3'>
-            <Globe className='h-4 w-4 text-gray-400' />
-            <span className='text-sm font-medium text-gray-900'>
+            <Globe className='h-4 w-4 text-gray-400 dark:text-gray-500' />
+            <span className='text-sm font-medium text-foreground'>
               {country.name}
             </span>
           </div>
           <div className='flex items-center space-x-2'>
-            <div className='w-16 text-right text-sm text-gray-600'>
+            <div className='w-16 text-right text-sm text-muted-foreground'>
               {country.percentage}%
             </div>
-            <div className='w-20 bg-gray-200 rounded-full h-2'>
+            <div className='w-20 bg-gray-200 dark:bg-gray-700 rounded-full h-2'>
               <div
-                className='bg-blue-600 h-2 rounded-full'
+                className='bg-blue-600 dark:bg-blue-500 h-2 rounded-full'
                 style={{ width: `${Math.min(country.percentage * 2, 100)}%` }}
               />
             </div>
@@ -384,13 +384,13 @@ function DeviceBreakdown({ data }: { data: AnalyticsData | null }) {
         return (
           <div key={device.type} className='flex items-center justify-between'>
             <div className='flex items-center space-x-3'>
-              <Icon className='h-4 w-4 text-gray-400' />
-              <span className='text-sm font-medium text-gray-900'>
+              <Icon className='h-4 w-4 text-gray-400 dark:text-gray-500' />
+              <span className='text-sm font-medium text-foreground'>
                 {device.type}
               </span>
             </div>
             <div className='flex items-center space-x-2'>
-              <div className='w-16 text-right text-sm text-gray-600'>
+              <div className='w-16 text-right text-sm text-muted-foreground'>
                 {device.percentage}%
               </div>
               <div className='w-20 bg-gray-200 rounded-full h-2'>
@@ -469,7 +469,7 @@ export default function AnalyticsDashboard() {
     <div className='p-6 space-y-6'>
       <div className='flex items-center justify-between'>
         <div>
-          <h1 className='text-3xl font-bold text-gray-900'>Analytics</h1>
+          <h1 className='text-3xl font-bold text-foreground'>Analytics</h1>
           <p className='text-gray-600'>
             Track your application's performance and user engagement
           </p>

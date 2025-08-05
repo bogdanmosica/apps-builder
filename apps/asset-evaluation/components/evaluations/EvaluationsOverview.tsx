@@ -556,8 +556,8 @@ export default function EvaluationsOverview({ evaluations, stats, isLoggedIn, us
                       </div>
                     </div>
 
-                    {/* Pros and Cons */}
-                    <div className="space-y-2 mb-4">
+                    {/* Pros and Cons within fixed-height container */}
+                    <div className="space-y-2 mb-4 h-32 overflow-y-auto">
                       <div>
                         <p className="text-sm font-medium text-green-700 mb-1">{t('results.strengths', { ns: 'evaluation' })}:</p>
                         <ul className="text-xs text-gray-600 dark:text-gray-300 space-y-1">

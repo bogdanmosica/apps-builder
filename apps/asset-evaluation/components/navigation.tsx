@@ -69,6 +69,31 @@ export default function Navigation({
           {/* Language Switcher - Always visible */}
           <LanguageSwitcher />
           
+          {/* Theme Toggle - Always visible */}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button className='h-9 w-9 px-0' size='sm' variant='ghost'>
+                <Icons.Sun className='rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0' />
+                <Icons.Moon className='absolute rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100' />
+                <span className='sr-only'>Toggle theme</span>
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align='end'>
+              <DropdownMenuItem onClick={() => setTheme('light')}>
+                <Icons.Sun className='mr-2 h-4 w-4' />
+                <span>Light</span>
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setTheme('dark')}>
+                <Icons.Moon className='mr-2 h-4 w-4' />
+                <span>Dark</span>
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setTheme('system')}>
+                <Icons.Laptop className='mr-2 h-4 w-4' />
+                <span>System</span>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+          
           {isLoading ? (
             // Loading state
             <div className="flex items-center space-x-2">
@@ -120,20 +145,17 @@ export default function Navigation({
                       <Link href='/dashboard'>{t('dashboard', { ns: 'navigation' })}</Link>
                     </DropdownMenuItem>
                   ) : null}
-                  <DropdownMenuSeparator />
-                  <DropdownMenuLabel>Theme</DropdownMenuLabel>
-                  <DropdownMenuItem onClick={() => setTheme('light')}>
-                    <Icons.Sun className='mr-2 h-4 w-4' />
-                    <span>Light</span>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => setTheme('dark')}>
-                    <Icons.Moon className='mr-2 h-4 w-4' />
-                    <span>Dark</span>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => setTheme('system')}>
-                    <Icons.Laptop className='mr-2 h-4 w-4' />
-                    <span>System</span>
-                  </DropdownMenuItem>
+                  
+                  {/* Admin Menu */}
+                  {userRole === 'admin' && (
+                    <>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuLabel>Admin</DropdownMenuLabel>
+                      <DropdownMenuItem asChild>
+                        <Link href='/dashboard/property-types'>Property Types</Link>
+                      </DropdownMenuItem>
+                    </>
+                  )}
                   <DropdownMenuSeparator />
                   <LogoutButton />
                 </DropdownMenuContent>
@@ -141,30 +163,6 @@ export default function Navigation({
             </div>
           ) : (
             <>
-              {/* Theme toggle for non-logged-in users */}
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button className='h-8 w-8 px-0' size='sm' variant='ghost'>
-                    <Icons.Sun className='rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0' />
-                    <Icons.Moon className='absolute rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100' />
-                    <span className='sr-only'>Toggle theme</span>
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align='end'>
-                  <DropdownMenuItem onClick={() => setTheme('light')}>
-                    <Icons.Sun className='mr-2 h-4 w-4' />
-                    <span>Light</span>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => setTheme('dark')}>
-                    <Icons.Moon className='mr-2 h-4 w-4' />
-                    <span>Dark</span>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => setTheme('system')}>
-                    <Icons.Laptop className='mr-2 h-4 w-4' />
-                    <span>System</span>
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
               <Button variant='ghost' asChild>
                 <Link href='/sign-in'>{t('login', { ns: 'common' })}</Link>
               </Button>

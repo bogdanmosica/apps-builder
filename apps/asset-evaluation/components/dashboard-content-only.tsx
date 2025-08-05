@@ -33,13 +33,13 @@ import {
   Package,
   ChevronDown,
   Search,
-  Bell,
   Menu,
 } from 'lucide-react';
 import Link from 'next/link';
 import { cookies } from 'next/headers';
 import { DashboardProducts } from './dashboard-products';
 import { LogoutButton } from './logout-button';
+import { ThemeToggleButton } from './theme-toggle-button';
 
 // Type definitions for API responses
 interface Metric {
@@ -287,10 +287,8 @@ function DashboardHeader() {
             />
           </div>
 
-          <Button variant='outline' size='icon' className='h-9 w-9'>
-            <Bell className='h-4 w-4' aria-hidden='true' />
-            <span className='sr-only'>Notifications</span>
-          </Button>
+          {/* Theme Toggle Button */}
+          <ThemeToggleButton />
 
           <DropdownMenu>
             <DropdownMenuTrigger asChild>

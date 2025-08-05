@@ -352,28 +352,28 @@ function ModelPerformanceCard({ model, name }: { model: any; name: string }) {
       <CardContent>
         <div className='space-y-3'>
           <div className='flex justify-between items-center'>
-            <span className='text-sm text-gray-600'>Accuracy</span>
+            <span className='text-sm text-muted-foreground'>Accuracy</span>
             <span className='font-medium'>{model.accuracy}%</span>
           </div>
           {model.precision && (
             <div className='flex justify-between items-center'>
-              <span className='text-sm text-gray-600'>Precision</span>
+              <span className='text-sm text-muted-foreground'>Precision</span>
               <span className='font-medium'>{model.precision}%</span>
             </div>
           )}
           {model.mape && (
             <div className='flex justify-between items-center'>
-              <span className='text-sm text-gray-600'>MAPE</span>
+              <span className='text-sm text-muted-foreground'>MAPE</span>
               <span className='font-medium'>{model.mape}%</span>
             </div>
           )}
           {model.clickThroughRate && (
             <div className='flex justify-between items-center'>
-              <span className='text-sm text-gray-600'>CTR</span>
+              <span className='text-sm text-muted-foreground'>CTR</span>
               <span className='font-medium'>{model.clickThroughRate}%</span>
             </div>
           )}
-          <div className='text-xs text-gray-500 border-t pt-2'>
+          <div className='text-xs text-muted-foreground border-t pt-2'>
             Last trained: {new Date(model.lastTrained).toLocaleDateString()}
           </div>
         </div>
@@ -390,13 +390,13 @@ function PredictionCard({
   const getRiskColor = (level: string) => {
     switch (level) {
       case 'high':
-        return 'bg-red-100 text-red-800 border-red-200';
+        return 'bg-red-100 text-red-800 border-red-200 dark:bg-red-900/20 dark:text-red-300 dark:border-red-800';
       case 'medium':
-        return 'bg-yellow-100 text-yellow-800 border-yellow-200';
+        return 'bg-yellow-100 text-yellow-800 border-yellow-200 dark:bg-yellow-900/20 dark:text-yellow-300 dark:border-yellow-800';
       case 'low':
-        return 'bg-green-100 text-green-800 border-green-200';
+        return 'bg-green-100 text-green-800 border-green-200 dark:bg-green-900/20 dark:text-green-300 dark:border-green-800';
       default:
-        return 'bg-gray-100 text-gray-800 border-gray-200';
+        return 'bg-gray-100 text-gray-800 border-gray-200 dark:bg-gray-800 dark:text-gray-300 dark:border-gray-700';
     }
   };
 
@@ -420,17 +420,17 @@ function PredictionCard({
           <div className='flex items-center space-x-2'>
             {getTypeIcon(prediction.type)}
             <div>
-              <h3 className='font-medium text-gray-900'>
+              <h3 className='font-medium text-foreground'>
                 {prediction.userName}
               </h3>
-              <p className='text-sm text-gray-500'>{prediction.email}</p>
+              <p className='text-sm text-muted-foreground'>{prediction.email}</p>
             </div>
           </div>
           <div className='text-right'>
             <Badge className={getRiskColor(prediction.riskLevel)}>
               {prediction.riskLevel} risk
             </Badge>
-            <div className='text-sm font-medium text-gray-900 mt-1'>
+            <div className='text-sm font-medium text-foreground mt-1'>
               {(prediction.probability * 100).toFixed(0)}% probability
             </div>
           </div>
@@ -438,7 +438,7 @@ function PredictionCard({
 
         <div className='space-y-3'>
           <div>
-            <h4 className='text-sm font-medium text-gray-700 mb-1'>
+            <h4 className='text-sm font-medium text-foreground mb-1'>
               Risk Factors
             </h4>
             <div className='flex flex-wrap gap-1'>
@@ -451,13 +451,13 @@ function PredictionCard({
           </div>
 
           <div>
-            <h4 className='text-sm font-medium text-gray-700 mb-1'>
+            <h4 className='text-sm font-medium text-foreground mb-1'>
               Recommended Actions
             </h4>
-            <ul className='text-sm text-gray-600 space-y-1'>
+            <ul className='text-sm text-muted-foreground space-y-1'>
               {prediction.recommendedActions.map((action, index) => (
                 <li key={index} className='flex items-center space-x-2'>
-                  <CheckCircle className='h-3 w-3 text-green-500' />
+                  <CheckCircle className='h-3 w-3 text-green-500 dark:text-green-400' />
                   <span>{action}</span>
                 </li>
               ))}
@@ -466,7 +466,7 @@ function PredictionCard({
         </div>
 
         <div className='flex items-center justify-between mt-4 pt-3 border-t'>
-          <span className='text-xs text-gray-500'>
+          <span className='text-xs text-muted-foreground'>
             {new Date(prediction.createdAt).toLocaleDateString()}
           </span>
           <div className='flex space-x-1'>
@@ -491,13 +491,13 @@ function InsightCard({
   const getImpactColor = (impact: string) => {
     switch (impact) {
       case 'high':
-        return 'bg-red-100 text-red-800';
+        return 'bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-300';
       case 'medium':
-        return 'bg-yellow-100 text-yellow-800';
+        return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-300';
       case 'low':
-        return 'bg-green-100 text-green-800';
+        return 'bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-300';
       default:
-        return 'bg-gray-100 text-gray-800';
+        return 'bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-300';
     }
   };
 
@@ -520,29 +520,29 @@ function InsightCard({
         <div className='flex items-start justify-between mb-3'>
           <div className='flex items-center space-x-2'>
             {getCategoryIcon(insight.category)}
-            <h3 className='font-medium text-gray-900'>{insight.title}</h3>
+            <h3 className='font-medium text-foreground'>{insight.title}</h3>
           </div>
           <div className='flex items-center space-x-2'>
             <Badge className={getImpactColor(insight.impact)}>
               {insight.impact} impact
             </Badge>
-            <div className='text-sm text-gray-500'>
+            <div className='text-sm text-muted-foreground'>
               {(insight.confidence * 100).toFixed(0)}% confidence
             </div>
           </div>
         </div>
 
-        <p className='text-sm text-gray-600 mb-4'>{insight.description}</p>
+        <p className='text-sm text-muted-foreground mb-4'>{insight.description}</p>
 
         {insight.actionable && (
-          <div className='bg-blue-50 p-3 rounded-lg mb-4'>
+          <div className='bg-blue-50 dark:bg-blue-900/20 p-3 rounded-lg mb-4'>
             <div className='flex items-start space-x-2'>
-              <Lightbulb className='h-4 w-4 text-blue-600 mt-0.5' />
+              <Lightbulb className='h-4 w-4 text-blue-600 dark:text-blue-400 mt-0.5' />
               <div>
-                <h4 className='text-sm font-medium text-blue-900 mb-1'>
+                <h4 className='text-sm font-medium text-blue-900 dark:text-blue-100 mb-1'>
                   Recommendation
                 </h4>
-                <p className='text-sm text-blue-800'>
+                <p className='text-sm text-blue-800 dark:text-blue-200'>
                   {insight.recommendation}
                 </p>
               </div>
@@ -550,7 +550,7 @@ function InsightCard({
           </div>
         )}
 
-        <div className='flex items-center justify-between text-xs text-gray-500'>
+        <div className='flex items-center justify-between text-xs text-muted-foreground'>
           <span>{new Date(insight.createdAt).toLocaleDateString()}</span>
           <div className='flex space-x-1'>
             <Button size='sm' variant='outline'>
@@ -587,7 +587,7 @@ function ModelManagementTable() {
             <TableCell>
               <div>
                 <div className='font-medium'>{model.name}</div>
-                <div className='text-sm text-gray-500'>ID: {model.id}</div>
+                <div className='text-sm text-muted-foreground'>ID: {model.id}</div>
               </div>
             </TableCell>
             <TableCell>
@@ -601,7 +601,7 @@ function ModelManagementTable() {
                     ? 'bg-green-100 text-green-800'
                     : model.status === 'training'
                       ? 'bg-yellow-100 text-yellow-800'
-                      : 'bg-gray-100 text-gray-800'
+                      : 'bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-300'
                 }
               >
                 {model.status}
@@ -657,11 +657,11 @@ export default function AIInsightsDashboard() {
       <div className='p-6 space-y-6'>
         <div className='flex items-center justify-between'>
           <div>
-            <h1 className='text-3xl font-bold text-gray-900 flex items-center space-x-2'>
-              <BrainCircuit className='h-8 w-8 text-blue-600' />
+            <h1 className='text-3xl font-bold text-foreground flex items-center space-x-2'>
+              <BrainCircuit className='h-8 w-8 text-blue-600 dark:text-blue-400' />
               <span>AI Insights Dashboard</span>
             </h1>
-            <p className='text-gray-600'>
+            <p className='text-muted-foreground'>
               AI-powered predictions, insights, and automation
             </p>
           </div>
@@ -693,7 +693,7 @@ export default function AIInsightsDashboard() {
 
         {/* Model Performance Overview */}
         <div>
-          <h2 className='text-xl font-semibold text-gray-900 mb-4'>
+          <h2 className='text-xl font-semibold text-foreground mb-4'>
             Model Performance
           </h2>
           <div className='grid grid-cols-1 md:grid-cols-3 gap-6'>
@@ -723,7 +723,7 @@ export default function AIInsightsDashboard() {
           <TabsContent value='predictions' className='space-y-6'>
             <div>
               <div className='flex items-center justify-between mb-4'>
-                <h3 className='text-lg font-semibold text-gray-900'>
+                <h3 className='text-lg font-semibold text-foreground'>
                   Active Predictions
                 </h3>
                 <div className='flex items-center space-x-2'>
@@ -759,7 +759,7 @@ export default function AIInsightsDashboard() {
           <TabsContent value='insights' className='space-y-6'>
             <div>
               <div className='flex items-center justify-between mb-4'>
-                <h3 className='text-lg font-semibold text-gray-900'>
+                <h3 className='text-lg font-semibold text-foreground'>
                   AI-Generated Insights
                 </h3>
                 <Button>
@@ -791,10 +791,10 @@ export default function AIInsightsDashboard() {
                         <div className='flex items-center space-x-3'>
                           <Bot className='h-5 w-5 text-blue-600' />
                           <div>
-                            <h4 className='font-medium text-gray-900'>
+                            <h4 className='font-medium text-foreground'>
                               {rule.name}
                             </h4>
-                            <p className='text-sm text-gray-600'>
+                            <p className='text-sm text-muted-foreground'>
                               {rule.description}
                             </p>
                           </div>
@@ -804,7 +804,7 @@ export default function AIInsightsDashboard() {
                             className={
                               rule.status === 'active'
                                 ? 'bg-green-100 text-green-800'
-                                : 'bg-gray-100 text-gray-800'
+                                : 'bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-300'
                             }
                           >
                             {rule.status}

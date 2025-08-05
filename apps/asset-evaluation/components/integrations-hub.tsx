@@ -454,7 +454,7 @@ function IntegrationCard({
               <IconComponent className='h-6 w-6' />
             </div>
             <div>
-              <h3 className='font-medium text-gray-900'>{integration.name}</h3>
+              <h3 className='font-medium text-foreground'>{integration.name}</h3>
               <p className='text-sm text-gray-500'>{integration.description}</p>
             </div>
           </div>
@@ -596,7 +596,7 @@ function AvailableIntegrationCard({
             </div>
             <div>
               <div className='flex items-center space-x-2'>
-                <h3 className='font-medium text-gray-900'>{integration.name}</h3>
+                <h3 className='font-medium text-foreground'>{integration.name}</h3>
                 {isRecommended && (
                   <Badge className='bg-blue-100 text-blue-800 text-xs'>
                     Recommended
@@ -1039,7 +1039,7 @@ export default function IntegrationsHub() {
         <div className='flex items-center justify-center h-64'>
           <div className='text-center'>
             <XCircle className='h-12 w-12 text-red-500 mx-auto mb-4' />
-            <h3 className='text-lg font-semibold text-gray-900 mb-2'>Error Loading Integrations</h3>
+            <h3 className='text-lg font-semibold text-foreground mb-2'>Error Loading Integrations</h3>
             <p className='text-gray-600 mb-4'>{error}</p>
             <Button onClick={() => window.location.reload()}>
               <RefreshCw className='h-4 w-4 mr-2' />
@@ -1057,7 +1057,7 @@ export default function IntegrationsHub() {
       <div className='p-6 space-y-6'>
         <div className='flex items-center justify-between'>
           <div>
-            <h1 className='text-3xl font-bold text-gray-900 flex items-center space-x-2'>
+            <h1 className='text-3xl font-bold text-foreground flex items-center space-x-2'>
               <Network className='h-8 w-8 text-blue-600' />
               <span>Integrations Hub</span>
             </h1>
@@ -1070,7 +1070,7 @@ export default function IntegrationsHub() {
         <div className='flex items-center justify-center h-64'>
           <div className='text-center'>
             <Network className='h-12 w-12 text-gray-400 mx-auto mb-4' />
-            <h3 className='text-lg font-semibold text-gray-900 mb-2'>No Integrations Found</h3>
+            <h3 className='text-lg font-semibold text-foreground mb-2'>No Integrations Found</h3>
             <p className='text-gray-600 mb-4'>Get started by creating some sample integrations data</p>
             <Button onClick={handleSeedData}>
               <Plus className='h-4 w-4 mr-2' />
@@ -1087,7 +1087,7 @@ export default function IntegrationsHub() {
       <div className='p-6 space-y-6'>
         <div className='flex items-center justify-between'>
           <div>
-            <h1 className='text-3xl font-bold text-gray-900 flex items-center space-x-2'>
+            <h1 className='text-3xl font-bold text-foreground flex items-center space-x-2'>
               <Network className='h-8 w-8 text-blue-600' />
               <span>Integrations Hub</span>
             </h1>

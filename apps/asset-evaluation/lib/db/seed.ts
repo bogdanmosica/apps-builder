@@ -1,3 +1,22 @@
+/**
+ * Database Seed Script
+ * 
+ * This script handles:
+ * 1. Initial database seeding with property evaluation questions
+ * 2. Creating a super admin user with default team
+ * 3. User role management via command line arguments
+ * 
+ * Usage:
+ * - Normal seed: tsx lib/db/seed.ts
+ * - Update user role: tsx lib/db/seed.ts --update-role <email> <role>
+ * 
+ * Available roles: admin, superuser, member, viewer, owner
+ * 
+ * Examples:
+ * - tsx lib/db/seed.ts --update-role admin@admin.com superuser
+ * - tsx lib/db/seed.ts --update-role user@example.com admin
+ */
+
 import { db } from './drizzle';
 import {
   users,
@@ -14,6 +33,46 @@ import {
 } from './schema';
 import { hashPassword } from '@/lib/auth/session';
 import { eq } from 'drizzle-orm';
+
+// Utility function to update user role (can be called from other scripts)
+export async function updateUserRole(email: string, role: string) {
+  const validRoles = ['admin', 'superuser', 'member', 'viewer', 'owner'];
+  
+  if (!validRoles.includes(role)) {
+    throw new Error(`Invalid role: ${role}. Valid roles: ${validRoles.join(', ')}`);
+  }
+  
+  try {
+    console.log(`🔧 Updating user ${email} to role: ${role}...`);
+    
+    const userList = await db
+      .select()
+      .from(users)
+      .where(eq(users.email, email));
+    
+    if (userList.length === 0) {
+      throw new Error(`User with email ${email} not found`);
+    }
+    
+    const [updatedUser] = await db
+      .update(users)
+      .set({ 
+        role: role,
+        updatedAt: new Date()
+      })
+      .where(eq(users.email, email))
+      .returning();
+    
+    console.log(`✅ User role updated successfully!`);
+    console.log(`   Email: ${updatedUser.email}`);
+    console.log(`   New Role: ${updatedUser.role}`);
+    
+    return updatedUser;
+  } catch (error) {
+    console.error('❌ Error updating user role:', error);
+    throw error;
+  }
+}
 
 interface QuestionData {
   text_ro: string;
@@ -458,12 +517,37 @@ async function seed() {
   }
 }
 
-seed()
-  .catch((error) => {
-    console.error('❌ Seed process failed:', error);
+// Allow running this file with arguments to update user roles
+// Usage: tsx lib/db/seed.ts --update-role admin@admin.com superuser
+if (process.argv.includes('--update-role')) {
+  const roleIndex = process.argv.indexOf('--update-role');
+  const targetEmail = process.argv[roleIndex + 1];
+  const targetRole = process.argv[roleIndex + 2];
+  
+  if (!targetEmail || !targetRole) {
+    console.error('❌ Usage: tsx lib/db/seed.ts --update-role <email> <role>');
+    console.error('Available roles: admin, superuser, member, viewer, owner');
     process.exit(1);
-  })
-  .finally(() => {
-    console.log('Seed process finished. Exiting...');
-    process.exit(0);
-  });
+  }
+  
+  updateUserRole(targetEmail, targetRole)
+    .then(() => {
+      console.log('✅ Role update completed!');
+      process.exit(0);
+    })
+    .catch((error) => {
+      console.error('❌ Role update failed:', error);
+      process.exit(1);
+    });
+} else {
+  // Run normal seed process
+  seed()
+    .catch((error) => {
+      console.error('❌ Seed process failed:', error);
+      process.exit(1);
+    })
+    .finally(() => {
+      console.log('Seed process finished. Exiting...');
+      process.exit(0);
+    });
+}

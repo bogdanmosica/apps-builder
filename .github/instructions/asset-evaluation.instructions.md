@@ -52,3 +52,14 @@ applyTo: "apps/asset-evaluation/**"
 | Add 5 properties        | Unlock badge (e.g. “Explorer”)     |
 | Complete 100% checklist | Visual seal (animated star rating) |
 | Invite family member    | Cosmetic flair or confetti burst   |
+
+
+## Code style guide
+
+- Use consistent naming conventions (e.g. camelCase for variables and functions)
+- Keep functions small and focused on a single task
+- Write clear and concise comments to explain complex logic
+- Use TypeScript types and interfaces for better code clarity
+- Follow the DRY (Don't Repeat Yourself) principle
+- Use only seed.ts to seed database. Don't create separate migration files for seeding data.
+- Always run the app into a new terminal using `cd apps/asset-evaluation; pnpm dev`
