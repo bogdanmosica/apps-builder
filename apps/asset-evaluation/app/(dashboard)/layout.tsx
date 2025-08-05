@@ -19,14 +19,11 @@ import {
 import {
   Search,
   PanelLeft,
-  Package,
   Home,
   LineChart,
   Bot,
   Network,
-  Shield,
   Settings,
-  Activity,
   LogOut,
   Loader2,
   BarChart3,
@@ -172,18 +169,6 @@ function DashboardHeader() {
                   Integrations
                 </Link>
                 <Link
-                  href='/dashboard/security'
-                  className={cn(
-                    'flex items-center gap-4 px-2.5 py-2 rounded-md transition-colors',
-                    isActive('/dashboard/security') 
-                      ? 'bg-primary/10 text-primary font-semibold border-l-4 border-primary' 
-                      : 'text-muted-foreground hover:text-foreground hover:bg-muted'
-                  )}
-                >
-                  <Shield className='h-5 w-5' aria-hidden='true' />
-                  Security
-                </Link>
-                <Link
                   href='/billing'
                   className={cn(
                     'flex items-center gap-4 px-2.5 py-2 rounded-md transition-colors',
@@ -196,18 +181,6 @@ function DashboardHeader() {
                   Billing
                 </Link>
                 <Link
-                  href='/dashboard/questions'
-                  className={cn(
-                    'flex items-center gap-4 px-2.5 py-2 rounded-md transition-colors',
-                    isActive('/dashboard/questions') 
-                      ? 'bg-primary/10 text-primary font-semibold border-l-4 border-primary' 
-                      : 'text-muted-foreground hover:text-foreground hover:bg-muted'
-                  )}
-                >
-                  <MessageCircleQuestion className='h-5 w-5' aria-hidden='true' />
-                  Q&A Management
-                </Link>
-                <Link
                   href='/dashboard/property-types'
                   className={cn(
                     'flex items-center gap-4 px-2.5 py-2 rounded-md transition-colors',
@@ -216,8 +189,8 @@ function DashboardHeader() {
                       : 'text-muted-foreground hover:text-foreground hover:bg-muted'
                   )}
                 >
-                  <Package className='h-5 w-5' aria-hidden='true' />
-                  Property Types
+                  <MessageCircleQuestion className='h-5 w-5' aria-hidden='true' />
+                  Q&A Management
                 </Link>
                 <Link
                   href='/todo'
@@ -230,18 +203,6 @@ function DashboardHeader() {
                 >
                   <CheckSquare className='h-5 w-5' aria-hidden='true' />
                   Todo
-                </Link>
-                <Link
-                  href='/activity'
-                  className={cn(
-                    'flex items-center gap-4 px-2.5 py-2 rounded-md transition-colors',
-                    isActive('/activity') 
-                      ? 'bg-primary/10 text-primary font-semibold border-l-4 border-primary' 
-                      : 'text-muted-foreground hover:text-foreground hover:bg-muted'
-                  )}
-                >
-                  <Activity className='h-5 w-5' aria-hidden='true' />
-                  Activity Log
                 </Link>
                 <Link
                   href='/dashboard/settings'
@@ -327,17 +288,6 @@ function DashboardHeader() {
             Integrations
           </Link>
           <Link
-            href='/dashboard/questions'
-            className={cn(
-              'py-1 px-2 border-b-2 transition-colors',
-              isActive('/dashboard/questions') 
-                ? 'text-primary border-primary font-semibold' 
-                : 'text-muted-foreground hover:text-foreground border-transparent hover:border-muted-foreground'
-            )}
-          >
-            Q&A Management
-          </Link>
-          <Link
             href='/dashboard/property-types'
             className={cn(
               'py-1 px-2 border-b-2 transition-colors',
@@ -346,18 +296,7 @@ function DashboardHeader() {
                 : 'text-muted-foreground hover:text-foreground border-transparent hover:border-muted-foreground'
             )}
           >
-            Property Types
-          </Link>
-          <Link
-            href='/dashboard/security'
-            className={cn(
-              'py-1 px-2 border-b-2 transition-colors',
-              isActive('/dashboard/security') 
-                ? 'text-primary border-primary font-semibold' 
-                : 'text-muted-foreground hover:text-foreground border-transparent hover:border-muted-foreground'
-            )}
-          >
-            Security
+            Q&A Management
           </Link>
           <Link
             href='/dashboard/settings'

@@ -473,7 +473,7 @@ export default function QuestionManager({ propertyType, onUpdate, language }: Qu
               </p>
             </div>
           ) : (
-            <Accordion type="multiple" value={expandedQuestions} onValueChange={setExpandedQuestions}>
+            <Accordion type="multiple" value={expandedQuestions} onValueChange={setExpandedQuestions} className="space-y-4">
               {propertyType.questionCategories.map((category) => (
                 <div key={category.id} className="space-y-2">
                   {(category.questions?.length || 0) > 0 && (
@@ -488,7 +488,7 @@ export default function QuestionManager({ propertyType, onUpdate, language }: Qu
                     const hasMinAnswers = question.answers.length >= 2;
 
                     return (
-                      <AccordionItem key={question.id} value={question.id.toString()}>
+                      <AccordionItem key={question.id} value={question.id.toString()} className="border-none">
                         <Card className={!hasMinAnswers ? 'border-yellow-200' : ''}>
                           <AccordionTrigger className="px-4 py-3 hover:no-underline">
                             <div className="flex items-center justify-between w-full">
@@ -522,22 +522,18 @@ export default function QuestionManager({ propertyType, onUpdate, language }: Qu
                               </div>
                               
                               <div className="flex gap-1" onClick={(e) => e.stopPropagation()}>
-                                <Button
-                                  size="icon"
-                                  variant="ghost"
-                                  className="h-8 w-8"
+                                <div
+                                  className="inline-flex items-center justify-center h-8 w-8 rounded-md hover:bg-accent hover:text-accent-foreground cursor-pointer"
                                   onClick={() => startEditQuestion({ ...question, categoryId: category.id })}
                                 >
                                   <Pencil className="h-4 w-4" />
-                                </Button>
-                                <Button
-                                  size="icon"
-                                  variant="ghost"
-                                  className="h-8 w-8"
+                                </div>
+                                <div
+                                  className="inline-flex items-center justify-center h-8 w-8 rounded-md hover:bg-accent hover:text-accent-foreground cursor-pointer"
                                   onClick={() => handleDeleteQuestion(question.id)}
                                 >
                                   <Trash className="h-4 w-4" />
-                                </Button>
+                                </div>
                               </div>
                             </div>
                           </AccordionTrigger>

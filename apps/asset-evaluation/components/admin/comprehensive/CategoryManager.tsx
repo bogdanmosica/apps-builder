@@ -277,14 +277,14 @@ export default function CategoryManager({ propertyType, onUpdate, language }: Ca
             </CardContent>
           </Card>
         ) : (
-          <Accordion type="multiple" value={expandedCategories} onValueChange={setExpandedCategories}>
+          <Accordion type="multiple" value={expandedCategories} onValueChange={setExpandedCategories} className="space-y-4">
             {propertyType.questionCategories.map((category) => {
               const isEditing = editing.id === category.id;
               const missingEnglish = !category.name_en;
               const hasQuestions = (category.questions?.length || 0) > 0;
 
               return (
-                <AccordionItem key={category.id} value={category.id.toString()}>
+                <AccordionItem key={category.id} value={category.id.toString()} className="border-none">
                   <Card>
                     <AccordionTrigger className="px-6 py-4 hover:no-underline">
                       <div className="flex items-center justify-between w-full">
@@ -308,30 +308,26 @@ export default function CategoryManager({ propertyType, onUpdate, language }: Ca
                                   />
                                 </div>
                                 <div className="flex gap-1">
-                                  <Button
-                                    size="icon"
-                                    variant="outline"
-                                    className="h-8 w-8"
+                                  <div
+                                    className="inline-flex items-center justify-center h-8 w-8 rounded-md border border-input bg-background hover:bg-accent hover:text-accent-foreground cursor-pointer"
                                     onClick={(e) => {
                                       e.stopPropagation();
                                       saveEdit();
                                     }}
-                                    disabled={isSubmitting}
+                                    style={{ opacity: isSubmitting ? 0.5 : 1, pointerEvents: isSubmitting ? 'none' : 'auto' }}
                                   >
                                     <Check className="h-4 w-4" />
-                                  </Button>
-                                  <Button
-                                    size="icon"
-                                    variant="ghost"
-                                    className="h-8 w-8"
+                                  </div>
+                                  <div
+                                    className="inline-flex items-center justify-center h-8 w-8 rounded-md hover:bg-accent hover:text-accent-foreground cursor-pointer"
                                     onClick={(e) => {
                                       e.stopPropagation();
                                       cancelEdit();
                                     }}
-                                    disabled={isSubmitting}
+                                    style={{ opacity: isSubmitting ? 0.5 : 1, pointerEvents: isSubmitting ? 'none' : 'auto' }}
                                   >
                                     <X className="h-4 w-4" />
-                                  </Button>
+                                  </div>
                                 </div>
                               </div>
                             ) : (
@@ -366,23 +362,19 @@ export default function CategoryManager({ propertyType, onUpdate, language }: Ca
                           
                           {!isEditing && (
                             <div className="flex gap-1" onClick={(e) => e.stopPropagation()}>
-                              <Button
-                                size="icon"
-                                variant="ghost"
-                                className="h-8 w-8"
+                              <div
+                                className="inline-flex items-center justify-center h-8 w-8 rounded-md hover:bg-accent hover:text-accent-foreground cursor-pointer"
                                 onClick={() => startEdit(category)}
                               >
                                 <Pencil className="h-4 w-4" />
-                              </Button>
-                              <Button
-                                size="icon"
-                                variant="ghost"
-                                className="h-8 w-8"
-                                onClick={() => handleDelete(category.id)}
-                                disabled={hasQuestions}
+                              </div>
+                              <div
+                                className="inline-flex items-center justify-center h-8 w-8 rounded-md hover:bg-accent hover:text-accent-foreground cursor-pointer disabled:pointer-events-none disabled:opacity-50"
+                                onClick={() => !hasQuestions && handleDelete(category.id)}
+                                style={{ opacity: hasQuestions ? 0.5 : 1, pointerEvents: hasQuestions ? 'none' : 'auto' }}
                               >
                                 <Trash className="h-4 w-4" />
-                              </Button>
+                              </div>
                             </div>
                           )}
                         </div>

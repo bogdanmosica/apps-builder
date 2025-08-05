@@ -23,7 +23,7 @@ export default function AdminManagementPanel({ initialData }: AdminManagementPan
   const [selectedPropertyTypeId, setSelectedPropertyTypeId] = useState<number | null>(
     initialData.length > 0 ? initialData[0].id : null
   );
-  const [activeTab, setActiveTab] = useState('overview');
+  const [activeTab, setActiveTab] = useState('categories');
   const [language, setLanguage] = useState<'ro' | 'en'>('ro');
   const [searchQuery, setSearchQuery] = useState('');
   const [validationErrors, setValidationErrors] = useState<string[]>([]);
@@ -209,25 +209,22 @@ export default function AdminManagementPanel({ initialData }: AdminManagementPan
         </Card>
       </div>
 
-      {/* Main Management Interface */}
+      {/* Property Type Selector - Acts as Filter */}
+      <PropertyTypeSelector
+        propertyTypes={propertyTypes}
+        selectedId={selectedPropertyTypeId}
+        onSelect={handlePropertyTypeSelect}
+        language={language}
+        searchQuery={searchQuery}
+      />
+
+      {/* Tabs for Management Interface */}
       <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-        <TabsList className="grid w-full grid-cols-5">
-          <TabsTrigger value="overview">Overview</TabsTrigger>
-          <TabsTrigger value="property-types">Property Types</TabsTrigger>
+        <TabsList className="grid w-full grid-cols-3">
+          <TabsTrigger value="property-types">Property Type Management</TabsTrigger>
           <TabsTrigger value="categories">Categories</TabsTrigger>
           <TabsTrigger value="questions">Questions</TabsTrigger>
-          <TabsTrigger value="validation">Validation</TabsTrigger>
         </TabsList>
-
-        <TabsContent value="overview" className="space-y-6">
-          <PropertyTypeSelector
-            propertyTypes={propertyTypes}
-            selectedId={selectedPropertyTypeId}
-            onSelect={handlePropertyTypeSelect}
-            language={language}
-            searchQuery={searchQuery}
-          />
-        </TabsContent>
 
         <TabsContent value="property-types" className="space-y-6">
           <PropertyTypeManager
@@ -248,7 +245,7 @@ export default function AdminManagementPanel({ initialData }: AdminManagementPan
           ) : (
             <Card>
               <CardContent className="p-8 text-center">
-                <p className="text-muted-foreground">Please select a property type first</p>
+                <p className="text-muted-foreground">Please select a property type to manage its categories</p>
               </CardContent>
             </Card>
           )}
@@ -264,57 +261,10 @@ export default function AdminManagementPanel({ initialData }: AdminManagementPan
           ) : (
             <Card>
               <CardContent className="p-8 text-center">
-                <p className="text-muted-foreground">Please select a property type first</p>
+                <p className="text-muted-foreground">Please select a property type to manage its questions</p>
               </CardContent>
             </Card>
           )}
-        </TabsContent>
-
-        <TabsContent value="validation" className="space-y-6">
-          <Card>
-            <CardHeader>
-              <CardTitle>Data Validation & Sync</CardTitle>
-              <CardDescription>
-                Review data completeness and sync changes across the system.
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    {validationErrors.length === 0 ? (
-                      <CheckCircle className="h-5 w-5 text-green-600" />
-                    ) : (
-                      <AlertTriangle className="h-5 w-5 text-red-600" />
-                    )}
-                    <span className="font-medium">
-                      {validationErrors.length === 0 
-                        ? 'System validation passed' 
-                        : `${validationErrors.length} validation issues found`
-                      }
-                    </span>
-                  </div>
-                  <Button onClick={validateData}>
-                    Re-validate
-                  </Button>
-                </div>
-                
-                {validationErrors.length > 0 && (
-                  <div className="space-y-2">
-                    <h4 className="font-medium text-red-600">Issues to fix:</h4>
-                    <ul className="space-y-1">
-                      {validationErrors.map((error, index) => (
-                        <li key={index} className="text-sm text-red-600 flex items-start gap-2">
-                          <AlertTriangle className="h-4 w-4 mt-0.5 flex-shrink-0" />
-                          {error}
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
-              </div>
-            </CardContent>
-          </Card>
         </TabsContent>
       </Tabs>
     </div>

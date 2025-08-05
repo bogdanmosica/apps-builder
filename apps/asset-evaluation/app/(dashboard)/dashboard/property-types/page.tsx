@@ -61,22 +61,8 @@ export default async function PropertyTypesAdminPage() {
         </div>
       </div>
 
-      {/* Warning Card */}
-      <Card className="border-yellow-200 bg-yellow-50">
-        <CardHeader className="pb-3">
-          <div className="flex items-center gap-2">
-            <Settings2 className="h-5 w-5 text-yellow-600" />
-            <CardTitle className="text-yellow-800">⚠️ System Administration Warning</CardTitle>
-          </div>
-          <CardDescription className="text-yellow-700">
-            You are accessing the core evaluation system. Changes made here will immediately affect all users. 
-            Ensure all entries have both Romanian and English translations before saving.
-          </CardDescription>
-        </CardHeader>
-      </Card>
-
       {/* Admin Management Panel */}
-            <Suspense fallback={<PropertyTypesTableSkeleton />}>
+          <Suspense fallback={<PropertyTypesTableSkeleton />}>
         <AdminManagementPanel initialData={allPropertyTypes} />
       </Suspense>
     </div>

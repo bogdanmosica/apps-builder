@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import { signToken, verifyToken } from '@/lib/auth/session';
 
-const protectedRoutes = ['/dashboard', '/analytics', '/ai-insights', '/integrations', '/onboarding', '/pricing', '/security', '/settings', '/team'];
+const protectedRoutes = ['/dashboard'];
 
 export async function middleware(request: NextRequest) {
   try {
@@ -10,15 +10,6 @@ export async function middleware(request: NextRequest) {
     const sessionCookie = request.cookies.get('session');
     const isProtectedRoute = protectedRoutes.some(route => pathname.startsWith(route));
 
-    // Add debug logging for property-types route
-    if (pathname === '/dashboard/property-types') {
-      console.log('🔍 Middleware debug for /dashboard/property-types:', {
-        hasSession: !!sessionCookie,
-        isProtectedRoute,
-        userAgent: request.headers.get('user-agent')?.substring(0, 50),
-        timestamp: new Date().toISOString()
-      });
-    }
 
     if (isProtectedRoute) {
       if (!sessionCookie) {
