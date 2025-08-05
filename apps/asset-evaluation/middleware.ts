@@ -10,8 +10,19 @@ export async function middleware(request: NextRequest) {
     const sessionCookie = request.cookies.get('session');
     const isProtectedRoute = protectedRoutes.some(route => pathname.startsWith(route));
 
+    // Add debug logging for property-types route
+    if (pathname === '/dashboard/property-types') {
+      console.log('🔍 Middleware debug for /dashboard/property-types:', {
+        hasSession: !!sessionCookie,
+        isProtectedRoute,
+        userAgent: request.headers.get('user-agent')?.substring(0, 50),
+        timestamp: new Date().toISOString()
+      });
+    }
+
     if (isProtectedRoute) {
       if (!sessionCookie) {
+        console.log('❌ No session cookie, redirecting to sign-in for:', pathname);
         return NextResponse.redirect(new URL('/sign-in', request.url));
       }
 
@@ -21,7 +32,16 @@ export async function middleware(request: NextRequest) {
         const userRole = parsed.user?.role || 'member';
         const isAdminUser = ['owner', 'admin'].includes(userRole);
         
+        if (pathname === '/dashboard/property-types') {
+          console.log('🔍 User role check for property-types:', {
+            userRole,
+            isAdminUser,
+            userId: parsed.user?.id,
+          });
+        }
+        
         if (!isAdminUser) {
+          console.log('❌ User not admin, redirecting to home for:', pathname, 'Role:', userRole);
           // Redirect regular members to marketing page instead of protected routes
           return NextResponse.redirect(new URL('/', request.url));
         }

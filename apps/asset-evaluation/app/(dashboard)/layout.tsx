@@ -338,6 +338,17 @@ function DashboardHeader() {
             Q&A Management
           </Link>
           <Link
+            href='/dashboard/property-types'
+            className={cn(
+              'py-1 px-2 border-b-2 transition-colors',
+              isActive('/dashboard/property-types') 
+                ? 'text-primary border-primary font-semibold' 
+                : 'text-muted-foreground hover:text-foreground border-transparent hover:border-muted-foreground'
+            )}
+          >
+            Property Types
+          </Link>
+          <Link
             href='/dashboard/security'
             className={cn(
               'py-1 px-2 border-b-2 transition-colors',
