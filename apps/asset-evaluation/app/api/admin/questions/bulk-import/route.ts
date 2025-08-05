@@ -19,9 +19,9 @@ export async function POST(request: NextRequest) {
   try {
     const user = await getUser();
     
-    if (!user || user.role !== 'superuser') {
+    if (!user || user.role !== 'admin') {
       return NextResponse.json(
-        { error: 'Unauthorized. Superuser access required.' },
+        { error: 'Unauthorized. Admin access required.' },
         { status: 403 }
       );
     }

@@ -347,7 +347,7 @@ export default function FinalScreen({
         {/* Footer */}
         <div className="text-center py-8">
           <p className="text-sm text-muted-foreground">
-            🏠 Property evaluation completed • Based on {propertyData.categories.reduce((sum, cat) => sum + cat.questions.length, 0)} expert criteria
+            🏠 Property evaluation completed • Based on {propertyData.categories.reduce((sum, cat) => sum + (cat.questions?.length || 0), 0)} expert criteria
           </p>
         </div>
       </div>

@@ -143,7 +143,7 @@ export function calculateEvaluationResult(
       maxScore: categoryMaxScore,
       percentage: categoryPercentage,
       questionsAnswered,
-      totalQuestions: category.questions.length,
+      totalQuestions: category.questions?.length || 0,
     });
 
     totalScore += categoryScore;

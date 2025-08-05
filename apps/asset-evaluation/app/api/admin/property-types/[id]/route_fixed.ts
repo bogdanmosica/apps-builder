@@ -1,16 +1,16 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getUser } from '@/lib/db/queries';
 import { db } from '@/lib/db/drizzle';
-import { questionCategories, questions, answers, userEvaluationAnswers } from '@/lib/db/schema';
-import { eq, inArray } from 'drizzle-orm';
+import { propertyTypes, questionCategories, evaluationSessions } from '@/lib/db/schema';
+import { eq, and, ne, or } from 'drizzle-orm';
 import { z } from 'zod';
 
-const updateCategorySchema = z.object({
+const updatePropertyTypeSchema = z.object({
   name_ro: z.string().min(1, 'Romanian name is required'),
   name_en: z.string().nullable(),
 });
 
-// PATCH /api/admin/question-categories/[id]
+// PATCH /api/admin/property-types/[id]
 export async function PATCH(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
@@ -29,13 +29,13 @@ export async function PATCH(
     const id = parseInt(idParam);
     if (isNaN(id)) {
       return NextResponse.json(
-        { success: false, error: 'Invalid category ID' },
+        { success: false, error: 'Invalid property type ID' },
         { status: 400 }
       );
     }
 
     const body = await request.json();
-    const validation = updateCategorySchema.safeParse(body);
+    const validation = updatePropertyTypeSchema.safeParse(body);
 
     if (!validation.success) {
       return NextResponse.json(
@@ -46,46 +46,52 @@ export async function PATCH(
 
     const { name_ro, name_en } = validation.data;
 
-    // Check if category exists
-    const existing = await db.query.questionCategories.findFirst({
-      where: eq(questionCategories.id, id),
+    // Check if property type exists
+    const existing = await db.query.propertyTypes.findFirst({
+      where: eq(propertyTypes.id, id),
     });
 
     if (!existing) {
       return NextResponse.json(
-        { success: false, error: 'Category not found' },
+        { success: false, error: 'Property type not found' },
         { status: 404 }
       );
     }
 
-    // Check for duplicate names within the same property type (excluding current record)
-    const duplicate = await db.query.questionCategories.findFirst({
-      where: eq(questionCategories.name_ro, name_ro),
+    // Check for duplicate names
+    const duplicate = await db.query.propertyTypes.findFirst({
+      where: and(
+        ne(propertyTypes.id, id),
+        or(
+          eq(propertyTypes.name_ro, name_ro),
+          name_en ? eq(propertyTypes.name_en, name_en) : undefined
+        )
+      ),
     });
 
-    if (duplicate && duplicate.id !== id && duplicate.propertyTypeId === existing.propertyTypeId) {
+    if (duplicate) {
       return NextResponse.json(
-        { success: false, error: 'Category with this Romanian name already exists for this property type' },
+        { success: false, error: 'Property type with this name already exists' },
         { status: 409 }
       );
     }
 
-    const [updatedCategory] = await db
-      .update(questionCategories)
+    const [updatedPropertyType] = await db
+      .update(propertyTypes)
       .set({
         name_ro,
         name_en,
         updatedAt: new Date(),
       })
-      .where(eq(questionCategories.id, id))
+      .where(eq(propertyTypes.id, id))
       .returning();
 
     return NextResponse.json({
       success: true,
-      data: updatedCategory,
+      data: updatedPropertyType,
     });
   } catch (error) {
-    console.error('Error updating category:', error);
+    console.error('Error updating property type:', error);
     return NextResponse.json(
       { success: false, error: 'Internal server error' },
       { status: 500 }
@@ -93,7 +99,7 @@ export async function PATCH(
   }
 }
 
-// DELETE /api/admin/question-categories/[id]
+// DELETE /api/admin/property-types/[id]
 export async function DELETE(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
@@ -112,45 +118,55 @@ export async function DELETE(
     const id = parseInt(idParam);
     if (isNaN(id)) {
       return NextResponse.json(
-        { success: false, error: 'Invalid category ID' },
+        { success: false, error: 'Invalid property type ID' },
         { status: 400 }
       );
     }
 
-    // Check if category exists and has no questions
-    const existing = await db.query.questionCategories.findFirst({
-      where: eq(questionCategories.id, id),
-      with: {
-        questions: {
-          with: {
-            answers: true,
-          },
-        },
-      },
+    // Check if property type exists
+    const existing = await db.query.propertyTypes.findFirst({
+      where: eq(propertyTypes.id, id),
     });
 
     if (!existing) {
       return NextResponse.json(
-        { success: false, error: 'Category not found' },
+        { success: false, error: 'Property type not found' },
         { status: 404 }
       );
     }
 
-    if (existing.questions.length > 0) {
+    // Check if property type is used by question categories
+    const categoriesUsingType = await db.query.questionCategories.findFirst({
+      where: eq(questionCategories.propertyTypeId, id),
+    });
+
+    if (categoriesUsingType) {
       return NextResponse.json(
-        { success: false, error: 'Cannot delete category with existing questions' },
+        { success: false, error: 'Cannot delete property type. It is being used by question categories.' },
         { status: 409 }
       );
     }
 
-    await db.delete(questionCategories).where(eq(questionCategories.id, id));
+    // Check if property type is used by evaluation sessions
+    const evaluationsUsingType = await db.query.evaluationSessions.findFirst({
+      where: eq(evaluationSessions.propertyTypeId, id),
+    });
+
+    if (evaluationsUsingType) {
+      return NextResponse.json(
+        { success: false, error: 'Cannot delete property type. It has been used in evaluations.' },
+        { status: 409 }
+      );
+    }
+
+    await db.delete(propertyTypes).where(eq(propertyTypes.id, id));
 
     return NextResponse.json({
       success: true,
-      message: 'Category deleted successfully',
+      message: 'Property type deleted successfully',
     });
   } catch (error) {
-    console.error('Error deleting category:', error);
+    console.error('Error deleting property type:', error);
     return NextResponse.json(
       { success: false, error: 'Internal server error' },
       { status: 500 }

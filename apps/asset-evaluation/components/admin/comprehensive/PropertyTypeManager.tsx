@@ -271,7 +271,7 @@ export default function PropertyTypeManager({
               {propertyTypes.map((propertyType) => {
                 const isEditing = editing.id === propertyType.id;
                 const totalQuestions = propertyType.questionCategories.reduce(
-                  (sum, cat) => sum + cat.questions.length,
+                  (sum, cat) => sum + (cat.questions?.length || 0),
                   0
                 );
                 const hasCategories = propertyType.questionCategories.length > 0;

@@ -54,7 +54,7 @@ export default function PropertyTypeSelector({
         {filteredPropertyTypes.map((propertyType) => {
           const isSelected = propertyType.id === selectedId;
           const totalQuestions = propertyType.questionCategories.reduce(
-            (sum, cat) => sum + cat.questions.length,
+            (sum, cat) => sum + (cat.questions?.length || 0),
             0
           );
           const totalAnswers = propertyType.questionCategories.reduce(

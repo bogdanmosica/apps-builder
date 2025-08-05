@@ -6,6 +6,8 @@
     "start": "next start",
     "db:setup": "npx tsx lib/db/setup.ts",
     "db:seed": "npx tsx lib/db/seed.ts",
+    "db:update-role": "npx tsx lib/db/seed.ts --update-role",
+    "db:check-users": "npx tsx lib/db/seed.ts --check-users",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
     "db:migrate:prod": "node scripts/migrate.js",

@@ -10,10 +10,10 @@
  * - Normal seed: tsx lib/db/seed.ts
  * - Update user role: tsx lib/db/seed.ts --update-role <email> <role>
  * 
- * Available roles: admin, superuser, member, viewer, owner
+ * Available roles: admin, member, viewer, owner
  * 
  * Examples:
- * - tsx lib/db/seed.ts --update-role admin@admin.com superuser
+ * - tsx lib/db/seed.ts --update-role admin@admin.com admin
  * - tsx lib/db/seed.ts --update-role user@example.com admin
  */
 
@@ -36,7 +36,7 @@ import { eq } from 'drizzle-orm';
 
 // Utility function to update user role (can be called from other scripts)
 export async function updateUserRole(email: string, role: string) {
-  const validRoles = ['admin', 'superuser', 'member', 'viewer', 'owner'];
+  const validRoles = ['admin', 'member', 'viewer', 'owner'];
   
   if (!validRoles.includes(role)) {
     throw new Error(`Invalid role: ${role}. Valid roles: ${validRoles.join(', ')}`);
@@ -518,7 +518,7 @@ async function seed() {
 }
 
 // Allow running this file with arguments to update user roles
-// Usage: tsx lib/db/seed.ts --update-role admin@admin.com superuser
+// Usage: tsx lib/db/seed.ts --update-role admin@admin.com admin
 if (process.argv.includes('--update-role')) {
   const roleIndex = process.argv.indexOf('--update-role');
   const targetEmail = process.argv[roleIndex + 1];
@@ -526,7 +526,7 @@ if (process.argv.includes('--update-role')) {
   
   if (!targetEmail || !targetRole) {
     console.error('❌ Usage: tsx lib/db/seed.ts --update-role <email> <role>');
-    console.error('Available roles: admin, superuser, member, viewer, owner');
+    console.error('Available roles: admin, member, viewer, owner');
     process.exit(1);
   }
   

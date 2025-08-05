@@ -476,13 +476,13 @@ export default function QuestionManager({ propertyType, onUpdate, language }: Qu
             <Accordion type="multiple" value={expandedQuestions} onValueChange={setExpandedQuestions}>
               {propertyType.questionCategories.map((category) => (
                 <div key={category.id} className="space-y-2">
-                  {category.questions.length > 0 && (
+                  {(category.questions?.length || 0) > 0 && (
                     <div className="text-sm font-medium text-muted-foreground mb-2 flex items-center gap-2">
                       <Badge variant="outline">{getLocalizedText(category.name_ro, category.name_en, language)}</Badge>
                     </div>
                   )}
                   
-                  {category.questions.map((question) => {
+                  {(category.questions || []).map((question) => {
                     const isEditingQ = editingQuestion.id === question.id;
                     const missingEnglish = !question.text_en;
                     const hasMinAnswers = question.answers.length >= 2;

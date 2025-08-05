@@ -151,7 +151,7 @@ export default function CategoryManager({ propertyType, onUpdate, language }: Ca
     if (!category) return;
 
     // Check if category has questions
-    if (category.questions.length > 0) {
+    if ((category.questions?.length || 0) > 0) {
       toast.error('Cannot delete category with existing questions. Delete questions first.');
       return;
     }
@@ -281,7 +281,7 @@ export default function CategoryManager({ propertyType, onUpdate, language }: Ca
             {propertyType.questionCategories.map((category) => {
               const isEditing = editing.id === category.id;
               const missingEnglish = !category.name_en;
-              const hasQuestions = category.questions.length > 0;
+              const hasQuestions = (category.questions?.length || 0) > 0;
 
               return (
                 <AccordionItem key={category.id} value={category.id.toString()}>
@@ -360,7 +360,7 @@ export default function CategoryManager({ propertyType, onUpdate, language }: Ca
                           <div className="flex items-center gap-2">
                             <MessageCircleQuestion className="h-4 w-4 text-blue-600" />
                             <Badge variant="outline">
-                              {category.questions.length} questions
+                              {category.questions?.length || 0} questions
                             </Badge>
                           </div>
                           
@@ -391,7 +391,7 @@ export default function CategoryManager({ propertyType, onUpdate, language }: Ca
                     
                     <AccordionContent className="px-6 pb-4">
                       <div className="space-y-4">
-                        {category.questions.length === 0 ? (
+                        {(category.questions?.length || 0) === 0 ? (
                           <div className="text-center py-4 text-muted-foreground">
                             <MessageCircleQuestion className="h-8 w-8 mx-auto mb-2 opacity-50" />
                             <p>No questions in this category yet.</p>
@@ -423,9 +423,9 @@ export default function CategoryManager({ propertyType, onUpdate, language }: Ca
                                   </div>
                                 </div>
                               ))}
-                              {category.questions.length > 5 && (
+                              {(category.questions?.length || 0) > 5 && (
                                 <p className="text-sm text-muted-foreground text-center">
-                                  ... and {category.questions.length - 5} more questions
+                                  ... and {(category.questions?.length || 0) - 5} more questions
                                 </p>
                               )}
                             </div>

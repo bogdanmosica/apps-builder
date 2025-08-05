@@ -32,7 +32,7 @@ export default function StartScreen({ propertyData, onStart }: StartScreenProps)
 
   // Calculate total questions and maximum score
   const totalQuestions = propertyData.categories.reduce(
-    (sum, category) => sum + category.questions.length,
+    (sum, category) => sum + (category.questions?.length || 0),
     0
   );
 
@@ -164,7 +164,7 @@ export default function StartScreen({ propertyData, onStart }: StartScreenProps)
                     <div className="w-2 h-2 bg-primary rounded-full" />
                     <span className="font-medium text-foreground">{getCategoryName(category, currentLanguage)}</span>
                     <Badge variant="secondary" className="ml-auto text-xs">
-                      {t('startScreen.categories.questionsCount', { count: category.questions.length, ns: 'evaluation' })}
+                      {t('startScreen.categories.questionsCount', { count: category.questions?.length || 0, ns: 'evaluation' })}
                     </Badge>
                   </div>
                 ))}

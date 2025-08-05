@@ -10,8 +10,8 @@ export const dynamic = 'force-dynamic';
 export default async function QuestionsPage() {
   const user = await getUser();
   
-  // If user is not logged in or not admin/superuser, redirect to login
-  if (!user || !['admin', 'superuser'].includes(user.role)) {
+  // If user is not logged in or not admin, redirect to login
+  if (!user || !['admin'].includes(user.role)) {
     redirect('/login');
   }
 

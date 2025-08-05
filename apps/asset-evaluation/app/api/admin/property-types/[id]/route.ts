@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getUser } from '@/lib/db/queries';
 import { db } from '@/lib/db/drizzle';
-import { propertyTypes } from '@/lib/db/schema';
-import { eq } from 'drizzle-orm';
+import { propertyTypes, questionCategories, evaluationSessions } from '@/lib/db/schema';
+import { eq, and, ne, or } from 'drizzle-orm';
 import { z } from 'zod';
 
 const updatePropertyTypeSchema = z.object({
@@ -18,7 +18,7 @@ export async function GET(
   try {
     const user = await getUser();
     
-    if (!user || !['admin', 'superuser'].includes(user.role)) {
+    if (!user || !['admin'].includes(user.role)) {
       return NextResponse.json(
         { success: false, error: 'Unauthorized' },
         { status: 403 }
@@ -34,33 +34,34 @@ export async function GET(
       );
     }
 
-    // Check if we need to include related data
-    const { searchParams } = new URL(request.url);
-    const include = searchParams.get('include');
-    const includeCategories = include?.includes('categories');
-    const includeQuestions = include?.includes('questions');
-    const includeAnswers = include?.includes('answers');
+    // Parse query parameters to determine what to include
+    const url = new URL(request.url);
+    const includeParam = url.searchParams.get('include');
+    const includes = includeParam ? includeParam.split(',') : [];
+
+    // Build the query with optional includes
+    const shouldIncludeCategories = includes.includes('categories');
+    const shouldIncludeQuestions = includes.includes('questions');
+    const shouldIncludeAnswers = includes.includes('answers');
 
     let propertyType;
-    
-    if (includeCategories || includeQuestions || includeAnswers) {
-      // Fetch with related data
+
+    if (shouldIncludeCategories) {
       propertyType = await db.query.propertyTypes.findFirst({
         where: eq(propertyTypes.id, id),
         with: {
-          questionCategories: includeCategories ? {
+          questionCategories: shouldIncludeQuestions ? {
             with: {
-              questions: includeQuestions ? {
+              questions: shouldIncludeAnswers ? {
                 with: {
-                  answers: includeAnswers ? true : false,
+                  answers: true,
                 },
-              } : false,
+              } : true,
             },
-          } : false,
+          } : true,
         },
       });
     } else {
-      // Fetch only property type
       propertyType = await db.query.propertyTypes.findFirst({
         where: eq(propertyTypes.id, id),
       });
@@ -73,15 +74,9 @@ export async function GET(
       );
     }
 
-    // Transform data to match expected structure
-    const result = {
-      ...propertyType,
-      categories: propertyType.questionCategories || [],
-    };
-
     return NextResponse.json({
       success: true,
-      data: result,
+      data: propertyType,
     });
   } catch (error) {
     console.error('Error fetching property type:', error);
@@ -92,6 +87,7 @@ export async function GET(
   }
 }
 
+// PATCH /api/admin/property-types/[id]
 export async function PATCH(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
@@ -99,7 +95,7 @@ export async function PATCH(
   try {
     const user = await getUser();
     
-    if (!user || !['admin', 'superuser'].includes(user.role)) {
+    if (!user || !['admin'].includes(user.role)) {
       return NextResponse.json(
         { success: false, error: 'Unauthorized' },
         { status: 403 }
@@ -139,18 +135,6 @@ export async function PATCH(
       );
     }
 
-    // Check for duplicate names (excluding current record)
-    const duplicate = await db.query.propertyTypes.findFirst({
-      where: eq(propertyTypes.name_ro, name_ro),
-    });
-
-    if (duplicate && duplicate.id !== id) {
-      return NextResponse.json(
-        { success: false, error: 'Property type with this Romanian name already exists' },
-        { status: 409 }
-      );
-    }
-
     const [updatedPropertyType] = await db
       .update(propertyTypes)
       .set({
@@ -182,7 +166,7 @@ export async function DELETE(
   try {
     const user = await getUser();
     
-    if (!user || !['admin', 'superuser'].includes(user.role)) {
+    if (!user || !['admin'].includes(user.role)) {
       return NextResponse.json(
         { success: false, error: 'Unauthorized' },
         { status: 403 }
@@ -198,12 +182,9 @@ export async function DELETE(
       );
     }
 
-    // Check if property type exists and has no categories
+    // Check if property type exists
     const existing = await db.query.propertyTypes.findFirst({
       where: eq(propertyTypes.id, id),
-      with: {
-        questionCategories: true,
-      },
     });
 
     if (!existing) {
@@ -213,9 +194,26 @@ export async function DELETE(
       );
     }
 
-    if (existing.questionCategories.length > 0) {
+    // Check if property type is used by question categories
+    const categoriesUsingType = await db.query.questionCategories.findFirst({
+      where: eq(questionCategories.propertyTypeId, id),
+    });
+
+    if (categoriesUsingType) {
       return NextResponse.json(
-        { success: false, error: 'Cannot delete property type with existing categories' },
+        { success: false, error: 'Cannot delete property type. It is being used by question categories.' },
+        { status: 409 }
+      );
+    }
+
+    // Check if property type is used by evaluation sessions
+    const evaluationsUsingType = await db.query.evaluationSessions.findFirst({
+      where: eq(evaluationSessions.propertyTypeId, id),
+    });
+
+    if (evaluationsUsingType) {
+      return NextResponse.json(
+        { success: false, error: 'Cannot delete property type. It has been used in evaluations.' },
         { status: 409 }
       );
     }

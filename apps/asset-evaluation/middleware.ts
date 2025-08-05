@@ -19,7 +19,7 @@ export async function middleware(request: NextRequest) {
       try {
         const parsed = await verifyToken(sessionCookie.value);
         const userRole = parsed.user?.role || 'member';
-        const isAdminUser = userRole === 'owner' || userRole === 'admin';
+        const isAdminUser = ['owner', 'admin'].includes(userRole);
         
         if (!isAdminUser) {
           // Redirect regular members to marketing page instead of protected routes

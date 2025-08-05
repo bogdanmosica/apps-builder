@@ -14,11 +14,11 @@ import PropertyTypeManager from './PropertyTypeManager';
 import CategoryManager from './CategoryManager';
 import QuestionManager from './QuestionManager';
 
-interface SuperuserManagementPanelProps {
+interface AdminManagementPanelProps {
   initialData: PropertyTypeWithRelations[];
 }
 
-export default function SuperuserManagementPanel({ initialData }: SuperuserManagementPanelProps) {
+export default function AdminManagementPanel({ initialData }: AdminManagementPanelProps) {
   const [propertyTypes, setPropertyTypes] = useState<PropertyTypeWithRelations[]>(initialData);
   const [selectedPropertyTypeId, setSelectedPropertyTypeId] = useState<number | null>(
     initialData.length > 0 ? initialData[0].id : null
@@ -48,11 +48,11 @@ export default function SuperuserManagementPanel({ initialData }: SuperuserManag
         }
         
         // Check if category has questions
-        if (category.questions.length === 0) {
+        if ((category.questions?.length || 0) === 0) {
           errors.push(`Category "${category.name_ro}" has no questions`);
         }
         
-        category.questions.forEach((question) => {
+        (category.questions || []).forEach((question) => {
           // Check question translations
           if (!question.text_en) {
             errors.push(`Question "${question.text_ro}" missing English translation`);
@@ -121,11 +121,11 @@ export default function SuperuserManagementPanel({ initialData }: SuperuserManag
     totalPropertyTypes: propertyTypes.length,
     totalCategories: propertyTypes.reduce((sum, pt) => sum + pt.questionCategories.length, 0),
     totalQuestions: propertyTypes.reduce((sum, pt) => 
-      sum + pt.questionCategories.reduce((catSum, cat) => catSum + cat.questions.length, 0), 0
+      sum + pt.questionCategories.reduce((catSum, cat) => catSum + (cat.questions?.length || 0), 0), 0
     ),
     totalAnswers: propertyTypes.reduce((sum, pt) => 
       sum + pt.questionCategories.reduce((catSum, cat) => 
-        catSum + cat.questions.reduce((qSum, q) => qSum + q.answers.length, 0), 0
+        catSum + (cat.questions || []).reduce((qSum, q) => qSum + (q.answers?.length || 0), 0), 0
       ), 0
     ),
     validationErrors: validationErrors.length,

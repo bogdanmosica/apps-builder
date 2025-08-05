@@ -48,7 +48,7 @@ interface Category {
 }
 
 interface PropertyTypeWithCategories extends PropertyType {
-  categories: Category[];
+  questionCategories: Category[];
 }
 
 export default function QuestionManagement() {
@@ -357,7 +357,7 @@ export default function QuestionManagement() {
         </Card>
       )}
 
-      {!loading && categoriesData && categoriesData.categories.length === 0 && (
+      {!loading && categoriesData && categoriesData.questionCategories.length === 0 && (
         <Card>
           <CardContent className="p-6">
             <div className="text-center">
@@ -375,9 +375,9 @@ export default function QuestionManagement() {
         </Card>
       )}
 
-      {!loading && categoriesData && categoriesData.categories.length > 0 && (
+      {!loading && categoriesData && categoriesData.questionCategories.length > 0 && (
         <Accordion type="multiple" className="space-y-4">
-          {categoriesData.categories.map((category) => (
+          {categoriesData.questionCategories.map((category) => (
             <AccordionItem key={category.id} value={category.id.toString()}>
               <Card>
                 <AccordionTrigger className="px-6 py-4 hover:no-underline">
@@ -387,7 +387,7 @@ export default function QuestionManagement() {
                       <p className="text-sm text-muted-foreground">{category.name_ro}</p>
                     </div>
                     <Badge variant="secondary">
-                      {category.questions.length} question{category.questions.length !== 1 ? 's' : ''}
+                      {category.questions?.length || 0} question{(category.questions?.length || 0) !== 1 ? 's' : ''}
                     </Badge>
                   </div>
                 </AccordionTrigger>
@@ -401,7 +401,7 @@ export default function QuestionManagement() {
                       </Button>
                     </div>
 
-                    {category.questions.length === 0 ? (
+                    {(category.questions?.length || 0) === 0 ? (
                       <div className="text-center py-8 border-2 border-dashed border-muted rounded-lg">
                         <MessageSquare className="w-8 h-8 mx-auto text-muted-foreground mb-2" />
                         <p className="text-muted-foreground mb-4">No questions in this category yet</p>
@@ -421,7 +421,7 @@ export default function QuestionManagement() {
                           </TableRow>
                         </TableHeader>
                         <TableBody>
-                          {category.questions.map((question) => (
+                          {(category.questions || []).map((question) => (
                             <TableRow key={question.id}>
                               <TableCell>
                                 <div>
