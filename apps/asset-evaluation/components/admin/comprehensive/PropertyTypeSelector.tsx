@@ -43,7 +43,6 @@ export default function PropertyTypeSelector({
   return (
     <div className="space-y-6">
       <div>
-        <h3 className="text-lg font-semibold mb-2">Property Types Overview</h3>
         <p className="text-muted-foreground text-sm">
           Select a property type to manage its categories, questions, and answers. 
           Use the tabs above to navigate between different management sections.

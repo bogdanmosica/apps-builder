@@ -52,8 +52,8 @@ export async function PATCH(
   try {
     const user = await getUser();
     
-    // Only admin users can update questions
-    if (!user || user.role !== 'admin') {
+    // Only admin/owner users can update questions
+    if (!user || !['admin', 'owner'].includes(user.role)) {
       return NextResponse.json(
         { success: false, error: 'Unauthorized' },
         { status: 401 }
@@ -127,8 +127,8 @@ export async function DELETE(
   try {
     const user = await getUser();
     
-    // Only admin users can delete questions
-    if (!user || user.role !== 'admin') {
+    // Only admin/owner users can delete questions
+    if (!user || !['admin', 'owner'].includes(user.role)) {
       return NextResponse.json(
         { success: false, error: 'Unauthorized' },
         { status: 401 }

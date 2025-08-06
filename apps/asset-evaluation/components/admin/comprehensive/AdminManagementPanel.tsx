@@ -6,13 +6,17 @@ import { Button } from '@workspace/ui/components/button';
 import { Input } from '@workspace/ui/components/input';
 import { Badge } from '@workspace/ui/components/badge';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@workspace/ui/components/card';
-import { Building2, FolderOpen, MessageSquare, CheckSquare, Search, Languages, AlertTriangle, CheckCircle } from 'lucide-react';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator } from '@workspace/ui/components/dropdown-menu';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@workspace/ui/components/dialog';
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@workspace/ui/components/accordion';
+import { Building2, FolderOpen, MessageSquare, CheckSquare, Search, Languages, AlertTriangle, CheckCircle, Download, Upload, FileText, FileSpreadsheet, ChevronDown } from 'lucide-react';
 import { toast } from 'sonner';
 import { PropertyTypeWithRelations } from '@/lib/types/admin';
 import PropertyTypeSelector from './PropertyTypeSelector';
 import PropertyTypeManager from './PropertyTypeManager';
 import CategoryManager from './CategoryManager';
 import QuestionManager from './QuestionManager';
+import EnhancedBulkImportDialog from '../dialogs/EnhancedBulkImportDialog';
 
 interface AdminManagementPanelProps {
   initialData: PropertyTypeWithRelations[];
@@ -27,6 +31,9 @@ export default function AdminManagementPanel({ initialData }: AdminManagementPan
   const [language, setLanguage] = useState<'ro' | 'en'>('ro');
   const [searchQuery, setSearchQuery] = useState('');
   const [validationErrors, setValidationErrors] = useState<string[]>([]);
+  
+  // Bulk import/export state
+  const [showImportDialog, setShowImportDialog] = useState(false);
 
   // Get selected property type
   const selectedPropertyType = propertyTypes.find(pt => pt.id === selectedPropertyTypeId);
@@ -131,6 +138,86 @@ export default function AdminManagementPanel({ initialData }: AdminManagementPan
     validationErrors: validationErrors.length,
   };
 
+  // Bulk Operations Functions
+  const handleDownloadTemplate = async (format: 'excel' | 'markdown' = 'excel') => {
+    try {
+      const params = new URLSearchParams({
+        type: 'template',
+        format,
+        ...(selectedPropertyTypeId && { propertyTypeId: selectedPropertyTypeId.toString() })
+      });
+      
+      const response = await fetch(`/api/admin/questions/template?${params}`);
+      
+      if (!response.ok) throw new Error('Failed to download template');
+      
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      
+      const selectedPropertyType = propertyTypes.find(pt => pt.id === selectedPropertyTypeId);
+      const typeName = selectedPropertyType 
+        ? selectedPropertyType.name_ro.toLowerCase().replace(/\s+/g, '-')
+        : 'all-types';
+      const extension = format === 'excel' ? 'xlsx' : 'md';
+      const date = new Date().toISOString().split('T')[0];
+      
+      a.download = `questions-template-${typeName}-${date}.${extension}`;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+      
+      toast.success(`${format === 'excel' ? 'Excel' : 'Markdown'} template downloaded successfully`);
+    } catch (error) {
+      console.error('Error downloading template:', error);
+      toast.error('Failed to download template');
+    }
+  };
+
+  const handleExportData = async (format: 'excel' | 'markdown' = 'excel') => {
+    try {
+      const params = new URLSearchParams({
+        type: 'export',
+        format,
+        ...(selectedPropertyTypeId && { propertyTypeId: selectedPropertyTypeId.toString() })
+      });
+      
+      const response = await fetch(`/api/admin/questions/template?${params}`);
+      
+      if (!response.ok) throw new Error('Failed to export data');
+      
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      
+      const selectedPropertyType = propertyTypes.find(pt => pt.id === selectedPropertyTypeId);
+      const typeName = selectedPropertyType 
+        ? selectedPropertyType.name_ro.toLowerCase().replace(/\s+/g, '-')
+        : 'all-types';
+      const extension = format === 'excel' ? 'xlsx' : 'md';
+      const date = new Date().toISOString().split('T')[0];
+      
+      a.download = `questions-export-${typeName}-${date}.${extension}`;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+      
+      toast.success(`Data exported to ${format === 'excel' ? 'Excel' : 'Markdown'} successfully`);
+    } catch (error) {
+      console.error('Error exporting data:', error);
+      toast.error('Failed to export data');
+    }
+  };
+
+  const handleImportSuccess = () => {
+    // Refresh data after successful import
+    window.location.reload();
+  };
+
   return (
     <div className="space-y-6 p-6">
       {/* Header with Language Toggle and Search */}
@@ -157,19 +244,64 @@ export default function AdminManagementPanel({ initialData }: AdminManagementPan
           </div>
         </div>
 
-        {/* Validation Status */}
-        <div className="flex items-center gap-2">
-          {validationErrors.length === 0 ? (
-            <div className="flex items-center gap-2 text-green-600">
-              <CheckCircle className="h-4 w-4" />
-              <span className="text-sm font-medium">System Valid</span>
-            </div>
-          ) : (
-            <div className="flex items-center gap-2 text-red-600">
-              <AlertTriangle className="h-4 w-4" />
-              <span className="text-sm font-medium">{validationErrors.length} Issues</span>
-            </div>
-          )}
+        {/* Validation Status and Actions */}
+        <div className="flex items-center gap-4">
+          {/* Validation Status */}
+          <div className="flex items-center gap-2">
+            {validationErrors.length === 0 ? (
+              <div className="flex items-center gap-2 text-green-600">
+                <CheckCircle className="h-4 w-4" />
+                <span className="text-sm font-medium">System Valid</span>
+              </div>
+            ) : (
+              <div className="flex items-center gap-2 text-red-600">
+                <AlertTriangle className="h-4 w-4" />
+                <span className="text-sm font-medium">{validationErrors.length} Issues</span>
+              </div>
+            )}
+          </div>
+
+          {/* Import/Export Actions */}
+          <div className="flex items-center gap-2">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" size="sm">
+                  <Download className="h-4 w-4 mr-2" />
+                  Export
+                  <ChevronDown className="h-4 w-4 ml-2" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem onClick={() => handleDownloadTemplate('excel')}>
+                  <FileSpreadsheet className="h-4 w-4 mr-2" />
+                  Download Excel Template
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => handleDownloadTemplate('markdown')}>
+                  <FileText className="h-4 w-4 mr-2" />
+                  Download Markdown Template
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={() => handleExportData('excel')}>
+                  <FileSpreadsheet className="h-4 w-4 mr-2" />
+                  Export Data to Excel
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => handleExportData('markdown')}>
+                  <FileText className="h-4 w-4 mr-2" />
+                  Export Data to Markdown
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+
+            <Button 
+              variant="outline" 
+              size="sm"
+              onClick={() => setShowImportDialog(true)}
+              disabled={!selectedPropertyType}
+            >
+              <Upload className="h-4 w-4 mr-2" />
+              Import
+            </Button>
+          </div>
         </div>
       </div>
 
@@ -209,21 +341,36 @@ export default function AdminManagementPanel({ initialData }: AdminManagementPan
         </Card>
       </div>
 
-      {/* Property Type Selector - Acts as Filter */}
-      <PropertyTypeSelector
-        propertyTypes={propertyTypes}
-        selectedId={selectedPropertyTypeId}
-        onSelect={handlePropertyTypeSelect}
-        language={language}
-        searchQuery={searchQuery}
-      />
+      {/* Property Types Overview Accordion */}
+      <Accordion type="single" collapsible defaultValue="property-types-overview" className="w-full">
+        <AccordionItem value="property-types-overview">
+          <AccordionTrigger className="text-lg font-semibold">
+            Property Types Overview
+          </AccordionTrigger>
+          <AccordionContent className="pt-4">
+            <PropertyTypeSelector
+              propertyTypes={propertyTypes}
+              selectedId={selectedPropertyTypeId}
+              onSelect={handlePropertyTypeSelect}
+              language={language}
+              searchQuery={searchQuery}
+            />
+          </AccordionContent>
+        </AccordionItem>
+      </Accordion>
 
       {/* Tabs for Management Interface */}
       <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-        <TabsList className="grid w-full grid-cols-3">
-          <TabsTrigger value="property-types">Property Type Management</TabsTrigger>
-          <TabsTrigger value="categories">Categories</TabsTrigger>
-          <TabsTrigger value="questions">Questions</TabsTrigger>
+        <TabsList className="grid w-full grid-cols-3 h-12 p-1 bg-muted/50">
+          <TabsTrigger value="property-types" className="text-sm font-medium px-4 py-2">
+            Management
+          </TabsTrigger>
+          <TabsTrigger value="categories" className="text-sm font-medium px-4 py-2">
+            Categories
+          </TabsTrigger>
+          <TabsTrigger value="questions" className="text-sm font-medium px-4 py-2">
+            Questions
+          </TabsTrigger>
         </TabsList>
 
         <TabsContent value="property-types" className="space-y-6">
@@ -267,6 +414,17 @@ export default function AdminManagementPanel({ initialData }: AdminManagementPan
           )}
         </TabsContent>
       </Tabs>
+
+      {/* Enhanced Bulk Import Dialog */}
+      {selectedPropertyType && (
+        <EnhancedBulkImportDialog
+          open={showImportDialog}
+          onOpenChange={setShowImportDialog}
+          propertyTypeId={selectedPropertyType.id}
+          propertyTypeName={selectedPropertyType.name_ro}
+          onSuccess={handleImportSuccess}
+        />
+      )}
     </div>
   );
 }

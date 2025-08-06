@@ -15,8 +15,8 @@ export const dynamic = 'force-dynamic';
 export default async function PropertyTypesAdminPage() {
   const user = await getUser();
   
-  // If user is not logged in or not an admin, redirect to home page
-  if (!user || !['admin'].includes(user.role)) {
+  // If user is not logged in or not an admin/owner, redirect to home page
+  if (!user || !['admin', 'owner'].includes(user.role)) {
     redirect('/');
   }
 
@@ -51,7 +51,7 @@ export default async function PropertyTypesAdminPage() {
               QA Management
             </h1>
             <Badge variant="default" className="ml-2">
-              ADMIN
+              {user.role.toUpperCase()}
             </Badge>
           </div>
           <p className="text-text-muted max-w-3xl">

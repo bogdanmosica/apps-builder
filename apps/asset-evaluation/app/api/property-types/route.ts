@@ -37,8 +37,8 @@ export async function POST(request: Request) {
   try {
     const user = await getUser();
     
-    // Only admin users can create property types
-    if (!user || user.role !== 'admin') {
+    // Only admin/owner users can create property types
+    if (!user || !['admin', 'owner'].includes(user.role)) {
       return NextResponse.json(
         { success: false, error: 'Unauthorized' },
         { status: 401 }

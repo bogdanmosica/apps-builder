@@ -91,26 +91,36 @@ function DashboardHeader() {
     <div className='w-full border-b bg-background'>
       <div className='container mx-auto px-4 py-4 flex items-center justify-between'>
         {/* Mobile Navigation */}
-        <div className='flex items-center'>
+        <div className='flex items-center space-x-3'>
           <Sheet>
             <SheetTrigger asChild>
-              <Button size='icon' variant='outline' className='sm:hidden mr-4'>
+              <Button size='icon' variant='outline' className='sm:hidden'>
                 <PanelLeft className='h-5 w-5' aria-hidden='true' />
                 <span className='sr-only'>Toggle Menu</span>
               </Button>
             </SheetTrigger>
             <SheetContent side='left' className='sm:max-w-xs'>
-              <nav className='grid gap-6 text-lg font-medium'>
-                <div className='flex items-center space-x-2 mb-4'>
+              <nav className='grid gap-2 text-lg font-medium'>
+                <div className='flex items-center space-x-2 mb-6 px-2.5'>
                   <Home className='h-8 w-8 text-primary' />
-                  <span className='text-2xl font-bold text-foreground'>
+                  <span className='text-xl font-bold text-foreground'>
                     Asset Evaluation
                   </span>
+                </div>
+                
+                {/* Mobile Search */}
+                <div className='relative mb-4 px-2.5'>
+                  <Search className='absolute left-5 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground' />
+                  <Input
+                    type='search'
+                    placeholder='Search...'
+                    className='pl-9'
+                  />
                 </div>
                 <Link
                   href='/dashboard'
                   className={cn(
-                    'flex items-center gap-4 px-2.5 py-2 rounded-md transition-colors',
+                    'flex items-center gap-3 px-3 py-3 rounded-lg transition-colors text-base',
                     isActive('/dashboard') 
                       ? 'bg-primary/10 text-primary font-semibold border-l-4 border-primary' 
                       : 'text-muted-foreground hover:text-foreground hover:bg-muted'
@@ -122,7 +132,7 @@ function DashboardHeader() {
                 <Link
                   href='/dashboard/analytics'
                   className={cn(
-                    'flex items-center gap-4 px-2.5 py-2 rounded-md transition-colors',
+                    'flex items-center gap-3 px-3 py-3 rounded-lg transition-colors text-base',
                     isActive('/dashboard/analytics') 
                       ? 'bg-primary/10 text-primary font-semibold border-l-4 border-primary' 
                       : 'text-muted-foreground hover:text-foreground hover:bg-muted'
@@ -147,7 +157,7 @@ function DashboardHeader() {
                 <Link
                   href='/dashboard/ai-insights'
                   className={cn(
-                    'flex items-center gap-4 px-2.5 py-2 rounded-md transition-colors',
+                    'flex items-center gap-3 px-3 py-3 rounded-lg transition-colors text-base',
                     isActive('/dashboard/ai-insights') 
                       ? 'bg-primary/10 text-primary font-semibold border-l-4 border-primary' 
                       : 'text-muted-foreground hover:text-foreground hover:bg-muted'
@@ -159,7 +169,7 @@ function DashboardHeader() {
                 <Link
                   href='/dashboard/integrations'
                   className={cn(
-                    'flex items-center gap-4 px-2.5 py-2 rounded-md transition-colors',
+                    'flex items-center gap-3 px-3 py-3 rounded-lg transition-colors text-base',
                     isActive('/dashboard/integrations') 
                       ? 'bg-primary/10 text-primary font-semibold border-l-4 border-primary' 
                       : 'text-muted-foreground hover:text-foreground hover:bg-muted'
@@ -171,7 +181,7 @@ function DashboardHeader() {
                 <Link
                   href='/billing'
                   className={cn(
-                    'flex items-center gap-4 px-2.5 py-2 rounded-md transition-colors',
+                    'flex items-center gap-3 px-3 py-3 rounded-lg transition-colors text-base',
                     isActive('/billing') 
                       ? 'bg-primary/10 text-primary font-semibold border-l-4 border-primary' 
                       : 'text-muted-foreground hover:text-foreground hover:bg-muted'
@@ -183,7 +193,7 @@ function DashboardHeader() {
                 <Link
                   href='/dashboard/property-types'
                   className={cn(
-                    'flex items-center gap-4 px-2.5 py-2 rounded-md transition-colors',
+                    'flex items-center gap-3 px-3 py-3 rounded-lg transition-colors text-base',
                     isActive('/dashboard/property-types') 
                       ? 'bg-primary/10 text-primary font-semibold border-l-4 border-primary' 
                       : 'text-muted-foreground hover:text-foreground hover:bg-muted'
@@ -195,7 +205,7 @@ function DashboardHeader() {
                 <Link
                   href='/todo'
                   className={cn(
-                    'flex items-center gap-4 px-2.5 py-2 rounded-md transition-colors',
+                    'flex items-center gap-3 px-3 py-3 rounded-lg transition-colors text-base',
                     isActive('/todo') 
                       ? 'bg-primary/10 text-primary font-semibold border-l-4 border-primary' 
                       : 'text-muted-foreground hover:text-foreground hover:bg-muted'
@@ -207,7 +217,7 @@ function DashboardHeader() {
                 <Link
                   href='/dashboard/settings'
                   className={cn(
-                    'flex items-center gap-4 px-2.5 py-2 rounded-md transition-colors',
+                    'flex items-center gap-3 px-3 py-3 rounded-lg transition-colors text-base',
                     isActive('/dashboard/settings') 
                       ? 'bg-primary/10 text-primary font-semibold border-l-4 border-primary' 
                       : 'text-muted-foreground hover:text-foreground hover:bg-muted'
@@ -312,8 +322,8 @@ function DashboardHeader() {
         </nav>
 
         {/* Right side actions */}
-        <div className='flex items-center space-x-4'>
-          <div className='relative'>
+        <div className='flex items-center space-x-3'>
+          <div className='relative hidden sm:block'>
             <Search
               className='absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground'
               aria-hidden='true'
@@ -321,7 +331,7 @@ function DashboardHeader() {
             <Input
               type='search'
               placeholder='Search...'
-              className='w-[200px] lg:w-[320px] pl-9'
+              className='w-[180px] lg:w-[280px] pl-9'
             />
           </div>
 

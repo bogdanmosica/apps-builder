@@ -21,7 +21,7 @@ export async function GET() {
   try {
     const user = await getUser();
     
-    if (!user || !['admin'].includes(user.role)) {
+    if (!user || !['admin', 'owner'].includes(user.role)) {
       return NextResponse.json(
         { success: false, error: 'Unauthorized' },
         { status: 403 }
@@ -56,7 +56,7 @@ export async function POST(request: NextRequest) {
   try {
     const user = await getUser();
     
-    if (!user || !['admin'].includes(user.role)) {
+    if (!user || !['admin', 'owner'].includes(user.role)) {
       return NextResponse.json(
         { success: false, error: 'Unauthorized' },
         { status: 403 }

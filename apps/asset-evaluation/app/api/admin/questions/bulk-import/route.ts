@@ -19,7 +19,7 @@ export async function POST(request: NextRequest) {
   try {
     const user = await getUser();
     
-    if (!user || user.role !== 'admin') {
+    if (!user || !['admin', 'owner'].includes(user.role)) {
       return NextResponse.json(
         { error: 'Unauthorized. Admin access required.' },
         { status: 403 }
