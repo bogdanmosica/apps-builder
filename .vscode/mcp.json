@@ -1,0 +1,10 @@
+{
+  "servers": {
+    "online-docs-mcp": {
+      "command": "node",
+      "args": ["packages/mcp-online-docs/dist/index.js"],
+      "env": {}
+    }
+  },
+  "inputs": []
+}

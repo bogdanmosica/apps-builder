@@ -1,0 +1,30 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(pnpm build:*)",
+      "Bash(rm:*)",
+      "Bash(pnpm install:*)",
+      "WebFetch(domain:docs.anthropic.com)",
+      "Bash(find:*)",
+      "mcp__online-docs-mcp__fetch_docs",
+      "Bash(npx create-next-app@latest:*)",
+      "Bash(npm uninstall:*)",
+      "Bash(pnpm add:*)",
+      "Bash(mv:*)",
+      "Bash(pkill:*)",
+      "Bash(taskkill:*)",
+      "Bash(move:*)",
+      "Bash(cmd /c \"move romanian-id-ocr apps\\romanian-id-ocr\")",
+      "Bash(cp:*)",
+      "Bash(mkdir:*)",
+      "Bash(pnpm approve-builds:*)",
+      "Bash(turbo dev:*)",
+      "Bash(pnpm remove:*)",
+      "Bash(pnpm dev:*)",
+      "Bash(next dev:*)",
+      "Bash(pnpm run:*)",
+      "Bash(powershell:*)"
+    ],
+    "deny": []
+  }
+}

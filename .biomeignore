@@ -1,0 +1,41 @@
+# Dependencies
+**/node_modules/
+**/pnpm-lock.yaml
+
+# Build outputs
+**/dist/
+**/build/
+**/.next/
+**/out/
+**/.turbo/
+
+# Generated files
+**/*.d.ts
+**/*.min.*
+**/coverage/
+
+# Assets and public files
+**/public/
+**/assets/
+**/static/
+**/*.svg
+**/*.png
+**/*.jpg
+**/*.jpeg
+**/*.gif
+**/*.ico
+**/*.woff*
+**/*.ttf
+**/*.eot
+
+# Config files that shouldn't be formatted
+**/.env*
+**/tsconfig*.json
+**/package-lock.json
+**/yarn.lock
+
+# IDE and OS files
+**/.vscode/
+**/.idea/
+**/.DS_Store
+**/Thumbs.db

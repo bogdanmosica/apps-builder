@@ -1,0 +1,27 @@
+{
+  "name": "@workspace/mcp-online-docs",
+  "version": "0.1.0",
+  "private": true,
+  "description": "MCP server for fetching online documentation from multiple sources",
+  "type": "module",
+  "main": "dist/index.js",
+  "bin": {
+    "mcp-online-docs": "dist/index.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "start": "node dist/index.js",
+    "clean": "rm -rf dist"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^0.5.0",
+    "cheerio": "^1.0.0",
+    "node-fetch": "^3.3.2"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "typescript": "^5.7.0"
+  },
+  "keywords": ["mcp", "docs", "documentation", "react", "nextjs", "online"]
+}
