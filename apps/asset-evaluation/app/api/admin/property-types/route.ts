@@ -1,17 +1,17 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { getUser } from '@/lib/db/queries';
-import { db } from '@/lib/db/drizzle';
-import { propertyTypes } from '@/lib/db/schema';
-import { eq } from 'drizzle-orm';
-import { z } from 'zod';
+import { eq } from "drizzle-orm";
+import { type NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
+import { db } from "@/lib/db/drizzle";
+import { getUser } from "@/lib/db/queries";
+import { propertyTypes } from "@/lib/db/schema";
 
 const createPropertyTypeSchema = z.object({
-  name_ro: z.string().min(1, 'Romanian name is required'),
+  name_ro: z.string().min(1, "Romanian name is required"),
   name_en: z.string().nullable(),
 });
 
 const updatePropertyTypeSchema = z.object({
-  name_ro: z.string().min(1, 'Romanian name is required'),
+  name_ro: z.string().min(1, "Romanian name is required"),
   name_en: z.string().nullable(),
 });
 
@@ -19,11 +19,11 @@ const updatePropertyTypeSchema = z.object({
 export async function GET() {
   try {
     const user = await getUser();
-    
-    if (!user || !['admin', 'owner'].includes(user.role)) {
+
+    if (!user || !["admin", "owner"].includes(user.role)) {
       return NextResponse.json(
-        { success: false, error: 'Unauthorized' },
-        { status: 403 }
+        { success: false, error: "Unauthorized" },
+        { status: 403 },
       );
     }
 
@@ -46,10 +46,10 @@ export async function GET() {
       data: allPropertyTypes,
     });
   } catch (error) {
-    console.error('Error fetching property types:', error);
+    console.error("Error fetching property types:", error);
     return NextResponse.json(
-      { success: false, error: 'Internal server error' },
-      { status: 500 }
+      { success: false, error: "Internal server error" },
+      { status: 500 },
     );
   }
 }
@@ -58,11 +58,11 @@ export async function GET() {
 export async function POST(request: NextRequest) {
   try {
     const user = await getUser();
-    
-    if (!user || !['admin', 'owner'].includes(user.role)) {
+
+    if (!user || !["admin", "owner"].includes(user.role)) {
       return NextResponse.json(
-        { success: false, error: 'Unauthorized' },
-        { status: 403 }
+        { success: false, error: "Unauthorized" },
+        { status: 403 },
       );
     }
 
@@ -71,8 +71,12 @@ export async function POST(request: NextRequest) {
 
     if (!validation.success) {
       return NextResponse.json(
-        { success: false, error: 'Invalid input', details: validation.error.issues },
-        { status: 400 }
+        {
+          success: false,
+          error: "Invalid input",
+          details: validation.error.issues,
+        },
+        { status: 400 },
       );
     }
 
@@ -85,8 +89,11 @@ export async function POST(request: NextRequest) {
 
     if (existing) {
       return NextResponse.json(
-        { success: false, error: 'Property type with this Romanian name already exists' },
-        { status: 409 }
+        {
+          success: false,
+          error: "Property type with this Romanian name already exists",
+        },
+        { status: 409 },
       );
     }
 
@@ -105,10 +112,10 @@ export async function POST(request: NextRequest) {
       data: newPropertyType,
     });
   } catch (error) {
-    console.error('Error creating property type:', error);
+    console.error("Error creating property type:", error);
     return NextResponse.json(
-      { success: false, error: 'Internal server error' },
-      { status: 500 }
+      { success: false, error: "Internal server error" },
+      { status: 500 },
     );
   }
 }

@@ -1,9 +1,6 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { Button } from '@workspace/ui/components/button';
-import { Input } from '@workspace/ui/components/input';
-import { Label } from '@workspace/ui/components/label';
+import { Button } from "@workspace/ui/components/button";
 import {
   Dialog,
   DialogClose,
@@ -12,8 +9,11 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from '@workspace/ui/components/dialog';
-import { toast } from 'sonner';
+} from "@workspace/ui/components/dialog";
+import { Input } from "@workspace/ui/components/input";
+import { Label } from "@workspace/ui/components/label";
+import { useState } from "react";
+import { toast } from "sonner";
 
 interface EditPropertyDialogProps {
   isOpen: boolean;
@@ -26,23 +26,27 @@ interface EditPropertyDialogProps {
   onSuccess: () => void;
 }
 
-export default function EditPropertyDialog({ 
-  isOpen, 
-  onClose, 
-  evaluation, 
-  onSuccess 
+export default function EditPropertyDialog({
+  isOpen,
+  onClose,
+  evaluation,
+  onSuccess,
 }: EditPropertyDialogProps) {
-  const [propertyName, setPropertyName] = useState(evaluation.propertyName || '');
-  const [propertyLocation, setPropertyLocation] = useState(evaluation.propertyLocation || '');
+  const [propertyName, setPropertyName] = useState(
+    evaluation.propertyName || "",
+  );
+  const [propertyLocation, setPropertyLocation] = useState(
+    evaluation.propertyLocation || "",
+  );
   const [isLoading, setIsLoading] = useState(false);
 
   const handleSave = async () => {
     setIsLoading(true);
     try {
       const response = await fetch(`/api/evaluation/${evaluation.id}`, {
-        method: 'PATCH',
+        method: "PATCH",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           propertyName: propertyName.trim() || null,
@@ -51,16 +55,16 @@ export default function EditPropertyDialog({
       });
 
       if (!response.ok) {
-        throw new Error('Failed to update property');
+        throw new Error("Failed to update property");
       }
 
-      toast.success('Property details updated successfully!');
+      toast.success("Property details updated successfully!");
 
       onSuccess();
       onClose();
     } catch (error) {
-      console.error('Error updating property:', error);
-      toast.error('Failed to update property details. Please try again.');
+      console.error("Error updating property:", error);
+      toast.error("Failed to update property details. Please try again.");
     } finally {
       setIsLoading(false);
     }
@@ -75,7 +79,7 @@ export default function EditPropertyDialog({
             Update the name and location for this property evaluation.
           </DialogDescription>
         </DialogHeader>
-        
+
         <div className="space-y-4 py-4">
           <div className="space-y-2">
             <Label htmlFor="propertyName">Property Name</Label>
@@ -86,7 +90,7 @@ export default function EditPropertyDialog({
               placeholder="e.g., My Dream House, Downtown Apartment"
             />
           </div>
-          
+
           <div className="space-y-2">
             <Label htmlFor="propertyLocation">Location</Label>
             <Input
@@ -97,14 +101,14 @@ export default function EditPropertyDialog({
             />
           </div>
         </div>
-        
+
         <DialogFooter className="sm:justify-start">
           <Button
             onClick={handleSave}
             disabled={isLoading}
             className="bg-primary hover:bg-primary-dark"
           >
-            {isLoading ? 'Saving...' : 'Save Changes'}
+            {isLoading ? "Saving..." : "Save Changes"}
           </Button>
           <DialogClose asChild>
             <Button type="button" variant="secondary">

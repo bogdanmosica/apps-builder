@@ -1,32 +1,32 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { Button } from '@workspace/ui/components/button';
-import { Input } from '@workspace/ui/components/input';
-import { Label } from '@workspace/ui/components/label';
-import { Textarea } from '@workspace/ui/components/textarea';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@workspace/ui/components/select';
+import { Button } from "@workspace/ui/components/button";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from '@workspace/ui/components/card';
-import { Separator } from '@workspace/ui/components/separator';
-import { MapPin, Upload, Euro, Home, Bed, Bath, Ruler } from 'lucide-react';
+} from "@workspace/ui/components/card";
+import { Input } from "@workspace/ui/components/input";
+import { Label } from "@workspace/ui/components/label";
 import {
-  PROPERTY_TYPE_OPTIONS,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@workspace/ui/components/select";
+import { Separator } from "@workspace/ui/components/separator";
+import { Textarea } from "@workspace/ui/components/textarea";
+import { Bath, Bed, Euro, Home, MapPin, Ruler, Upload } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import {
   LISTING_TYPE_OPTIONS,
+  PROPERTY_TYPE_OPTIONS,
   ROMANIAN_COUNTIES,
-} from '../lib/constants';
+} from "../lib/constants";
 
 interface PropertyFormData {
   title: string;
@@ -59,24 +59,24 @@ export function PropertyForm({
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState<PropertyFormData>({
-    title: initialData?.title || '',
-    description: initialData?.description || '',
-    propertyType: initialData?.propertyType || 'apartment',
-    listingType: initialData?.listingType || 'sale',
-    address: initialData?.address || '',
-    city: initialData?.city || '',
-    county: initialData?.county || '',
-    postalCode: initialData?.postalCode || '',
-    price: initialData?.price || '',
-    area: initialData?.area || '',
-    rooms: initialData?.rooms || '',
-    bedrooms: initialData?.bedrooms || '',
-    bathrooms: initialData?.bathrooms || '',
-    floor: initialData?.floor || '',
-    totalFloors: initialData?.totalFloors || '',
-    yearBuilt: initialData?.yearBuilt || '',
-    features: initialData?.features || '',
-    amenities: initialData?.amenities || '',
+    title: initialData?.title || "",
+    description: initialData?.description || "",
+    propertyType: initialData?.propertyType || "apartment",
+    listingType: initialData?.listingType || "sale",
+    address: initialData?.address || "",
+    city: initialData?.city || "",
+    county: initialData?.county || "",
+    postalCode: initialData?.postalCode || "",
+    price: initialData?.price || "",
+    area: initialData?.area || "",
+    rooms: initialData?.rooms || "",
+    bedrooms: initialData?.bedrooms || "",
+    bathrooms: initialData?.bathrooms || "",
+    floor: initialData?.floor || "",
+    totalFloors: initialData?.totalFloors || "",
+    yearBuilt: initialData?.yearBuilt || "",
+    features: initialData?.features || "",
+    amenities: initialData?.amenities || "",
   });
 
   const handleInputChange = (field: keyof PropertyFormData, value: string) => {
@@ -93,13 +93,13 @@ export function PropertyForm({
     try {
       const url = propertyId
         ? `/api/properties/${propertyId}`
-        : '/api/properties';
-      const method = propertyId ? 'PUT' : 'POST';
+        : "/api/properties";
+      const method = propertyId ? "PUT" : "POST";
 
       const response = await fetch(url, {
         method,
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           ...formData,
@@ -120,79 +120,79 @@ export function PropertyForm({
         const property = await response.json();
         router.push(`/properties/${property.id}`);
       } else {
-        console.error('Failed to save property');
+        console.error("Failed to save property");
       }
     } catch (error) {
-      console.error('Error saving property:', error);
+      console.error("Error saving property:", error);
     } finally {
       setIsLoading(false);
     }
   };
 
   return (
-    <div className='max-w-4xl mx-auto p-6'>
+    <div className="max-w-4xl mx-auto p-6">
       <Card>
         <CardHeader>
-          <CardTitle className='flex items-center gap-2'>
-            <Home className='h-6 w-6' />
-            {propertyId ? 'Editează proprietatea' : 'Adaugă proprietate nouă'}
+          <CardTitle className="flex items-center gap-2">
+            <Home className="h-6 w-6" />
+            {propertyId ? "Editează proprietatea" : "Adaugă proprietate nouă"}
           </CardTitle>
           <CardDescription>
             {propertyId
-              ? 'Modifică detaliile proprietății tale'
-              : 'Completează formularul pentru a adăuga o proprietate nouă'}
+              ? "Modifică detaliile proprietății tale"
+              : "Completează formularul pentru a adăuga o proprietate nouă"}
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <form onSubmit={handleSubmit} className='space-y-6'>
+          <form onSubmit={handleSubmit} className="space-y-6">
             {/* Basic Information */}
-            <div className='space-y-4'>
-              <h3 className='text-lg font-semibold'>Informații de bază</h3>
+            <div className="space-y-4">
+              <h3 className="text-lg font-semibold">Informații de bază</h3>
 
-              <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
-                <div className='space-y-2'>
-                  <Label htmlFor='title'>Titlu anunț *</Label>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="title">Titlu anunț *</Label>
                   <Input
-                    id='title'
+                    id="title"
                     value={formData.title}
                     onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                      handleInputChange('title', e.target.value)
+                      handleInputChange("title", e.target.value)
                     }
-                    placeholder='ex. Apartament 2 camere, zona centrală'
+                    placeholder="ex. Apartament 2 camere, zona centrală"
                     required
                   />
                 </div>
 
-                <div className='space-y-2'>
-                  <Label htmlFor='price'>Preț (EUR) *</Label>
-                  <div className='relative'>
-                    <Euro className='absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400' />
+                <div className="space-y-2">
+                  <Label htmlFor="price">Preț (EUR) *</Label>
+                  <div className="relative">
+                    <Euro className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
                     <Input
-                      id='price'
-                      type='number'
+                      id="price"
+                      type="number"
                       value={formData.price}
                       onChange={(e) =>
-                        handleInputChange('price', e.target.value)
+                        handleInputChange("price", e.target.value)
                       }
-                      placeholder='150000'
-                      className='pl-10'
+                      placeholder="150000"
+                      className="pl-10"
                       required
                     />
                   </div>
                 </div>
               </div>
 
-              <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
-                <div className='space-y-2'>
-                  <Label htmlFor='propertyType'>Tip proprietate *</Label>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="propertyType">Tip proprietate *</Label>
                   <Select
                     value={formData.propertyType}
                     onValueChange={(value) =>
-                      handleInputChange('propertyType', value)
+                      handleInputChange("propertyType", value)
                     }
                   >
                     <SelectTrigger>
-                      <SelectValue placeholder='Selectează tipul' />
+                      <SelectValue placeholder="Selectează tipul" />
                     </SelectTrigger>
                     <SelectContent>
                       {PROPERTY_TYPE_OPTIONS.map((type) => (
@@ -204,16 +204,16 @@ export function PropertyForm({
                   </Select>
                 </div>
 
-                <div className='space-y-2'>
-                  <Label htmlFor='listingType'>Tip anunț *</Label>
+                <div className="space-y-2">
+                  <Label htmlFor="listingType">Tip anunț *</Label>
                   <Select
                     value={formData.listingType}
                     onValueChange={(value) =>
-                      handleInputChange('listingType', value)
+                      handleInputChange("listingType", value)
                     }
                   >
                     <SelectTrigger>
-                      <SelectValue placeholder='Selectează tipul' />
+                      <SelectValue placeholder="Selectează tipul" />
                     </SelectTrigger>
                     <SelectContent>
                       {LISTING_TYPE_OPTIONS.map((type) => (
@@ -226,15 +226,15 @@ export function PropertyForm({
                 </div>
               </div>
 
-              <div className='space-y-2'>
-                <Label htmlFor='description'>Descriere</Label>
+              <div className="space-y-2">
+                <Label htmlFor="description">Descriere</Label>
                 <Textarea
-                  id='description'
+                  id="description"
                   value={formData.description}
                   onChange={(e) =>
-                    handleInputChange('description', e.target.value)
+                    handleInputChange("description", e.target.value)
                   }
-                  placeholder='Descrie proprietatea în detaliu...'
+                  placeholder="Descrie proprietatea în detaliu..."
                   rows={4}
                 />
               </div>
@@ -243,45 +243,45 @@ export function PropertyForm({
             <Separator />
 
             {/* Location */}
-            <div className='space-y-4'>
-              <h3 className='text-lg font-semibold flex items-center gap-2'>
-                <MapPin className='h-5 w-5' />
+            <div className="space-y-4">
+              <h3 className="text-lg font-semibold flex items-center gap-2">
+                <MapPin className="h-5 w-5" />
                 Locație
               </h3>
 
-              <div className='space-y-2'>
-                <Label htmlFor='address'>Adresa *</Label>
+              <div className="space-y-2">
+                <Label htmlFor="address">Adresa *</Label>
                 <Input
-                  id='address'
+                  id="address"
                   value={formData.address}
-                  onChange={(e) => handleInputChange('address', e.target.value)}
-                  placeholder='Strada și numărul'
+                  onChange={(e) => handleInputChange("address", e.target.value)}
+                  placeholder="Strada și numărul"
                   required
                 />
               </div>
 
-              <div className='grid grid-cols-1 md:grid-cols-3 gap-4'>
-                <div className='space-y-2'>
-                  <Label htmlFor='city'>Oraș *</Label>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="city">Oraș *</Label>
                   <Input
-                    id='city'
+                    id="city"
                     value={formData.city}
-                    onChange={(e) => handleInputChange('city', e.target.value)}
-                    placeholder='București'
+                    onChange={(e) => handleInputChange("city", e.target.value)}
+                    placeholder="București"
                     required
                   />
                 </div>
 
-                <div className='space-y-2'>
-                  <Label htmlFor='county'>Județ *</Label>
+                <div className="space-y-2">
+                  <Label htmlFor="county">Județ *</Label>
                   <Select
                     value={formData.county}
                     onValueChange={(value) =>
-                      handleInputChange('county', value)
+                      handleInputChange("county", value)
                     }
                   >
                     <SelectTrigger>
-                      <SelectValue placeholder='Selectează județul' />
+                      <SelectValue placeholder="Selectează județul" />
                     </SelectTrigger>
                     <SelectContent>
                       {ROMANIAN_COUNTIES.map((county) => (
@@ -293,15 +293,15 @@ export function PropertyForm({
                   </Select>
                 </div>
 
-                <div className='space-y-2'>
-                  <Label htmlFor='postalCode'>Cod poștal</Label>
+                <div className="space-y-2">
+                  <Label htmlFor="postalCode">Cod poștal</Label>
                   <Input
-                    id='postalCode'
+                    id="postalCode"
                     value={formData.postalCode}
                     onChange={(e) =>
-                      handleInputChange('postalCode', e.target.value)
+                      handleInputChange("postalCode", e.target.value)
                     }
-                    placeholder='010101'
+                    placeholder="010101"
                   />
                 </div>
               </div>
@@ -310,105 +310,105 @@ export function PropertyForm({
             <Separator />
 
             {/* Property Details */}
-            <div className='space-y-4'>
-              <h3 className='text-lg font-semibold flex items-center gap-2'>
-                <Ruler className='h-5 w-5' />
+            <div className="space-y-4">
+              <h3 className="text-lg font-semibold flex items-center gap-2">
+                <Ruler className="h-5 w-5" />
                 Detalii proprietate
               </h3>
 
-              <div className='grid grid-cols-2 md:grid-cols-4 gap-4'>
-                <div className='space-y-2'>
-                  <Label htmlFor='area'>Suprafață (mp)</Label>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="area">Suprafață (mp)</Label>
                   <Input
-                    id='area'
-                    type='number'
+                    id="area"
+                    type="number"
                     value={formData.area}
-                    onChange={(e) => handleInputChange('area', e.target.value)}
-                    placeholder='75'
+                    onChange={(e) => handleInputChange("area", e.target.value)}
+                    placeholder="75"
                   />
                 </div>
 
-                <div className='space-y-2'>
-                  <Label htmlFor='rooms'>Camere</Label>
+                <div className="space-y-2">
+                  <Label htmlFor="rooms">Camere</Label>
                   <Input
-                    id='rooms'
-                    type='number'
+                    id="rooms"
+                    type="number"
                     value={formData.rooms}
-                    onChange={(e) => handleInputChange('rooms', e.target.value)}
-                    placeholder='3'
+                    onChange={(e) => handleInputChange("rooms", e.target.value)}
+                    placeholder="3"
                   />
                 </div>
 
-                <div className='space-y-2'>
-                  <Label htmlFor='bedrooms'>Dormitoare</Label>
-                  <div className='relative'>
-                    <Bed className='absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400' />
+                <div className="space-y-2">
+                  <Label htmlFor="bedrooms">Dormitoare</Label>
+                  <div className="relative">
+                    <Bed className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
                     <Input
-                      id='bedrooms'
-                      type='number'
+                      id="bedrooms"
+                      type="number"
                       value={formData.bedrooms}
                       onChange={(e) =>
-                        handleInputChange('bedrooms', e.target.value)
+                        handleInputChange("bedrooms", e.target.value)
                       }
-                      placeholder='2'
-                      className='pl-10'
+                      placeholder="2"
+                      className="pl-10"
                     />
                   </div>
                 </div>
 
-                <div className='space-y-2'>
-                  <Label htmlFor='bathrooms'>Băi</Label>
-                  <div className='relative'>
-                    <Bath className='absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400' />
+                <div className="space-y-2">
+                  <Label htmlFor="bathrooms">Băi</Label>
+                  <div className="relative">
+                    <Bath className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
                     <Input
-                      id='bathrooms'
-                      type='number'
+                      id="bathrooms"
+                      type="number"
                       value={formData.bathrooms}
                       onChange={(e) =>
-                        handleInputChange('bathrooms', e.target.value)
+                        handleInputChange("bathrooms", e.target.value)
                       }
-                      placeholder='1'
-                      className='pl-10'
+                      placeholder="1"
+                      className="pl-10"
                     />
                   </div>
                 </div>
               </div>
 
-              <div className='grid grid-cols-1 md:grid-cols-3 gap-4'>
-                <div className='space-y-2'>
-                  <Label htmlFor='floor'>Etaj</Label>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="floor">Etaj</Label>
                   <Input
-                    id='floor'
-                    type='number'
+                    id="floor"
+                    type="number"
                     value={formData.floor}
-                    onChange={(e) => handleInputChange('floor', e.target.value)}
-                    placeholder='2'
+                    onChange={(e) => handleInputChange("floor", e.target.value)}
+                    placeholder="2"
                   />
                 </div>
 
-                <div className='space-y-2'>
-                  <Label htmlFor='totalFloors'>Total etaje</Label>
+                <div className="space-y-2">
+                  <Label htmlFor="totalFloors">Total etaje</Label>
                   <Input
-                    id='totalFloors'
-                    type='number'
+                    id="totalFloors"
+                    type="number"
                     value={formData.totalFloors}
                     onChange={(e) =>
-                      handleInputChange('totalFloors', e.target.value)
+                      handleInputChange("totalFloors", e.target.value)
                     }
-                    placeholder='4'
+                    placeholder="4"
                   />
                 </div>
 
-                <div className='space-y-2'>
-                  <Label htmlFor='yearBuilt'>An construcție</Label>
+                <div className="space-y-2">
+                  <Label htmlFor="yearBuilt">An construcție</Label>
                   <Input
-                    id='yearBuilt'
-                    type='number'
+                    id="yearBuilt"
+                    type="number"
                     value={formData.yearBuilt}
                     onChange={(e) =>
-                      handleInputChange('yearBuilt', e.target.value)
+                      handleInputChange("yearBuilt", e.target.value)
                     }
-                    placeholder='2010'
+                    placeholder="2010"
                   />
                 </div>
               </div>
@@ -417,34 +417,34 @@ export function PropertyForm({
             <Separator />
 
             {/* Features & Amenities */}
-            <div className='space-y-4'>
-              <h3 className='text-lg font-semibold'>
+            <div className="space-y-4">
+              <h3 className="text-lg font-semibold">
                 Caracteristici și facilități
               </h3>
 
-              <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
-                <div className='space-y-2'>
-                  <Label htmlFor='features'>Caracteristici</Label>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="features">Caracteristici</Label>
                   <Textarea
-                    id='features'
+                    id="features"
                     value={formData.features}
                     onChange={(e) =>
-                      handleInputChange('features', e.target.value)
+                      handleInputChange("features", e.target.value)
                     }
-                    placeholder='ex. Balcon, Boxă, Loc parcare'
+                    placeholder="ex. Balcon, Boxă, Loc parcare"
                     rows={3}
                   />
                 </div>
 
-                <div className='space-y-2'>
-                  <Label htmlFor='amenities'>Facilități</Label>
+                <div className="space-y-2">
+                  <Label htmlFor="amenities">Facilități</Label>
                   <Textarea
-                    id='amenities'
+                    id="amenities"
                     value={formData.amenities}
                     onChange={(e) =>
-                      handleInputChange('amenities', e.target.value)
+                      handleInputChange("amenities", e.target.value)
                     }
-                    placeholder='ex. Lift, Interfon, Securitate'
+                    placeholder="ex. Lift, Interfon, Securitate"
                     rows={3}
                   />
                 </div>
@@ -454,21 +454,21 @@ export function PropertyForm({
             <Separator />
 
             {/* Submit */}
-            <div className='flex gap-4 pt-4'>
+            <div className="flex gap-4 pt-4">
               <Button
-                type='button'
-                variant='outline'
+                type="button"
+                variant="outline"
                 onClick={() => router.back()}
                 disabled={isLoading}
               >
                 Anulează
               </Button>
-              <Button type='submit' disabled={isLoading}>
+              <Button type="submit" disabled={isLoading}>
                 {isLoading
-                  ? 'Se salvează...'
+                  ? "Se salvează..."
                   : propertyId
-                    ? 'Actualizează proprietatea'
-                    : 'Adaugă proprietatea'}
+                    ? "Actualizează proprietatea"
+                    : "Adaugă proprietatea"}
               </Button>
             </div>
           </form>

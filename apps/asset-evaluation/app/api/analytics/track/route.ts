@@ -1,9 +1,9 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { getUser } from '@/lib/db/queries';
-import { trackPageView, trackActivity } from '@/lib/analytics';
-import { db } from '@/lib/db/drizzle';
-import { teamMembers } from '@/lib/db/schema';
-import { eq } from 'drizzle-orm';
+import { eq } from "drizzle-orm";
+import { type NextRequest, NextResponse } from "next/server";
+import { trackActivity, trackPageView } from "@/lib/analytics";
+import { db } from "@/lib/db/drizzle";
+import { getUser } from "@/lib/db/queries";
+import { teamMembers } from "@/lib/db/schema";
 
 export async function POST(request: NextRequest) {
   try {
@@ -11,9 +11,10 @@ export async function POST(request: NextRequest) {
     const { action, path, data, timestamp } = body;
 
     const user = await getUser();
-    const ipAddress = request.headers.get('x-forwarded-for') || 
-      request.headers.get('x-real-ip') || 
-      '127.0.0.1';
+    const ipAddress =
+      request.headers.get("x-forwarded-for") ||
+      request.headers.get("x-real-ip") ||
+      "127.0.0.1";
 
     if (user) {
       try {
@@ -28,14 +29,17 @@ export async function POST(request: NextRequest) {
           const teamId = userWithTeam[0].teamId;
 
           // Track the event using existing functions
-          if (action === 'page_view') {
+          if (action === "page_view") {
             await trackPageView(path, user.id, teamId, ipAddress);
           } else {
             await trackActivity(action, user.id, teamId, ipAddress);
           }
         }
       } catch (dbError) {
-        console.warn('Analytics tracking failed (database unavailable):', dbError);
+        console.warn(
+          "Analytics tracking failed (database unavailable):",
+          dbError,
+        );
         // Continue without tracking if database is unavailable
       }
     }
@@ -43,7 +47,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ success: true });
   } catch (error) {
-    console.error('Error tracking analytics event:', error);
+    console.error("Error tracking analytics event:", error);
     // Return success even if tracking fails to prevent page errors
     return NextResponse.json({ success: true });
   }

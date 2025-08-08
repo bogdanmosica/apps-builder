@@ -1,21 +1,14 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
+import { Badge } from "@workspace/ui/components/badge";
+import { Button } from "@workspace/ui/components/button";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from '@workspace/ui/components/card';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@workspace/ui/components/table';
+} from "@workspace/ui/components/card";
 import {
   Dialog,
   DialogContent,
@@ -24,11 +17,18 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from '@workspace/ui/components/dialog';
-import { Badge } from '@workspace/ui/components/badge';
-import { Button } from '@workspace/ui/components/button';
-import { Package, Eye, Loader2, Trash2 } from 'lucide-react';
-import { toast } from 'sonner';
+} from "@workspace/ui/components/dialog";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@workspace/ui/components/table";
+import { Eye, Loader2, Package, Trash2 } from "lucide-react";
+import { useEffect, useState } from "react";
+import { toast } from "sonner";
 
 interface Product {
   id: number;
@@ -50,16 +50,16 @@ export default function ProductsList() {
 
   const fetchProducts = async () => {
     try {
-      const response = await fetch('/api/products');
+      const response = await fetch("/api/products");
       if (response.ok) {
         const data = await response.json();
         setProducts(data.products || []);
       } else {
-        toast.error('Failed to load products');
+        toast.error("Failed to load products");
       }
     } catch (error) {
-      console.error('Error fetching products:', error);
-      toast.error('Failed to load products');
+      console.error("Error fetching products:", error);
+      toast.error("Failed to load products");
     } finally {
       setLoading(false);
     }
@@ -76,22 +76,24 @@ export default function ProductsList() {
     setDeletingId(productToDelete.id);
     try {
       const response = await fetch(`/api/products/${productToDelete.id}`, {
-        method: 'DELETE',
+        method: "DELETE",
       });
 
       if (response.ok) {
-        toast.success('Product deleted successfully');
+        toast.success("Product deleted successfully");
         // Remove the product from the local state
-        setProducts(products.filter(product => product.id !== productToDelete.id));
+        setProducts(
+          products.filter((product) => product.id !== productToDelete.id),
+        );
         setDeleteDialogOpen(false);
         setProductToDelete(null);
       } else {
         const errorData = await response.json();
-        toast.error(errorData.error || 'Failed to delete product');
+        toast.error(errorData.error || "Failed to delete product");
       }
     } catch (error) {
-      console.error('Error deleting product:', error);
-      toast.error('Failed to delete product');
+      console.error("Error deleting product:", error);
+      toast.error("Failed to delete product");
     } finally {
       setDeletingId(null);
     }
@@ -103,12 +105,12 @@ export default function ProductsList() {
 
   const formatBillingPeriod = (period: string) => {
     switch (period) {
-      case 'monthly':
-        return 'Monthly';
-      case 'yearly':
-        return 'Yearly';
-      case 'one_time':
-        return 'One-time';
+      case "monthly":
+        return "Monthly";
+      case "yearly":
+        return "Yearly";
+      case "one_time":
+        return "One-time";
       default:
         return period;
     }
@@ -118,16 +120,16 @@ export default function ProductsList() {
     return (
       <Card>
         <CardHeader>
-          <CardTitle className='flex items-center gap-2'>
-            <Package className='h-5 w-5' />
+          <CardTitle className="flex items-center gap-2">
+            <Package className="h-5 w-5" />
             Products
           </CardTitle>
           <CardDescription>
             Manage your SaaS products and pricing
           </CardDescription>
         </CardHeader>
-        <CardContent className='flex items-center justify-center py-8'>
-          <Loader2 className='h-6 w-6 animate-spin' />
+        <CardContent className="flex items-center justify-center py-8">
+          <Loader2 className="h-6 w-6 animate-spin" />
         </CardContent>
       </Card>
     );
@@ -136,20 +138,20 @@ export default function ProductsList() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle className='flex items-center gap-2'>
-          <Package className='h-5 w-5' />
+        <CardTitle className="flex items-center gap-2">
+          <Package className="h-5 w-5" />
           Products ({products.length})
         </CardTitle>
         <CardDescription>Manage your SaaS products and pricing</CardDescription>
       </CardHeader>
       <CardContent>
         {products.length === 0 ? (
-          <div className='text-center py-8'>
-            <Package className='h-12 w-12 text-muted-foreground mx-auto mb-4' />
-            <h3 className='text-lg font-medium text-muted-foreground mb-2'>
+          <div className="text-center py-8">
+            <Package className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+            <h3 className="text-lg font-medium text-muted-foreground mb-2">
               No products yet
             </h3>
-            <p className='text-sm text-muted-foreground mb-4'>
+            <p className="text-sm text-muted-foreground mb-4">
               Create your first product to start selling your SaaS
             </p>
           </div>
@@ -161,7 +163,7 @@ export default function ProductsList() {
                 <TableHead>Price</TableHead>
                 <TableHead>Billing</TableHead>
                 <TableHead>Status</TableHead>
-                <TableHead className='text-right'>Actions</TableHead>
+                <TableHead className="text-right">Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -169,46 +171,46 @@ export default function ProductsList() {
                 <TableRow key={product.id}>
                   <TableCell>
                     <div>
-                      <div className='font-medium'>{product.name}</div>
+                      <div className="font-medium">{product.name}</div>
                       {product.description && (
-                        <div className='text-sm text-muted-foreground truncate max-w-xs'>
+                        <div className="text-sm text-muted-foreground truncate max-w-xs">
                           {product.description}
                         </div>
                       )}
                     </div>
                   </TableCell>
                   <TableCell>
-                    <div className='font-medium'>{product.formattedPrice}</div>
-                    <div className='text-sm text-muted-foreground uppercase'>
+                    <div className="font-medium">{product.formattedPrice}</div>
+                    <div className="text-sm text-muted-foreground uppercase">
                       {product.currency}
                     </div>
                   </TableCell>
                   <TableCell>
-                    <Badge variant='outline'>
+                    <Badge variant="outline">
                       {formatBillingPeriod(product.billingPeriod)}
                     </Badge>
                   </TableCell>
                   <TableCell>
-                    <Badge variant={product.isActive ? 'default' : 'secondary'}>
-                      {product.isActive ? 'Active' : 'Inactive'}
+                    <Badge variant={product.isActive ? "default" : "secondary"}>
+                      {product.isActive ? "Active" : "Inactive"}
                     </Badge>
                   </TableCell>
-                  <TableCell className='text-right'>
-                    <div className='flex items-center justify-end gap-2'>
-                      <Button variant='ghost' size='sm'>
-                        <Eye className='h-4 w-4' />
+                  <TableCell className="text-right">
+                    <div className="flex items-center justify-end gap-2">
+                      <Button variant="ghost" size="sm">
+                        <Eye className="h-4 w-4" />
                       </Button>
-                      <Button 
-                        variant='ghost' 
-                        size='sm'
+                      <Button
+                        variant="ghost"
+                        size="sm"
                         onClick={() => openDeleteDialog(product)}
                         disabled={deletingId === product.id}
-                        className='text-destructive hover:text-destructive hover:bg-destructive/10'
+                        className="text-destructive hover:text-destructive hover:bg-destructive/10"
                       >
                         {deletingId === product.id ? (
-                          <Loader2 className='h-4 w-4 animate-spin' />
+                          <Loader2 className="h-4 w-4 animate-spin" />
                         ) : (
-                          <Trash2 className='h-4 w-4' />
+                          <Trash2 className="h-4 w-4" />
                         )}
                       </Button>
                     </div>
@@ -226,12 +228,13 @@ export default function ProductsList() {
           <DialogHeader>
             <DialogTitle>Delete Product</DialogTitle>
             <DialogDescription>
-              Are you sure you want to delete "{productToDelete?.name}"? This action cannot be undone.
+              Are you sure you want to delete "{productToDelete?.name}"? This
+              action cannot be undone.
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
-            <Button 
-              variant="outline" 
+            <Button
+              variant="outline"
               onClick={() => {
                 setDeleteDialogOpen(false);
                 setProductToDelete(null);
@@ -240,8 +243,8 @@ export default function ProductsList() {
             >
               Cancel
             </Button>
-            <Button 
-              variant="destructive" 
+            <Button
+              variant="destructive"
               onClick={handleDeleteProduct}
               disabled={deletingId !== null}
             >

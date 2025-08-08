@@ -1,36 +1,41 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { useTranslation } from 'react-i18next';
-import { Button } from '@workspace/ui/components/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@workspace/ui/components/card';
-import { Badge } from '@workspace/ui/components/badge';
-import { Progress } from '@workspace/ui/components/progress';
+import { Badge } from "@workspace/ui/components/badge";
+import { Button } from "@workspace/ui/components/button";
 import {
-  Trophy,
-  Star,
-  Home,
-  Crown,
-  Award,
-  TrendingUp,
-  RotateCcw,
-  Share2,
-  Download,
-  Sparkles,
-  CheckCircle2,
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "@workspace/ui/components/card";
+import { Progress } from "@workspace/ui/components/progress";
+import {
   AlertTriangle,
-  Target,
   ArrowLeft,
+  Award,
+  CheckCircle2,
+  Crown,
+  Download,
+  Home,
   List,
   Plus,
-} from 'lucide-react';
-import Link from 'next/link';
+  RotateCcw,
+  Share2,
+  Sparkles,
+  Star,
+  Target,
+  TrendingUp,
+  Trophy,
+} from "lucide-react";
+import Link from "next/link";
+import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import {
-  EvaluationResult,
-  PropertyTypeWithCategories,
-  trackEvaluationEvent,
+  type EvaluationResult,
   getPropertyTypeName,
-} from '@/lib/evaluation-utils';
+  type PropertyTypeWithCategories,
+  trackEvaluationEvent,
+} from "@/lib/evaluation-utils";
 
 interface FinalScreenProps {
   result: EvaluationResult;
@@ -48,20 +53,20 @@ export default function FinalScreen({
   onDownload,
 }: FinalScreenProps) {
   const { i18n } = useTranslation();
-  const currentLanguage = i18n.language as 'ro' | 'en';
+  const currentLanguage = i18n.language as "ro" | "en";
   const [showConfetti, setShowConfetti] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
     setIsVisible(true);
-    
+
     // Show confetti for good scores
     if (result.percentage >= 60) {
       setShowConfetti(true);
       setTimeout(() => setShowConfetti(false), 3000);
     }
 
-    trackEvaluationEvent('evaluation_completed', {
+    trackEvaluationEvent("evaluation_completed", {
       totalScore: result.totalScore,
       maxScore: result.maxPossibleScore,
       percentage: Math.round(result.percentage),
@@ -71,13 +76,17 @@ export default function FinalScreen({
       categoriesCount: result.categoryScores.length,
       propertyType: getPropertyTypeName(propertyData, currentLanguage),
     });
-  }, [result, getPropertyTypeName(propertyData, currentLanguage), currentLanguage]);
+  }, [
+    result,
+    getPropertyTypeName(propertyData, currentLanguage),
+    currentLanguage,
+  ]);
 
   const getBadgeIcon = (level: string) => {
     switch (level) {
-      case 'Expert':
+      case "Expert":
         return <Trophy className="w-8 h-8 text-yellow-500" />;
-      case 'Good':
+      case "Good":
         return <Star className="w-8 h-8 text-blue-500" />;
       default:
         return <Home className="w-8 h-8 text-gray-500" />;
@@ -85,32 +94,40 @@ export default function FinalScreen({
   };
 
   const getBadgeColor = (percentage: number) => {
-    if (percentage >= 90) return 'bg-gradient-to-r from-yellow-400 to-yellow-600';
-    if (percentage >= 60) return 'bg-gradient-to-r from-green-400 to-green-600';
-    if (percentage >= 30) return 'bg-gradient-to-r from-blue-400 to-blue-600';
-    return 'bg-gradient-to-r from-gray-400 to-gray-600';
+    if (percentage >= 90)
+      return "bg-gradient-to-r from-yellow-400 to-yellow-600";
+    if (percentage >= 60) return "bg-gradient-to-r from-green-400 to-green-600";
+    if (percentage >= 30) return "bg-gradient-to-r from-blue-400 to-blue-600";
+    return "bg-gradient-to-r from-gray-400 to-gray-600";
   };
 
   const getScoreMessage = (percentage: number) => {
-    if (percentage >= 90) return {
-      title: '🎉 Outstanding Property!',
-      message: 'This property shows excellent quality across all areas. A fantastic investment!',
-      color: 'text-green-600 dark:text-green-400'
-    };
-    if (percentage >= 60) return {
-      title: '⭐ Great Property!',
-      message: 'This property has strong fundamentals with some areas for improvement.',
-      color: 'text-blue-600 dark:text-blue-400'
-    };
-    if (percentage >= 30) return {
-      title: '📈 Potential Property',
-      message: 'This property has good potential but requires attention in several areas.',
-      color: 'text-yellow-600 dark:text-yellow-400'
-    };
+    if (percentage >= 90)
+      return {
+        title: "🎉 Outstanding Property!",
+        message:
+          "This property shows excellent quality across all areas. A fantastic investment!",
+        color: "text-green-600 dark:text-green-400",
+      };
+    if (percentage >= 60)
+      return {
+        title: "⭐ Great Property!",
+        message:
+          "This property has strong fundamentals with some areas for improvement.",
+        color: "text-blue-600 dark:text-blue-400",
+      };
+    if (percentage >= 30)
+      return {
+        title: "📈 Potential Property",
+        message:
+          "This property has good potential but requires attention in several areas.",
+        color: "text-yellow-600 dark:text-yellow-400",
+      };
     return {
-      title: '🔧 Needs Attention',
-      message: 'This property requires significant improvements across multiple areas.',
-      color: 'text-red-600 dark:text-red-400'
+      title: "🔧 Needs Attention",
+      message:
+        "This property requires significant improvements across multiple areas.",
+      color: "text-red-600 dark:text-red-400",
     };
   };
 
@@ -118,13 +135,18 @@ export default function FinalScreen({
 
   const getImprovementSuggestions = () => {
     return result.categoryScores
-      .filter(category => category.percentage < 70)
+      .filter((category) => category.percentage < 70)
       .sort((a, b) => a.percentage - b.percentage)
       .slice(0, 3)
-      .map(category => ({
+      .map((category) => ({
         name: category.categoryName,
         percentage: category.percentage,
-        priority: category.percentage < 30 ? 'High' : category.percentage < 50 ? 'Medium' : 'Low'
+        priority:
+          category.percentage < 30
+            ? "High"
+            : category.percentage < 50
+              ? "Medium"
+              : "Low",
       }));
   };
 
@@ -146,7 +168,7 @@ export default function FinalScreen({
           </Link>
         </Button>
       </div>
-      
+
       {/* Confetti Effect */}
       {showConfetti && (
         <div className="fixed inset-0 pointer-events-none z-50">
@@ -162,14 +184,16 @@ export default function FinalScreen({
           <CardContent className="p-8 text-center space-y-6">
             {/* Badge and Icon */}
             <div className="flex flex-col items-center space-y-4">
-              <div className={`
+              <div
+                className={`
                 w-24 h-24 rounded-full flex items-center justify-center text-white shadow-xl
                 ${getBadgeColor(result.percentage)}
                 animate-in zoom-in-50 duration-500 delay-300
-              `}>
+              `}
+              >
                 {getBadgeIcon(result.level)}
               </div>
-              
+
               <div className="space-y-2">
                 <h1 className="text-3xl md:text-4xl font-bold text-foreground">
                   {result.badge}
@@ -188,7 +212,8 @@ export default function FinalScreen({
                   <span className="text-3xl text-muted-foreground">%</span>
                 </p>
                 <p className="text-lg text-muted-foreground mt-2">
-                  {result.totalScore.toFixed(1)} / {result.maxPossibleScore.toFixed(1)} points
+                  {result.totalScore.toFixed(1)} /{" "}
+                  {result.maxPossibleScore.toFixed(1)} points
                 </p>
               </div>
 
@@ -233,18 +258,30 @@ export default function FinalScreen({
               >
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
-                    <h3 className="font-medium text-foreground">{category.categoryName}</h3>
-                    <Badge variant={category.percentage >= 70 ? 'default' : category.percentage >= 50 ? 'secondary' : 'destructive'}>
+                    <h3 className="font-medium text-foreground">
+                      {category.categoryName}
+                    </h3>
+                    <Badge
+                      variant={
+                        category.percentage >= 70
+                          ? "default"
+                          : category.percentage >= 50
+                            ? "secondary"
+                            : "destructive"
+                      }
+                    >
                       {Math.round(category.percentage)}%
                     </Badge>
                   </div>
                   <div className="text-sm text-muted-foreground">
-                    {category.questionsAnswered}/{category.totalQuestions} answered
+                    {category.questionsAnswered}/{category.totalQuestions}{" "}
+                    answered
                   </div>
                 </div>
                 <Progress value={category.percentage} className="h-2" />
                 <p className="text-xs text-muted-foreground">
-                  {category.score.toFixed(1)} / {category.maxScore.toFixed(1)} points
+                  {category.score.toFixed(1)} / {category.maxScore.toFixed(1)}{" "}
+                  points
                 </p>
               </div>
             ))}
@@ -268,13 +305,21 @@ export default function FinalScreen({
                   style={{ animationDelay: `${index * 150}ms` }}
                 >
                   <div>
-                    <h4 className="font-medium text-foreground">{improvement.name}</h4>
+                    <h4 className="font-medium text-foreground">
+                      {improvement.name}
+                    </h4>
                     <p className="text-sm text-muted-foreground">
                       Current score: {Math.round(improvement.percentage)}%
                     </p>
                   </div>
-                  <Badge 
-                    variant={improvement.priority === 'High' ? 'destructive' : improvement.priority === 'Medium' ? 'secondary' : 'outline'}
+                  <Badge
+                    variant={
+                      improvement.priority === "High"
+                        ? "destructive"
+                        : improvement.priority === "Medium"
+                          ? "secondary"
+                          : "outline"
+                    }
                   >
                     {improvement.priority} Priority
                   </Badge>
@@ -347,7 +392,12 @@ export default function FinalScreen({
         {/* Footer */}
         <div className="text-center py-8">
           <p className="text-sm text-muted-foreground">
-            🏠 Property evaluation completed • Based on {propertyData.categories.reduce((sum, cat) => sum + (cat.questions?.length || 0), 0)} expert criteria
+            🏠 Property evaluation completed • Based on{" "}
+            {propertyData.categories.reduce(
+              (sum, cat) => sum + (cat.questions?.length || 0),
+              0,
+            )}{" "}
+            expert criteria
           </p>
         </div>
       </div>

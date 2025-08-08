@@ -1,14 +1,14 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { Button } from '@workspace/ui/components/button';
+import { Badge } from "@workspace/ui/components/badge";
+import { Button } from "@workspace/ui/components/button";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from '@workspace/ui/components/card';
+} from "@workspace/ui/components/card";
 import {
   Dialog,
   DialogContent,
@@ -16,25 +16,25 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from '@workspace/ui/components/dialog';
-import { Input } from '@workspace/ui/components/input';
-import { Badge } from '@workspace/ui/components/badge';
+} from "@workspace/ui/components/dialog";
+import { Input } from "@workspace/ui/components/input";
 import {
+  AlertTriangle,
+  Calendar,
   CheckCircle2,
   Circle,
-  Plus,
-  Trophy,
-  Star,
-  Target,
-  Zap,
-  Trash2,
-  Sparkles,
   Crown,
   Lock,
-  Calendar,
-  AlertTriangle,
+  Plus,
+  Sparkles,
+  Star,
+  Target,
+  Trash2,
   TrendingUp,
-} from 'lucide-react';
+  Trophy,
+  Zap,
+} from "lucide-react";
+import { useEffect, useState } from "react";
 
 interface Todo {
   id: string;
@@ -42,8 +42,8 @@ interface Todo {
   completed: boolean;
   points: number;
   createdAt: Date;
-  difficulty?: 'easy' | 'medium' | 'hard';
-  priority?: 'low' | 'medium' | 'high';
+  difficulty?: "easy" | "medium" | "hard";
+  priority?: "low" | "medium" | "high";
   dueDate?: Date;
   category?: string;
 }
@@ -53,28 +53,35 @@ interface GamifiedTodoProps {
   isPro?: boolean; // Add isPro prop to determine if user has PRO features
 }
 
-export default function GamifiedTodo({ userName = "User", isPro = false }: GamifiedTodoProps) {
+export default function GamifiedTodo({
+  userName = "User",
+  isPro = false,
+}: GamifiedTodoProps) {
   const [todos, setTodos] = useState<Todo[]>([]);
-  const [newTodo, setNewTodo] = useState('');
+  const [newTodo, setNewTodo] = useState("");
   const [totalPoints, setTotalPoints] = useState(0);
   const [level, setLevel] = useState(1);
   const [streak, setStreak] = useState(0);
   const [isLevelUpDialogOpen, setIsLevelUpDialogOpen] = useState(false);
   const [newLevelAchieved, setNewLevelAchieved] = useState(1);
-  
+
   // PRO features state
-  const [selectedDifficulty, setSelectedDifficulty] = useState<'easy' | 'medium' | 'hard'>('medium');
-  const [selectedPriority, setSelectedPriority] = useState<'low' | 'medium' | 'high'>('medium');
-  const [selectedCategory, setSelectedCategory] = useState('personal');
-  const [dueDate, setDueDate] = useState('');
+  const [selectedDifficulty, setSelectedDifficulty] = useState<
+    "easy" | "medium" | "hard"
+  >("medium");
+  const [selectedPriority, setSelectedPriority] = useState<
+    "low" | "medium" | "high"
+  >("medium");
+  const [selectedCategory, setSelectedCategory] = useState("personal");
+  const [dueDate, setDueDate] = useState("");
   const [showProFeatures, setShowProFeatures] = useState(false);
 
   // Load from localStorage on mount
   useEffect(() => {
-    const savedTodos = localStorage.getItem('gamified-todos');
-    const savedPoints = localStorage.getItem('gamified-points');
-    const savedLevel = localStorage.getItem('gamified-level');
-    const savedStreak = localStorage.getItem('gamified-streak');
+    const savedTodos = localStorage.getItem("gamified-todos");
+    const savedPoints = localStorage.getItem("gamified-points");
+    const savedLevel = localStorage.getItem("gamified-level");
+    const savedStreak = localStorage.getItem("gamified-streak");
 
     if (savedTodos) {
       setTodos(JSON.parse(savedTodos));
@@ -92,34 +99,40 @@ export default function GamifiedTodo({ userName = "User", isPro = false }: Gamif
 
   // Save to localStorage whenever state changes
   useEffect(() => {
-    localStorage.setItem('gamified-todos', JSON.stringify(todos));
+    localStorage.setItem("gamified-todos", JSON.stringify(todos));
   }, [todos]);
 
   useEffect(() => {
-    localStorage.setItem('gamified-points', totalPoints.toString());
+    localStorage.setItem("gamified-points", totalPoints.toString());
   }, [totalPoints]);
 
   useEffect(() => {
-    localStorage.setItem('gamified-level', level.toString());
+    localStorage.setItem("gamified-level", level.toString());
   }, [level]);
 
   useEffect(() => {
-    localStorage.setItem('gamified-streak', streak.toString());
+    localStorage.setItem("gamified-streak", streak.toString());
   }, [streak]);
 
   const addTodo = () => {
     if (newTodo.trim()) {
       let points = Math.floor(Math.random() * 20) + 10; // Base points between 10-30
-      
+
       // PRO feature: Difficulty-based points
       if (isPro && selectedDifficulty) {
         switch (selectedDifficulty) {
-          case 'easy': points = Math.floor(Math.random() * 10) + 5; break;
-          case 'medium': points = Math.floor(Math.random() * 20) + 15; break;
-          case 'hard': points = Math.floor(Math.random() * 30) + 25; break;
+          case "easy":
+            points = Math.floor(Math.random() * 10) + 5;
+            break;
+          case "medium":
+            points = Math.floor(Math.random() * 20) + 15;
+            break;
+          case "hard":
+            points = Math.floor(Math.random() * 30) + 25;
+            break;
         }
       }
-      
+
       const todo: Todo = {
         id: Date.now().toString(),
         text: newTodo.trim(),
@@ -132,49 +145,51 @@ export default function GamifiedTodo({ userName = "User", isPro = false }: Gamif
         ...(isPro && dueDate && { dueDate: new Date(dueDate) }),
       };
       setTodos([...todos, todo]);
-      setNewTodo('');
-      setDueDate('');
+      setNewTodo("");
+      setDueDate("");
     }
   };
 
   const toggleTodo = (id: string) => {
-    setTodos(todos.map(todo => {
-      if (todo.id === id) {
-        const newCompleted = !todo.completed;
-        if (newCompleted) {
-          // Award points and update streak
-          setTotalPoints(prev => prev + todo.points);
-          setStreak(prev => prev + 1);
-          
-          // Level up calculation
-          const newTotal = totalPoints + todo.points;
-          const newLevel = Math.floor(newTotal / 100) + 1;
-          if (newLevel > level) {
-            setLevel(newLevel);
-            setNewLevelAchieved(newLevel);
-            // Show celebration dialog
-            setTimeout(() => {
-              setIsLevelUpDialogOpen(true);
-            }, 100);
+    setTodos(
+      todos.map((todo) => {
+        if (todo.id === id) {
+          const newCompleted = !todo.completed;
+          if (newCompleted) {
+            // Award points and update streak
+            setTotalPoints((prev) => prev + todo.points);
+            setStreak((prev) => prev + 1);
+
+            // Level up calculation
+            const newTotal = totalPoints + todo.points;
+            const newLevel = Math.floor(newTotal / 100) + 1;
+            if (newLevel > level) {
+              setLevel(newLevel);
+              setNewLevelAchieved(newLevel);
+              // Show celebration dialog
+              setTimeout(() => {
+                setIsLevelUpDialogOpen(true);
+              }, 100);
+            }
+          } else {
+            // Remove points if unchecked
+            setTotalPoints((prev) => Math.max(0, prev - todo.points));
+            setStreak((prev) => Math.max(0, prev - 1));
           }
-        } else {
-          // Remove points if unchecked
-          setTotalPoints(prev => Math.max(0, prev - todo.points));
-          setStreak(prev => Math.max(0, prev - 1));
+          return { ...todo, completed: newCompleted };
         }
-        return { ...todo, completed: newCompleted };
-      }
-      return todo;
-    }));
+        return todo;
+      }),
+    );
   };
 
   const deleteTodo = (id: string) => {
-    const todo = todos.find(t => t.id === id);
+    const todo = todos.find((t) => t.id === id);
     if (todo && todo.completed) {
-      setTotalPoints(prev => Math.max(0, prev - todo.points));
-      setStreak(prev => Math.max(0, prev - 1));
+      setTotalPoints((prev) => Math.max(0, prev - todo.points));
+      setStreak((prev) => Math.max(0, prev - 1));
     }
-    setTodos(todos.filter(todo => todo.id !== id));
+    setTodos(todos.filter((todo) => todo.id !== id));
   };
 
   const getProgressToNextLevel = () => {
@@ -188,19 +203,27 @@ export default function GamifiedTodo({ userName = "User", isPro = false }: Gamif
   // PRO helper functions
   const getDifficultyColor = (difficulty: string) => {
     switch (difficulty) {
-      case 'easy': return 'bg-green-100 text-green-800';
-      case 'medium': return 'bg-yellow-100 text-yellow-800';
-      case 'hard': return 'bg-red-100 text-red-800';
-      default: return 'bg-gray-100 text-gray-800';
+      case "easy":
+        return "bg-green-100 text-green-800";
+      case "medium":
+        return "bg-yellow-100 text-yellow-800";
+      case "hard":
+        return "bg-red-100 text-red-800";
+      default:
+        return "bg-gray-100 text-gray-800";
     }
   };
 
   const getPriorityColor = (priority: string) => {
     switch (priority) {
-      case 'low': return 'bg-blue-100 text-blue-800';
-      case 'medium': return 'bg-orange-100 text-orange-800';
-      case 'high': return 'bg-purple-100 text-purple-800';
-      default: return 'bg-gray-100 text-gray-800';
+      case "low":
+        return "bg-blue-100 text-blue-800";
+      case "medium":
+        return "bg-orange-100 text-orange-800";
+      case "high":
+        return "bg-purple-100 text-purple-800";
+      default:
+        return "bg-gray-100 text-gray-800";
     }
   };
 
@@ -210,20 +233,24 @@ export default function GamifiedTodo({ userName = "User", isPro = false }: Gamif
 
   const getWeeklyStats = () => {
     if (!isPro) return { completed: 0, goal: 7, percentage: 0 };
-    
+
     const oneWeekAgo = new Date();
     oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
-    const completed = todos.filter(todo => 
-      todo.completed && new Date(todo.createdAt) >= oneWeekAgo
+    const completed = todos.filter(
+      (todo) => todo.completed && new Date(todo.createdAt) >= oneWeekAgo,
     ).length;
     const goal = 7;
-    return { completed, goal, percentage: Math.min((completed / goal) * 100, 100) };
+    return {
+      completed,
+      goal,
+      percentage: Math.min((completed / goal) * 100, 100),
+    };
   };
 
-  const categories = ['personal', 'work', 'health', 'learning', 'projects'];
+  const categories = ["personal", "work", "health", "learning", "projects"];
 
-  const completedTodos = todos.filter(todo => todo.completed);
-  const pendingTodos = todos.filter(todo => !todo.completed);
+  const completedTodos = todos.filter((todo) => todo.completed);
+  const pendingTodos = todos.filter((todo) => !todo.completed);
 
   return (
     <div className="w-full max-w-2xl mx-auto space-y-6">
@@ -239,7 +266,9 @@ export default function GamifiedTodo({ userName = "User", isPro = false }: Gamif
               </CardTitle>
               <CardDescription className="text-purple-100">
                 Hey {userName}! Complete tasks to level up! 🚀
-                {isPro && <span className="ml-2 text-yellow-200">PRO User</span>}
+                {isPro && (
+                  <span className="ml-2 text-yellow-200">PRO User</span>
+                )}
               </CardDescription>
             </div>
             <div className="text-right">
@@ -247,12 +276,10 @@ export default function GamifiedTodo({ userName = "User", isPro = false }: Gamif
                 <Trophy className="h-5 w-5" />
                 <span className="text-xl font-bold">Level {level}</span>
               </div>
-              <div className="text-sm opacity-90">
-                {totalPoints} XP
-              </div>
+              <div className="text-sm opacity-90">{totalPoints} XP</div>
             </div>
           </div>
-          
+
           {/* Progress Bar */}
           <div className="mt-4">
             <div className="flex justify-between text-sm mb-1">
@@ -260,7 +287,7 @@ export default function GamifiedTodo({ userName = "User", isPro = false }: Gamif
               <span>{Math.round(getProgressToNextLevel())}%</span>
             </div>
             <div className="w-full bg-purple-400 rounded-full h-2">
-              <div 
+              <div
                 className="bg-white rounded-full h-2 transition-all duration-300"
                 style={{ width: `${getProgressToNextLevel()}%` }}
               />
@@ -276,13 +303,15 @@ export default function GamifiedTodo({ userName = "User", isPro = false }: Gamif
             <div className="flex items-center gap-2">
               <Target className="h-5 w-5 text-green-500" />
               <div>
-                <div className="text-2xl font-bold">{completedTodos.length}</div>
+                <div className="text-2xl font-bold">
+                  {completedTodos.length}
+                </div>
                 <div className="text-sm text-muted-foreground">Completed</div>
               </div>
             </div>
           </CardContent>
         </Card>
-        
+
         <Card>
           <CardContent className="pt-6">
             <div className="flex items-center gap-2">
@@ -294,7 +323,7 @@ export default function GamifiedTodo({ userName = "User", isPro = false }: Gamif
             </div>
           </CardContent>
         </Card>
-        
+
         <Card>
           <CardContent className="pt-6">
             <div className="flex items-center gap-2">
@@ -326,13 +355,15 @@ export default function GamifiedTodo({ userName = "User", isPro = false }: Gamif
               </span>
             </div>
             <div className="w-full bg-gray-200 rounded-full h-2">
-              <div 
+              <div
                 className="bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full h-2 transition-all duration-300"
                 style={{ width: `${getWeeklyStats().percentage}%` }}
               />
             </div>
             <div className="mt-2 text-xs text-muted-foreground">
-              {getWeeklyStats().percentage >= 100 ? "🎉 Goal achieved!" : "Keep going! You're doing great!"}
+              {getWeeklyStats().percentage >= 100
+                ? "🎉 Goal achieved!"
+                : "Keep going! You're doing great!"}
             </div>
           </CardContent>
         </Card>
@@ -344,15 +375,18 @@ export default function GamifiedTodo({ userName = "User", isPro = false }: Gamif
           <CardContent className="pt-6">
             <div className="text-center">
               <Crown className="h-8 w-8 text-yellow-600 mx-auto mb-2" />
-              <h3 className="text-lg font-semibold mb-2">Unlock PRO Features!</h3>
+              <h3 className="text-lg font-semibold mb-2">
+                Unlock PRO Features!
+              </h3>
               <p className="text-sm text-muted-foreground mb-4">
-                Get advanced task management with priorities, due dates, categories, difficulty levels, and weekly goals!
+                Get advanced task management with priorities, due dates,
+                categories, difficulty levels, and weekly goals!
               </p>
-              <Button 
+              <Button
                 className="bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600"
                 onClick={() => setShowProFeatures(!showProFeatures)}
               >
-                {showProFeatures ? 'Hide PRO Preview' : 'Preview PRO Features'}
+                {showProFeatures ? "Hide PRO Preview" : "Preview PRO Features"}
               </Button>
             </div>
           </CardContent>
@@ -365,7 +399,9 @@ export default function GamifiedTodo({ userName = "User", isPro = false }: Gamif
           <CardTitle className="flex items-center gap-2">
             <Plus className="h-5 w-5" />
             Create New Quest
-            {(isPro || showProFeatures) && <Badge className="bg-yellow-100 text-yellow-800">Enhanced</Badge>}
+            {(isPro || showProFeatures) && (
+              <Badge className="bg-yellow-100 text-yellow-800">Enhanced</Badge>
+            )}
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -374,14 +410,14 @@ export default function GamifiedTodo({ userName = "User", isPro = false }: Gamif
               placeholder="What quest will you embark on today?"
               value={newTodo}
               onChange={(e) => setNewTodo(e.target.value)}
-              onKeyPress={(e) => e.key === 'Enter' && addTodo()}
+              onKeyPress={(e) => e.key === "Enter" && addTodo()}
               className="flex-1"
             />
             <Button onClick={addTodo} disabled={!newTodo.trim()}>
               <Plus className="h-4 w-4" />
             </Button>
           </div>
-          
+
           {/* PRO Features */}
           {(isPro || showProFeatures) && (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 border rounded-lg bg-muted/50">
@@ -392,24 +428,27 @@ export default function GamifiedTodo({ userName = "User", isPro = false }: Gamif
                   {!isPro && <Lock className="h-3 w-3 text-muted-foreground" />}
                 </label>
                 <div className="flex gap-2">
-                  {['easy', 'medium', 'hard'].map((diff) => (
+                  {["easy", "medium", "hard"].map((diff) => (
                     <Button
                       key={diff}
-                      variant={selectedDifficulty === diff ? "default" : "outline"}
+                      variant={
+                        selectedDifficulty === diff ? "default" : "outline"
+                      }
                       size="sm"
-                      onClick={() => isPro && setSelectedDifficulty(diff as any)}
+                      onClick={() =>
+                        isPro && setSelectedDifficulty(diff as any)
+                      }
                       disabled={!isPro}
-                      className={`text-xs ${!isPro ? 'opacity-50' : ''}`}
+                      className={`text-xs ${!isPro ? "opacity-50" : ""}`}
                     >
-                      {diff === 'easy' && '😊'}
-                      {diff === 'medium' && '😐'}
-                      {diff === 'hard' && '😤'}
-                      {' '}{diff}
+                      {diff === "easy" && "😊"}
+                      {diff === "medium" && "😐"}
+                      {diff === "hard" && "😤"} {diff}
                     </Button>
                   ))}
                 </div>
               </div>
-              
+
               <div className="space-y-2">
                 <label className="text-sm font-medium flex items-center gap-2">
                   <AlertTriangle className="h-4 w-4" />
@@ -417,24 +456,27 @@ export default function GamifiedTodo({ userName = "User", isPro = false }: Gamif
                   {!isPro && <Lock className="h-3 w-3 text-muted-foreground" />}
                 </label>
                 <div className="flex gap-2">
-                  {['low', 'medium', 'high'].map((priority) => (
+                  {["low", "medium", "high"].map((priority) => (
                     <Button
                       key={priority}
-                      variant={selectedPriority === priority ? "default" : "outline"}
+                      variant={
+                        selectedPriority === priority ? "default" : "outline"
+                      }
                       size="sm"
-                      onClick={() => isPro && setSelectedPriority(priority as any)}
+                      onClick={() =>
+                        isPro && setSelectedPriority(priority as any)
+                      }
                       disabled={!isPro}
-                      className={`text-xs ${!isPro ? 'opacity-50' : ''}`}
+                      className={`text-xs ${!isPro ? "opacity-50" : ""}`}
                     >
-                      {priority === 'low' && '🟢'}
-                      {priority === 'medium' && '🟡'}
-                      {priority === 'high' && '🔴'}
-                      {' '}{priority}
+                      {priority === "low" && "🟢"}
+                      {priority === "medium" && "🟡"}
+                      {priority === "high" && "🔴"} {priority}
                     </Button>
                   ))}
                 </div>
               </div>
-              
+
               <div className="space-y-2">
                 <label className="text-sm font-medium flex items-center gap-2">
                   <Calendar className="h-4 w-4" />
@@ -446,10 +488,10 @@ export default function GamifiedTodo({ userName = "User", isPro = false }: Gamif
                   value={dueDate}
                   onChange={(e) => isPro && setDueDate(e.target.value)}
                   disabled={!isPro}
-                  className={!isPro ? 'opacity-50' : ''}
+                  className={!isPro ? "opacity-50" : ""}
                 />
               </div>
-              
+
               <div className="space-y-2">
                 <label className="text-sm font-medium flex items-center gap-2">
                   <Star className="h-4 w-4" />
@@ -460,7 +502,7 @@ export default function GamifiedTodo({ userName = "User", isPro = false }: Gamif
                   value={selectedCategory}
                   onChange={(e) => isPro && setSelectedCategory(e.target.value)}
                   disabled={!isPro}
-                  className={`w-full p-2 border rounded-md text-sm ${!isPro ? 'opacity-50 bg-muted' : ''}`}
+                  className={`w-full p-2 border rounded-md text-sm ${!isPro ? "opacity-50 bg-muted" : ""}`}
                 >
                   {categories.map((cat) => (
                     <option key={cat} value={cat}>
@@ -471,7 +513,7 @@ export default function GamifiedTodo({ userName = "User", isPro = false }: Gamif
               </div>
             </div>
           )}
-          
+
           {!isPro && showProFeatures && (
             <div className="text-center p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
               <Crown className="h-6 w-6 text-yellow-600 mx-auto mb-2" />
@@ -494,7 +536,10 @@ export default function GamifiedTodo({ userName = "User", isPro = false }: Gamif
           </CardHeader>
           <CardContent className="space-y-3">
             {pendingTodos.map((todo) => (
-              <div key={todo.id} className="flex items-center gap-3 p-3 bg-muted/50 rounded-lg">
+              <div
+                key={todo.id}
+                className="flex items-center gap-3 p-3 bg-muted/50 rounded-lg"
+              >
                 <Button
                   variant="ghost"
                   size="sm"
@@ -505,7 +550,13 @@ export default function GamifiedTodo({ userName = "User", isPro = false }: Gamif
                 </Button>
                 <div className="flex-1">
                   <div className="flex items-center gap-2 mb-1">
-                    <span className={todo.dueDate && isOverdue(todo.dueDate) ? 'text-red-600 font-medium' : ''}>
+                    <span
+                      className={
+                        todo.dueDate && isOverdue(todo.dueDate)
+                          ? "text-red-600 font-medium"
+                          : ""
+                      }
+                    >
                       {todo.text}
                     </span>
                     {todo.dueDate && isOverdue(todo.dueDate) && (
@@ -516,12 +567,18 @@ export default function GamifiedTodo({ userName = "User", isPro = false }: Gamif
                   </div>
                   <div className="flex gap-2 flex-wrap">
                     {todo.difficulty && (
-                      <Badge className={getDifficultyColor(todo.difficulty)} variant="outline">
+                      <Badge
+                        className={getDifficultyColor(todo.difficulty)}
+                        variant="outline"
+                      >
                         {todo.difficulty}
                       </Badge>
                     )}
                     {todo.priority && (
-                      <Badge className={getPriorityColor(todo.priority)} variant="outline">
+                      <Badge
+                        className={getPriorityColor(todo.priority)}
+                        variant="outline"
+                      >
                         {todo.priority}
                       </Badge>
                     )}
@@ -537,7 +594,10 @@ export default function GamifiedTodo({ userName = "User", isPro = false }: Gamif
                     )}
                   </div>
                 </div>
-                <Badge variant="secondary" className="bg-blue-100 text-blue-800">
+                <Badge
+                  variant="secondary"
+                  className="bg-blue-100 text-blue-800"
+                >
                   +{todo.points} XP
                 </Badge>
                 <Button
@@ -565,7 +625,10 @@ export default function GamifiedTodo({ userName = "User", isPro = false }: Gamif
           </CardHeader>
           <CardContent className="space-y-3">
             {completedTodos.map((todo) => (
-              <div key={todo.id} className="flex items-center gap-3 p-3 bg-green-50 rounded-lg">
+              <div
+                key={todo.id}
+                className="flex items-center gap-3 p-3 bg-green-50 rounded-lg"
+              >
                 <Button
                   variant="ghost"
                   size="sm"
@@ -576,16 +639,24 @@ export default function GamifiedTodo({ userName = "User", isPro = false }: Gamif
                 </Button>
                 <div className="flex-1">
                   <div className="flex items-center gap-2 mb-1">
-                    <span className="line-through text-muted-foreground">{todo.text}</span>
+                    <span className="line-through text-muted-foreground">
+                      {todo.text}
+                    </span>
                   </div>
                   <div className="flex gap-2 flex-wrap">
                     {todo.difficulty && (
-                      <Badge className={getDifficultyColor(todo.difficulty)} variant="outline">
+                      <Badge
+                        className={getDifficultyColor(todo.difficulty)}
+                        variant="outline"
+                      >
                         {todo.difficulty}
                       </Badge>
                     )}
                     {todo.priority && (
-                      <Badge className={getPriorityColor(todo.priority)} variant="outline">
+                      <Badge
+                        className={getPriorityColor(todo.priority)}
+                        variant="outline"
+                      >
                         {todo.priority}
                       </Badge>
                     )}
@@ -596,7 +667,10 @@ export default function GamifiedTodo({ userName = "User", isPro = false }: Gamif
                     )}
                   </div>
                 </div>
-                <Badge variant="secondary" className="bg-green-100 text-green-800">
+                <Badge
+                  variant="secondary"
+                  className="bg-green-100 text-green-800"
+                >
                   +{todo.points} XP
                 </Badge>
                 <Button
@@ -622,7 +696,7 @@ export default function GamifiedTodo({ userName = "User", isPro = false }: Gamif
             <p className="text-muted-foreground mb-4">
               Create your first quest and start earning XP to level up!
             </p>
-            <Button onClick={() => document.querySelector('input')?.focus()}>
+            <Button onClick={() => document.querySelector("input")?.focus()}>
               Create Your First Quest
             </Button>
           </CardContent>
@@ -641,13 +715,15 @@ export default function GamifiedTodo({ userName = "User", isPro = false }: Gamif
             </div>
             <DialogTitle className="text-2xl">🎉 Level Up!</DialogTitle>
             <DialogDescription className="text-lg">
-              Congratulations! You've reached <strong>Level {newLevelAchieved}</strong>!
+              Congratulations! You've reached{" "}
+              <strong>Level {newLevelAchieved}</strong>!
             </DialogDescription>
           </DialogHeader>
           <div className="py-4">
             <div className="bg-gradient-to-r from-yellow-100 to-orange-100 dark:from-yellow-900/20 dark:to-orange-900/20 rounded-lg p-4 mb-4">
               <p className="text-sm text-muted-foreground">
-                Keep completing quests to unlock new achievements and earn more XP!
+                Keep completing quests to unlock new achievements and earn more
+                XP!
               </p>
             </div>
             <div className="flex justify-center space-x-2">
@@ -657,7 +733,10 @@ export default function GamifiedTodo({ userName = "User", isPro = false }: Gamif
             </div>
           </div>
           <DialogFooter className="justify-center">
-            <Button onClick={() => setIsLevelUpDialogOpen(false)} className="bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600">
+            <Button
+              onClick={() => setIsLevelUpDialogOpen(false)}
+              className="bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600"
+            >
               <Trophy className="mr-2 h-4 w-4" />
               Awesome!
             </Button>

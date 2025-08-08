@@ -1,8 +1,7 @@
-import { NextRequest, NextResponse } from 'next/server';
-import db from '@workspace/prisma';
-import { auth } from '@/auth';
-import { getCrawlWebsite } from '@/actions/crawl-website';
-import { SelectorRequestDto } from 'types/crawl-dto';
+import { type NextRequest, NextResponse } from "next/server";
+import type { SelectorRequestDto } from "types/crawl-dto";
+import { getCrawlWebsite } from "@/actions/crawl-website";
+import { auth } from "@/auth";
 
 type RequestBody = {
   url: string;
@@ -16,7 +15,7 @@ export async function PUT(req: NextRequest) {
     const session = await auth();
 
     if (!session || !session.user) {
-      return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
+      return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
     }
 
     const userId = session.user.id as string;
@@ -24,19 +23,19 @@ export async function PUT(req: NextRequest) {
     const body = await req.json();
     const { url, selectors, compositionIds = [] }: RequestBody = body;
 
-    const id = req.nextUrl.searchParams.get('id'); // Get crawl ID from query
+    const id = req.nextUrl.searchParams.get("id"); // Get crawl ID from query
 
     if (!id) {
       return NextResponse.json(
-        { message: 'Crawl ID is required' },
-        { status: 400 }
+        { message: "Crawl ID is required" },
+        { status: 400 },
       );
     }
 
     if (!url || !selectors || selectors.length === 0) {
       return NextResponse.json(
-        { message: 'URL and selectors are required' },
-        { status: 400 }
+        { message: "URL and selectors are required" },
+        { status: 400 },
       );
     }
 
@@ -49,7 +48,7 @@ export async function PUT(req: NextRequest) {
     });
 
     if (!existingCrawl) {
-      return NextResponse.json({ message: 'Crawl not found' }, { status: 404 });
+      return NextResponse.json({ message: "Crawl not found" }, { status: 404 });
     }
 
     // Parse data for each container and ensure it's grouped by selector names
@@ -68,10 +67,10 @@ export async function PUT(req: NextRequest) {
 
     return NextResponse.json(updatedCrawl, { status: 200 });
   } catch (error) {
-    console.error('Error during crawling:', error);
+    console.error("Error during crawling:", error);
     return NextResponse.json(
-      { message: 'Something went wrong' },
-      { status: 500 }
+      { message: "Something went wrong" },
+      { status: 500 },
     );
   }
 }
@@ -80,16 +79,16 @@ export async function DELETE(req: NextRequest) {
   const session = await auth();
 
   if (!session || !session.user) {
-    return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
+    return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
   }
 
   const userId = session.user.id;
-  const id = req.nextUrl.searchParams.get('id'); // Get Crawl ID from query
+  const id = req.nextUrl.searchParams.get("id"); // Get Crawl ID from query
 
   if (!id) {
     return NextResponse.json(
-      { message: 'Crawl ID is required' },
-      { status: 400 }
+      { message: "Crawl ID is required" },
+      { status: 400 },
     );
   }
 
@@ -99,13 +98,13 @@ export async function DELETE(req: NextRequest) {
     });
 
     return NextResponse.json(
-      { message: 'Crawl deleted successfully' },
-      { status: 200 }
+      { message: "Crawl deleted successfully" },
+      { status: 200 },
     );
   } catch (error) {
     return NextResponse.json(
-      { message: 'Error deleting crawl', error },
-      { status: 500 }
+      { message: "Error deleting crawl", error },
+      { status: 500 },
     );
   }
 }

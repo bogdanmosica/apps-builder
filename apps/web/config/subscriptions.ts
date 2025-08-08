@@ -1,4 +1,4 @@
-import { SubscriptionPlan } from "@workspace/types";
+import type { SubscriptionPlan } from "@workspace/types";
 
 export const freePlan: SubscriptionPlan = {
   name: "Free",

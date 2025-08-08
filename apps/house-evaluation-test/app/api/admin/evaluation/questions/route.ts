@@ -1,23 +1,20 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { db } from '@/lib/db/drizzle';
+import { and, eq } from "drizzle-orm";
+import { type NextRequest, NextResponse } from "next/server";
+import { checkAdminAccess } from "@/lib/auth/admin";
+import { db } from "@/lib/db/drizzle";
 import {
-  evaluationQuestions,
   evaluationAnswerChoices,
-  type NewEvaluationQuestion,
+  evaluationQuestions,
   type NewEvaluationAnswerChoice,
-} from '@/lib/db/schema';
-import { checkAdminAccess } from '@/lib/auth/admin';
-import { eq, and } from 'drizzle-orm';
+  type NewEvaluationQuestion,
+} from "@/lib/db/schema";
 
 // Get all questions with choices (admin only)
 export async function GET() {
   try {
     const adminCheck = await checkAdminAccess();
     if (!adminCheck.authorized) {
-      return NextResponse.json(
-        { error: adminCheck.error },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: adminCheck.error }, { status: 401 });
     }
 
     const questions = await db
@@ -41,10 +38,10 @@ export async function GET() {
 
     return NextResponse.json(questionsWithChoices);
   } catch (error) {
-    console.error('Error fetching questions:', error);
+    console.error("Error fetching questions:", error);
     return NextResponse.json(
-      { error: 'Failed to fetch questions' },
-      { status: 500 }
+      { error: "Failed to fetch questions" },
+      { status: 500 },
     );
   }
 }
@@ -54,10 +51,7 @@ export async function POST(request: NextRequest) {
   try {
     const adminCheck = await checkAdminAccess();
     if (!adminCheck.authorized) {
-      return NextResponse.json(
-        { error: adminCheck.error },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: adminCheck.error }, { status: 401 });
     }
 
     const body = await request.json();
@@ -65,8 +59,8 @@ export async function POST(request: NextRequest) {
 
     if (!question || !answerChoices || !Array.isArray(answerChoices)) {
       return NextResponse.json(
-        { error: 'Invalid request data' },
-        { status: 400 }
+        { error: "Invalid request data" },
+        { status: 400 },
       );
     }
 
@@ -97,12 +91,15 @@ export async function POST(request: NextRequest) {
       await db.insert(evaluationAnswerChoices).values(newChoice);
     }
 
-    return NextResponse.json({ success: true, questionId: insertedQuestion.id });
+    return NextResponse.json({
+      success: true,
+      questionId: insertedQuestion.id,
+    });
   } catch (error) {
-    console.error('Error creating question:', error);
+    console.error("Error creating question:", error);
     return NextResponse.json(
-      { error: 'Failed to create question' },
-      { status: 500 }
+      { error: "Failed to create question" },
+      { status: 500 },
     );
   }
 }
@@ -112,10 +109,7 @@ export async function PUT(request: NextRequest) {
   try {
     const adminCheck = await checkAdminAccess();
     if (!adminCheck.authorized) {
-      return NextResponse.json(
-        { error: adminCheck.error },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: adminCheck.error }, { status: 401 });
     }
 
     const body = await request.json();
@@ -123,8 +117,8 @@ export async function PUT(request: NextRequest) {
 
     if (!question?.id || !answerChoices || !Array.isArray(answerChoices)) {
       return NextResponse.json(
-        { error: 'Invalid request data' },
-        { status: 400 }
+        { error: "Invalid request data" },
+        { status: 400 },
       );
     }
 
@@ -161,10 +155,10 @@ export async function PUT(request: NextRequest) {
 
     return NextResponse.json({ success: true });
   } catch (error) {
-    console.error('Error updating question:', error);
+    console.error("Error updating question:", error);
     return NextResponse.json(
-      { error: 'Failed to update question' },
-      { status: 500 }
+      { error: "Failed to update question" },
+      { status: 500 },
     );
   }
 }
@@ -174,19 +168,16 @@ export async function DELETE(request: NextRequest) {
   try {
     const adminCheck = await checkAdminAccess();
     if (!adminCheck.authorized) {
-      return NextResponse.json(
-        { error: adminCheck.error },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: adminCheck.error }, { status: 401 });
     }
 
     const { searchParams } = new URL(request.url);
-    const questionId = searchParams.get('id');
+    const questionId = searchParams.get("id");
 
     if (!questionId) {
       return NextResponse.json(
-        { error: 'Question ID is required' },
-        { status: 400 }
+        { error: "Question ID is required" },
+        { status: 400 },
       );
     }
 
@@ -202,10 +193,10 @@ export async function DELETE(request: NextRequest) {
 
     return NextResponse.json({ success: true });
   } catch (error) {
-    console.error('Error deleting question:', error);
+    console.error("Error deleting question:", error);
     return NextResponse.json(
-      { error: 'Failed to delete question' },
-      { status: 500 }
+      { error: "Failed to delete question" },
+      { status: 500 },
     );
   }
 }

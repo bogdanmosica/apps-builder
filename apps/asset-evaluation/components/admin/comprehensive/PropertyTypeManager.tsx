@@ -1,17 +1,14 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { PropertyTypeWithRelations } from '@/lib/types/admin';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@workspace/ui/components/card';
-import { Button } from '@workspace/ui/components/button';
-import { Input } from '@workspace/ui/components/input';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@workspace/ui/components/table';
-import { Badge } from '@workspace/ui/components/badge';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@workspace/ui/components/tabs';
-import { getLocalizedText } from '@/lib/evaluation-utils';
-import { Plus, Pencil, Trash, Check, X, AlertTriangle } from 'lucide-react';
-import { toast } from 'sonner';
-import HydrationSafeDate from '../../hydration-safe-date';
+import { Badge } from "@workspace/ui/components/badge";
+import { Button } from "@workspace/ui/components/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@workspace/ui/components/card";
 import {
   Dialog,
   DialogContent,
@@ -19,13 +16,43 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from '@workspace/ui/components/dialog';
+} from "@workspace/ui/components/dialog";
+import { Input } from "@workspace/ui/components/input";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@workspace/ui/components/table";
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from "@workspace/ui/components/tabs";
+import {
+  AlertTriangle,
+  Check,
+  Pencil,
+  Plus,
+  Settings2,
+  Trash,
+  X,
+} from "lucide-react";
+import { useState } from "react";
+import { toast } from "sonner";
+import { getLocalizedText } from "@/lib/evaluation-utils";
+import type { PropertyTypeWithRelations } from "@/lib/types/admin";
+import HydrationSafeDate from "../../hydration-safe-date";
 
 interface PropertyTypeManagerProps {
   propertyTypes: PropertyTypeWithRelations[];
   onUpdate: (updatedPropertyTypes: PropertyTypeWithRelations[]) => void;
-  language: 'ro' | 'en';
+  language: "ro" | "en";
   onAdd: (data: { name_ro: string; name_en: string }) => Promise<void>;
+  onManageFields?: (propertyTypeId: number, propertyTypeName: string) => void;
 }
 
 interface EditingState {
@@ -39,15 +66,24 @@ export default function PropertyTypeManager({
   onUpdate,
   language,
   onAdd,
+  onManageFields,
 }: PropertyTypeManagerProps) {
-  const [editing, setEditing] = useState<EditingState>({ id: null, name_ro: '', name_en: '' });
+  const [editing, setEditing] = useState<EditingState>({
+    id: null,
+    name_ro: "",
+    name_en: "",
+  });
   const [adding, setAdding] = useState(false);
-  const [newPropertyType, setNewPropertyType] = useState({ name_ro: '', name_en: '' });
+  const [newPropertyType, setNewPropertyType] = useState({
+    name_ro: "",
+    name_en: "",
+  });
   const [isSubmitting, setIsSubmitting] = useState(false);
-  
+
   // Dialog state for delete confirmation
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-  const [propertyTypeToDelete, setPropertyTypeToDelete] = useState<PropertyTypeWithRelations | null>(null);
+  const [propertyTypeToDelete, setPropertyTypeToDelete] =
+    useState<PropertyTypeWithRelations | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
 
   // Start editing a property type
@@ -55,49 +91,53 @@ export default function PropertyTypeManager({
     setEditing({
       id: propertyType.id,
       name_ro: propertyType.name_ro,
-      name_en: propertyType.name_en || '',
+      name_en: propertyType.name_en || "",
     });
   };
 
   // Cancel editing
   const cancelEdit = () => {
-    setEditing({ id: null, name_ro: '', name_en: '' });
+    setEditing({ id: null, name_ro: "", name_en: "" });
   };
 
   // Save edit
   const saveEdit = async () => {
     if (!editing.id || !editing.name_ro.trim()) {
-      toast.error('Romanian name is required');
+      toast.error("Romanian name is required");
       return;
     }
 
     setIsSubmitting(true);
     try {
       const response = await fetch(`/api/admin/property-types/${editing.id}`, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           name_ro: editing.name_ro.trim(),
           name_en: editing.name_en.trim() || null,
         }),
       });
 
-      if (!response.ok) throw new Error('Failed to update property type');
+      if (!response.ok) throw new Error("Failed to update property type");
 
       const result = await response.json();
       if (result.success) {
-        const updatedPropertyTypes = propertyTypes.map(pt =>
+        const updatedPropertyTypes = propertyTypes.map((pt) =>
           pt.id === editing.id
-            ? { ...pt, name_ro: editing.name_ro.trim(), name_en: editing.name_en.trim() || null }
-            : pt
+            ? {
+                ...pt,
+                name_ro: editing.name_ro.trim(),
+                name_en: editing.name_en.trim() || null,
+              }
+            : pt,
         );
         onUpdate(updatedPropertyTypes);
-        setEditing({ id: null, name_ro: '', name_en: '' });
-        toast.success('Property type updated successfully');
+        setEditing({ id: null, name_ro: "", name_en: "" });
+        toast.success("Property type updated successfully");
       }
     } catch (error) {
-      console.error('Error updating property type:', error);
-      toast.error('Failed to update property type');
+      console.error("Error updating property type:", error);
+      toast.error("Failed to update property type");
     } finally {
       setIsSubmitting(false);
     }
@@ -106,12 +146,12 @@ export default function PropertyTypeManager({
   // Handle adding new property type
   const handleAdd = async () => {
     if (!newPropertyType.name_ro.trim()) {
-      toast.error('Romanian name is required');
+      toast.error("Romanian name is required");
       return;
     }
 
     if (!newPropertyType.name_en.trim()) {
-      toast.error('English name is required for completeness');
+      toast.error("English name is required for completeness");
       return;
     }
 
@@ -121,10 +161,10 @@ export default function PropertyTypeManager({
         name_ro: newPropertyType.name_ro.trim(),
         name_en: newPropertyType.name_en.trim(),
       });
-      setNewPropertyType({ name_ro: '', name_en: '' });
+      setNewPropertyType({ name_ro: "", name_en: "" });
       setAdding(false);
     } catch (error) {
-      console.error('Error adding property type:', error);
+      console.error("Error adding property type:", error);
     } finally {
       setIsSubmitting(false);
     }
@@ -132,12 +172,14 @@ export default function PropertyTypeManager({
 
   // Delete property type
   const handleDelete = async (id: number) => {
-    const propertyType = propertyTypes.find(pt => pt.id === id);
+    const propertyType = propertyTypes.find((pt) => pt.id === id);
     if (!propertyType) return;
 
     // Check if property type has categories/questions
     if (propertyType.questionCategories.length > 0) {
-      toast.error('Cannot delete property type with existing categories. Delete categories first.');
+      toast.error(
+        "Cannot delete property type with existing categories. Delete categories first.",
+      );
       return;
     }
 
@@ -150,21 +192,26 @@ export default function PropertyTypeManager({
 
     setIsDeleting(true);
     try {
-      const response = await fetch(`/api/admin/property-types/${propertyTypeToDelete.id}`, {
-        method: 'DELETE',
-      });
+      const response = await fetch(
+        `/api/admin/property-types/${propertyTypeToDelete.id}`,
+        {
+          method: "DELETE",
+        },
+      );
 
-      if (!response.ok) throw new Error('Failed to delete property type');
+      if (!response.ok) throw new Error("Failed to delete property type");
 
       const result = await response.json();
       if (result.success) {
-        const updatedPropertyTypes = propertyTypes.filter(pt => pt.id !== propertyTypeToDelete.id);
+        const updatedPropertyTypes = propertyTypes.filter(
+          (pt) => pt.id !== propertyTypeToDelete.id,
+        );
         onUpdate(updatedPropertyTypes);
-        toast.success('Property type deleted successfully');
+        toast.success("Property type deleted successfully");
       }
     } catch (error) {
-      console.error('Error deleting property type:', error);
-      toast.error('Failed to delete property type');
+      console.error("Error deleting property type:", error);
+      toast.error("Failed to delete property type");
     } finally {
       setIsDeleting(false);
       setDeleteDialogOpen(false);
@@ -178,7 +225,8 @@ export default function PropertyTypeManager({
         <div>
           <h3 className="text-lg font-semibold">Property Type Management</h3>
           <p className="text-muted-foreground text-sm">
-            Add, edit, and manage property types. Each property type can contain multiple question categories.
+            Add, edit, and manage property types. Each property type can contain
+            multiple question categories.
           </p>
         </div>
         <Button
@@ -211,7 +259,12 @@ export default function PropertyTypeManager({
                 <Input
                   placeholder="e.g., Casă, Apartament"
                   value={newPropertyType.name_ro}
-                  onChange={(e) => setNewPropertyType(prev => ({ ...prev, name_ro: e.target.value }))}
+                  onChange={(e) =>
+                    setNewPropertyType((prev) => ({
+                      ...prev,
+                      name_ro: e.target.value,
+                    }))
+                  }
                 />
               </TabsContent>
               <TabsContent value="en" className="space-y-2">
@@ -219,7 +272,12 @@ export default function PropertyTypeManager({
                 <Input
                   placeholder="e.g., House, Apartment"
                   value={newPropertyType.name_en}
-                  onChange={(e) => setNewPropertyType(prev => ({ ...prev, name_en: e.target.value }))}
+                  onChange={(e) =>
+                    setNewPropertyType((prev) => ({
+                      ...prev,
+                      name_en: e.target.value,
+                    }))
+                  }
                 />
               </TabsContent>
             </Tabs>
@@ -228,7 +286,7 @@ export default function PropertyTypeManager({
                 variant="outline"
                 onClick={() => {
                   setAdding(false);
-                  setNewPropertyType({ name_ro: '', name_en: '' });
+                  setNewPropertyType({ name_ro: "", name_en: "" });
                 }}
                 disabled={isSubmitting}
               >
@@ -236,9 +294,13 @@ export default function PropertyTypeManager({
               </Button>
               <Button
                 onClick={handleAdd}
-                disabled={isSubmitting || !newPropertyType.name_ro.trim() || !newPropertyType.name_en.trim()}
+                disabled={
+                  isSubmitting ||
+                  !newPropertyType.name_ro.trim() ||
+                  !newPropertyType.name_en.trim()
+                }
               >
-                {isSubmitting ? 'Adding...' : 'Add Property Type'}
+                {isSubmitting ? "Adding..." : "Add Property Type"}
               </Button>
             </div>
           </CardContent>
@@ -250,7 +312,8 @@ export default function PropertyTypeManager({
         <CardHeader>
           <CardTitle className="text-base">Existing Property Types</CardTitle>
           <CardDescription>
-            Click edit to modify names. Delete is only allowed for property types without categories.
+            Click edit to modify names. Delete is only allowed for property
+            types without categories.
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -264,7 +327,7 @@ export default function PropertyTypeManager({
                 <TableHead className="text-center">Questions</TableHead>
                 <TableHead className="text-center">Status</TableHead>
                 <TableHead className="hidden md:table-cell">Created</TableHead>
-                <TableHead className="w-[150px] text-right">Actions</TableHead>
+                <TableHead className="w-[200px] text-right">Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -272,59 +335,70 @@ export default function PropertyTypeManager({
                 const isEditing = editing.id === propertyType.id;
                 const totalQuestions = propertyType.questionCategories.reduce(
                   (sum, cat) => sum + (cat.questions?.length || 0),
-                  0
+                  0,
                 );
-                const hasCategories = propertyType.questionCategories.length > 0;
+                const hasCategories =
+                  propertyType.questionCategories.length > 0;
                 const missingEnglish = !propertyType.name_en;
 
                 return (
                   <TableRow key={propertyType.id}>
-                    <TableCell className="font-medium">{propertyType.id}</TableCell>
-                    
+                    <TableCell className="font-medium">
+                      {propertyType.id}
+                    </TableCell>
+
                     {/* Romanian Name */}
                     <TableCell>
                       {isEditing ? (
                         <Input
                           value={editing.name_ro}
-                          onChange={(e) => setEditing(prev => ({ ...prev, name_ro: e.target.value }))}
+                          onChange={(e) =>
+                            setEditing((prev) => ({
+                              ...prev,
+                              name_ro: e.target.value,
+                            }))
+                          }
                           className="h-8"
                         />
                       ) : (
                         propertyType.name_ro
                       )}
                     </TableCell>
-                    
+
                     {/* English Name */}
                     <TableCell>
                       {isEditing ? (
                         <Input
                           value={editing.name_en}
-                          onChange={(e) => setEditing(prev => ({ ...prev, name_en: e.target.value }))}
+                          onChange={(e) =>
+                            setEditing((prev) => ({
+                              ...prev,
+                              name_en: e.target.value,
+                            }))
+                          }
                           className="h-8"
                           placeholder="English translation"
                         />
                       ) : (
                         <div className="flex items-center gap-2">
-                          {propertyType.name_en || '—'}
+                          {propertyType.name_en || "—"}
                           {missingEnglish && (
                             <AlertTriangle className="h-4 w-4 text-yellow-500" />
                           )}
                         </div>
                       )}
                     </TableCell>
-                    
+
                     <TableCell className="text-center">
                       <Badge variant="outline">
                         {propertyType.questionCategories.length}
                       </Badge>
                     </TableCell>
-                    
+
                     <TableCell className="text-center">
-                      <Badge variant="outline">
-                        {totalQuestions}
-                      </Badge>
+                      <Badge variant="outline">{totalQuestions}</Badge>
                     </TableCell>
-                    
+
                     <TableCell className="text-center">
                       {missingEnglish ? (
                         <Badge variant="destructive">Incomplete</Badge>
@@ -332,11 +406,11 @@ export default function PropertyTypeManager({
                         <Badge variant="default">Complete</Badge>
                       )}
                     </TableCell>
-                    
+
                     <TableCell className="hidden md:table-cell">
                       <HydrationSafeDate date={propertyType.createdAt} />
                     </TableCell>
-                    
+
                     <TableCell className="text-right">
                       {isEditing ? (
                         <div className="flex justify-end gap-1">
@@ -361,6 +435,22 @@ export default function PropertyTypeManager({
                         </div>
                       ) : (
                         <div className="flex justify-end gap-1">
+                          {onManageFields && (
+                            <Button
+                              size="icon"
+                              variant="ghost"
+                              className="h-8 w-8"
+                              onClick={() =>
+                                onManageFields(
+                                  propertyType.id,
+                                  propertyType.name_ro,
+                                )
+                              }
+                              title="⚙️ Câmpuri personalizate"
+                            >
+                              <Settings2 className="h-4 w-4" />
+                            </Button>
+                          )}
                           <Button
                             size="icon"
                             variant="ghost"
@@ -389,7 +479,9 @@ export default function PropertyTypeManager({
 
           {propertyTypes.length === 0 && (
             <div className="text-center py-8">
-              <p className="text-muted-foreground">No property types found. Add one to get started.</p>
+              <p className="text-muted-foreground">
+                No property types found. Add one to get started.
+              </p>
             </div>
           )}
         </CardContent>
@@ -401,7 +493,8 @@ export default function PropertyTypeManager({
           <DialogHeader>
             <DialogTitle>Delete Property Type</DialogTitle>
             <DialogDescription>
-              Are you sure you want to delete "{propertyTypeToDelete?.name_ro}"? This action cannot be undone.
+              Are you sure you want to delete "{propertyTypeToDelete?.name_ro}"?
+              This action cannot be undone.
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
@@ -420,7 +513,7 @@ export default function PropertyTypeManager({
               onClick={confirmDeletePropertyType}
               disabled={isDeleting}
             >
-              {isDeleting ? 'Deleting...' : 'Delete'}
+              {isDeleting ? "Deleting..." : "Delete"}
             </Button>
           </DialogFooter>
         </DialogContent>

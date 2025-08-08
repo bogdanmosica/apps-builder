@@ -1,6 +1,7 @@
-'use client';
+"use client";
 
-import { Button } from '@workspace/ui/components/button';
+import { CaretSortIcon } from "@radix-ui/react-icons";
+import { Button } from "@workspace/ui/components/button";
 import {
   Command,
   CommandEmpty,
@@ -8,23 +9,21 @@ import {
   CommandInput,
   CommandItem,
   CommandList,
-} from '@workspace/ui/components/command';
+} from "@workspace/ui/components/command";
 import {
   Drawer,
   DrawerContent,
   DrawerTrigger,
-} from '@workspace/ui/components/drawer';
+} from "@workspace/ui/components/drawer";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from '@workspace/ui/components/popover';
-import { CaretSortIcon } from '@radix-ui/react-icons';
-import { useState } from 'react';
-
-import { useMediaQuery } from '@workspace/ui/hooks/use-media-query';
-import { countries, findMatchingCountry } from '@/lib/countries';
-import { ElWithErrors, type ElWithErrorsProps } from '@/ui/input-errors';
+} from "@workspace/ui/components/popover";
+import { useMediaQuery } from "@workspace/ui/hooks/use-media-query";
+import { useState } from "react";
+import { countries, findMatchingCountry } from "@/lib/countries";
+import { ElWithErrors, type ElWithErrorsProps } from "@/ui/input-errors";
 
 type ListItem = (typeof countries)[number];
 
@@ -34,7 +33,7 @@ export function CountrySelect({
   ...props
 }: ElWithErrorsProps & { onChangeValue?: (value: string) => void }) {
   const [open, setOpen] = useState(false);
-  const isDesktop = useMediaQuery('(min-width: 768px)');
+  const isDesktop = useMediaQuery("(min-width: 768px)");
 
   const selectedCountry = findMatchingCountry(value) ?? null;
 
@@ -46,21 +45,17 @@ export function CountrySelect({
             <Popover open={open} onOpenChange={setOpen}>
               <PopoverTrigger asChild>
                 <Button
-                  variant='outline'
-                  className='mt-3 w-full justify-between text-base'
+                  variant="outline"
+                  className="mt-3 w-full justify-between text-base"
                 >
-                  {selectedCountry ? (
-                    <>{selectedCountry.label}</>
-                  ) : (
-                    'Select country…'
-                  )}
-                  <CaretSortIcon className='ml-2 h-4 w-4 shrink-0 opacity-50' />
+                  {selectedCountry ? selectedCountry.label : "Select country…"}
+                  <CaretSortIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                 </Button>
               </PopoverTrigger>
-              <PopoverContent className='w-[200px] p-0' align='start'>
+              <PopoverContent className="w-[200px] p-0" align="start">
                 <CountryList
                   setOpen={setOpen}
-                  setSelectedCountry={(c) => onChangeValue?.(c?.value ?? '')}
+                  setSelectedCountry={(c) => onChangeValue?.(c?.value ?? "")}
                 />
               </PopoverContent>
             </Popover>
@@ -70,19 +65,15 @@ export function CountrySelect({
         return (
           <Drawer open={open} onOpenChange={setOpen}>
             <DrawerTrigger asChild>
-              <Button variant='outline' className='w-[150px] justify-start'>
-                {selectedCountry ? (
-                  <>{selectedCountry.label}</>
-                ) : (
-                  <>+ Set status</>
-                )}
+              <Button variant="outline" className="w-[150px] justify-start">
+                {selectedCountry ? selectedCountry.label : "+ Set status"}
               </Button>
             </DrawerTrigger>
             <DrawerContent>
-              <div className='mt-4 border-t'>
+              <div className="mt-4 border-t">
                 <CountryList
                   setOpen={setOpen}
-                  setSelectedCountry={(c) => onChangeValue?.(c?.value ?? '')}
+                  setSelectedCountry={(c) => onChangeValue?.(c?.value ?? "")}
                 />
               </div>
             </DrawerContent>
@@ -110,8 +101,8 @@ function CountryList({
       }}
     >
       <CommandInput
-        placeholder='Find country…'
-        className='my-2 h-8 border border-neutral-200 py-0 focus:border-neutral-300 focus:outline-hidden focus:ring-3 focus:ring-neutral-100'
+        placeholder="Find country…"
+        className="my-2 h-8 border border-neutral-200 py-0 focus:border-neutral-300 focus:outline-hidden focus:ring-3 focus:ring-neutral-100"
       />
       <CommandList>
         <CommandEmpty>No results found.</CommandEmpty>

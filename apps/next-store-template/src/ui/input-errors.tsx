@@ -1,9 +1,9 @@
-import { Input } from '@workspace/ui/components/input';
-import { Label } from '@workspace/ui/components/label';
-import { cn } from '@workspace/ui/lib/utils';
-import { type ComponentProps, type ReactNode, useMemo } from 'react';
+import { Input } from "@workspace/ui/components/input";
+import { Label } from "@workspace/ui/components/label";
+import { cn } from "@workspace/ui/lib/utils";
+import { type ComponentProps, type ReactNode, useMemo } from "react";
 
-export interface ElWithErrorsProps extends ComponentProps<'input'> {
+export interface ElWithErrorsProps extends ComponentProps<"input"> {
   errors: undefined | null | Record<string, string[] | undefined | null>;
   label: string;
 }
@@ -15,8 +15,8 @@ export const ElWithErrors = ({
   label,
   children,
   ...props
-}: Omit<ElWithErrorsProps, 'children'> & {
-  children: (props: ComponentProps<'input'>) => ReactNode;
+}: Omit<ElWithErrorsProps, "children"> & {
+  children: (props: ComponentProps<"input">) => ReactNode;
 }) => {
   const currentErrors = errors && name && name in errors ? errors[name] : null;
   const id = name ? `input-${name}` : undefined;
@@ -25,20 +25,20 @@ export const ElWithErrors = ({
     return children({
       ...props,
       name,
-      className: cn(className, currentErrors?.length && 'border-destructive'),
-      'aria-invalid': !!currentErrors?.length,
-      'aria-errormessage': id,
+      className: cn(className, currentErrors?.length && "border-destructive"),
+      "aria-invalid": !!currentErrors?.length,
+      "aria-errormessage": id,
     });
   }, [children, className, currentErrors?.length, id, name, props]);
 
   return (
     <Label>
       <span>{label}</span>
-      <span id={id} aria-live='assertive'>
+      <span id={id} aria-live="assertive">
         {currentErrors?.map((error) => (
           <span
             key={error}
-            className='ml-2 text-xs leading-none text-destructive'
+            className="ml-2 text-xs leading-none text-destructive"
           >
             {error}
           </span>

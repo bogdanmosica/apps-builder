@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import { useEffect, useState } from 'react';
-import MarketingLanding from '@/components/marketing-landing';
-import EvaluationsOverview from '@/components/evaluations/EvaluationsOverview';
+import { useEffect, useState } from "react";
+import EvaluationsOverview from "@/components/evaluations/EvaluationsOverview";
+import MarketingLanding from "@/components/marketing-landing";
 
 interface ClientAuthPageProps {
   initialIsLoggedIn: boolean;
@@ -20,20 +20,25 @@ export default function ClientAuthPage({
   const [isReady, setIsReady] = useState(false);
 
   // Safely handle potentially null/undefined props
-  const safeEvaluations = Array.isArray(initialEvaluations) ? initialEvaluations : [];
-  const safeStats = initialStats && typeof initialStats === 'object' ? initialStats : {
-    totalEvaluations: 0,
-    averageScore: 0,
-    bestScore: 0,
-    completionRate: 0,
-  };
+  const safeEvaluations = Array.isArray(initialEvaluations)
+    ? initialEvaluations
+    : [];
+  const safeStats =
+    initialStats && typeof initialStats === "object"
+      ? initialStats
+      : {
+          totalEvaluations: 0,
+          averageScore: 0,
+          bestScore: 0,
+          completionRate: 0,
+        };
 
   useEffect(() => {
     // Temporarily disable authentication check to stop infinite reload
     // TODO: Fix authentication state mismatch properly
-    console.log('Auth check disabled to prevent infinite reload', {
+    console.log("Auth check disabled to prevent infinite reload", {
       initialIsLoggedIn,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     });
     setIsReady(true);
 
@@ -98,8 +103,8 @@ export default function ClientAuthPage({
   // Show evaluations overview for logged-in users
   if (initialIsLoggedIn) {
     return (
-      <EvaluationsOverview 
-        evaluations={safeEvaluations} 
+      <EvaluationsOverview
+        evaluations={safeEvaluations}
         stats={safeStats}
         isLoggedIn={initialIsLoggedIn}
         userRole={initialUserRole}
@@ -109,9 +114,9 @@ export default function ClientAuthPage({
 
   // Show marketing landing for non-authenticated users
   return (
-    <MarketingLanding 
-      isLoggedIn={initialIsLoggedIn} 
-      userRole={initialUserRole} 
+    <MarketingLanding
+      isLoggedIn={initialIsLoggedIn}
+      userRole={initialUserRole}
     />
   );
 }

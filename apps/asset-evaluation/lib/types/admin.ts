@@ -1,8 +1,15 @@
-import { PropertyType, QuestionCategory, Question, Answer } from '@/lib/evaluation-utils';
+import type {
+  Answer,
+  CustomField,
+  PropertyType,
+  Question,
+  QuestionCategory,
+} from "@/lib/evaluation-utils";
 
 // Extended types for the admin panel with full relations
 export interface PropertyTypeWithRelations extends PropertyType {
   questionCategories: CategoryWithRelations[];
+  customFields?: CustomField[];
 }
 
 export interface CategoryWithRelations extends QuestionCategory {
@@ -55,10 +62,40 @@ export interface UpdateAnswerData extends CreateAnswerData {
   id: number;
 }
 
+// Custom Fields types
+export interface SelectOption {
+  value: string;
+  label_ro: string;
+  label_en?: string;
+}
+
+export interface CreateCustomFieldData {
+  propertyTypeId: number;
+  label_ro: string;
+  label_en?: string;
+  fieldType: "text" | "number" | "select" | "textarea" | "date" | "boolean";
+  isRequired: boolean;
+  placeholder_ro?: string;
+  placeholder_en?: string;
+  helpText_ro?: string;
+  helpText_en?: string;
+  selectOptions?: SelectOption[];
+  validation?: Record<string, any>;
+  sortOrder?: number;
+}
+
+export interface UpdateCustomFieldData extends CreateCustomFieldData {
+  id: number;
+}
+
 // Validation types
 export interface ValidationError {
-  type: 'missing_translation' | 'missing_answers' | 'missing_questions' | 'invalid_weight';
-  level: 'property_type' | 'category' | 'question' | 'answer';
+  type:
+    | "missing_translation"
+    | "missing_answers"
+    | "missing_questions"
+    | "invalid_weight";
+  level: "property_type" | "category" | "question" | "answer";
   id: number;
   message: string;
   field?: string;

@@ -1,14 +1,14 @@
-import { db } from './drizzle';
-import { users, teams, teamMembers } from './schema';
-import { hashPassword } from '@/lib/auth/session';
-import { eq } from 'drizzle-orm';
+import { eq } from "drizzle-orm";
+import { hashPassword } from "@/lib/auth/session";
+import { db } from "./drizzle";
+import { teamMembers, teams, users } from "./schema";
 
 async function seed() {
-  const email = 'admin@admin.com';
-  const password = 'admin123';
+  const email = "admin@admin.com";
+  const password = "admin123";
   const passwordHash = await hashPassword(password);
 
-  console.log('Creating super user...');
+  console.log("Creating super user...");
 
   // Check if user already exists
   const existingUser = await db
@@ -20,21 +20,21 @@ async function seed() {
   let user;
   if (existingUser.length > 0) {
     user = existingUser[0];
-    console.log('Super user already exists.');
+    console.log("Super user already exists.");
   } else {
     // Create super user
     [user] = await db
       .insert(users)
       .values([
         {
-          name: 'Super Admin',
+          name: "Super Admin",
           email: email,
           passwordHash: passwordHash,
-          role: 'owner',
+          role: "owner",
         },
       ])
       .returning();
-    console.log('✅ Super user created successfully!');
+    console.log("✅ Super user created successfully!");
   }
 
   // Check if user has a team
@@ -45,44 +45,44 @@ async function seed() {
     .limit(1);
 
   if (existingTeamMember.length === 0) {
-    console.log('Creating default team for super user...');
-    
+    console.log("Creating default team for super user...");
+
     // Create a default team
     const [team] = await db
       .insert(teams)
       .values({
-        name: 'Default Team',
+        name: "Default Team",
       })
       .returning();
 
     // Add user to the team
-    await db
-      .insert(teamMembers)
-      .values({
-        userId: user.id,
-        teamId: team.id,
-        role: 'owner',
-      });
+    await db.insert(teamMembers).values({
+      userId: user.id,
+      teamId: team.id,
+      role: "owner",
+    });
 
     console.log(`✅ Default team created and user added as owner!`);
   } else {
-    console.log('User already belongs to a team.');
+    console.log("User already belongs to a team.");
   }
 
-  console.log('');
-  console.log('Super User Credentials:');
+  console.log("");
+  console.log("Super User Credentials:");
   console.log(`📧 Email: ${email}`);
   console.log(`🔑 Password: ${password}`);
-  console.log('');
-  console.log('You can now login and create products and other data through the interface.');
+  console.log("");
+  console.log(
+    "You can now login and create products and other data through the interface.",
+  );
 }
 
 seed()
   .catch((error) => {
-    console.error('❌ Seed process failed:', error);
+    console.error("❌ Seed process failed:", error);
     process.exit(1);
   })
   .finally(() => {
-    console.log('Seed process finished. Exiting...');
+    console.log("Seed process finished. Exiting...");
     process.exit(0);
   });

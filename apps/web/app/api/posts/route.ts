@@ -1,10 +1,7 @@
+import { getUserSubscriptionPlan, RequiresProPlanError } from "@hub/lib";
 import * as z from "zod";
-
-import db from "@workspace/prisma";
-import { RequiresProPlanError } from "@hub/lib";
-import { getUserSubscriptionPlan } from "@hub/lib";
-import { authConfig } from "@/config/auth";
 import { auth } from "@/auth";
+import { authConfig } from "@/config/auth";
 
 const postCreateSchema = z.object({
   title: z.string(),

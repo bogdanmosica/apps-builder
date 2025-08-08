@@ -1,24 +1,14 @@
-'use client';
+"use client";
 
-import { useState, useTransition } from 'react';
-import { Badge } from '@workspace/ui/components/badge';
-import { Button } from '@workspace/ui/components/button';
+import { Badge } from "@workspace/ui/components/badge";
+import { Button } from "@workspace/ui/components/button";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from '@workspace/ui/components/card';
-import { Input } from '@workspace/ui/components/input';
-import { Label } from '@workspace/ui/components/label';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@workspace/ui/components/select';
+} from "@workspace/ui/components/card";
 import {
   Dialog,
   DialogContent,
@@ -27,35 +17,45 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from '@workspace/ui/components/dialog';
-
-import { 
-  Users, 
-  UserPlus, 
-  MoreHorizontal, 
-  Trash2, 
-  Shield, 
-  Mail,
-  Calendar,
-  Crown,
-  Eye,
-  Settings2,
-  Clock,
-  X
-} from 'lucide-react';
+} from "@workspace/ui/components/dialog";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from '@workspace/ui/components/dropdown-menu';
-import { 
-  inviteTeamMember, 
-  updateMemberRole, 
+} from "@workspace/ui/components/dropdown-menu";
+import { Input } from "@workspace/ui/components/input";
+import { Label } from "@workspace/ui/components/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@workspace/ui/components/select";
+
+import {
+  Calendar,
+  Clock,
+  Crown,
+  Eye,
+  Mail,
+  MoreHorizontal,
+  Settings2,
+  Shield,
+  Trash2,
+  UserPlus,
+  Users,
+  X,
+} from "lucide-react";
+import { useState, useTransition } from "react";
+import { toast } from "sonner";
+import {
+  cancelInvitation,
+  inviteTeamMember,
   removeMember,
-  cancelInvitation 
-} from '@/lib/actions/team-settings';
-import { toast } from 'sonner';
+  updateMemberRole,
+} from "@/lib/actions/team-settings";
 
 interface TeamMember {
   id: number;
@@ -98,10 +98,10 @@ interface TeamSettingsProps {
 }
 
 const ROLE_COLORS = {
-  owner: 'bg-purple-100 text-purple-800',
-  admin: 'bg-blue-100 text-blue-800',
-  member: 'bg-green-100 text-green-800',
-  viewer: 'bg-gray-100 text-gray-800',
+  owner: "bg-purple-100 text-purple-800",
+  admin: "bg-blue-100 text-blue-800",
+  member: "bg-green-100 text-green-800",
+  viewer: "bg-gray-100 text-gray-800",
 };
 
 const ROLE_ICONS = {
@@ -136,8 +136,8 @@ export default function TeamSettings({ teamData }: TeamSettingsProps) {
     );
   }
 
-  const canManageTeam = ['admin', 'owner'].some(role => 
-    teamData.currentUserRole?.includes(role)
+  const canManageTeam = ["admin", "owner"].some((role) =>
+    teamData.currentUserRole?.includes(role),
   );
 
   const handleInviteMember = async (formData: FormData) => {
@@ -154,8 +154,8 @@ export default function TeamSettings({ teamData }: TeamSettingsProps) {
 
   const handleUpdateRole = async (memberId: number, newRole: string) => {
     const formData = new FormData();
-    formData.append('memberId', memberId.toString());
-    formData.append('role', newRole);
+    formData.append("memberId", memberId.toString());
+    formData.append("role", newRole);
 
     startTransitionRole(async () => {
       const result = await updateMemberRole(formData);
@@ -169,7 +169,7 @@ export default function TeamSettings({ teamData }: TeamSettingsProps) {
 
   const handleRemoveMember = async (memberId: number) => {
     const formData = new FormData();
-    formData.append('memberId', memberId.toString());
+    formData.append("memberId", memberId.toString());
 
     startTransitionRemove(async () => {
       const result = await removeMember(formData);
@@ -183,7 +183,7 @@ export default function TeamSettings({ teamData }: TeamSettingsProps) {
 
   const handleCancelInvitation = async (invitationId: number) => {
     const formData = new FormData();
-    formData.append('invitationId', invitationId.toString());
+    formData.append("invitationId", invitationId.toString());
 
     startTransitionCancel(async () => {
       const result = await cancelInvitation(formData);
@@ -196,10 +196,10 @@ export default function TeamSettings({ teamData }: TeamSettingsProps) {
   };
 
   const formatDate = (date: Date) => {
-    return new Intl.DateTimeFormat('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
+    return new Intl.DateTimeFormat("en-US", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
     }).format(new Date(date));
   };
 
@@ -224,7 +224,10 @@ export default function TeamSettings({ teamData }: TeamSettingsProps) {
               </CardDescription>
             </div>
             {canManageTeam && (
-              <Dialog open={isInviteDialogOpen} onOpenChange={setIsInviteDialogOpen}>
+              <Dialog
+                open={isInviteDialogOpen}
+                onOpenChange={setIsInviteDialogOpen}
+              >
                 <DialogTrigger asChild>
                   <Button>
                     <UserPlus className="mr-2 h-4 w-4" />
@@ -288,7 +291,7 @@ export default function TeamSettings({ teamData }: TeamSettingsProps) {
                         Cancel
                       </Button>
                       <Button type="submit" disabled={isPendingInvite}>
-                        {isPendingInvite ? 'Sending...' : 'Send Invitation'}
+                        {isPendingInvite ? "Sending..." : "Send Invitation"}
                       </Button>
                     </DialogFooter>
                   </form>
@@ -299,7 +302,8 @@ export default function TeamSettings({ teamData }: TeamSettingsProps) {
         </CardHeader>
         <CardContent>
           <div className="text-sm text-muted-foreground">
-            Created on {formatDate(teamData.team.createdAt)} • {teamData.team.teamMembers.length} members
+            Created on {formatDate(teamData.team.createdAt)} •{" "}
+            {teamData.team.teamMembers.length} members
           </div>
         </CardContent>
       </Card>
@@ -316,7 +320,7 @@ export default function TeamSettings({ teamData }: TeamSettingsProps) {
           <div className="space-y-4">
             {teamData.team.teamMembers.map((member) => {
               const isCurrentUser = member.user.email === member.user.email; // This should be checked against current user
-              
+
               return (
                 <div
                   key={member.id}
@@ -324,11 +328,12 @@ export default function TeamSettings({ teamData }: TeamSettingsProps) {
                 >
                   <div className="flex items-center gap-4">
                     <div className="flex items-center justify-center w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full text-white font-medium">
-                      {member.user.name?.[0]?.toUpperCase() || member.user.email[0].toUpperCase()}
+                      {member.user.name?.[0]?.toUpperCase() ||
+                        member.user.email[0].toUpperCase()}
                     </div>
                     <div>
                       <div className="font-medium">
-                        {member.user.name || 'No name'}
+                        {member.user.name || "No name"}
                         {/* Add current user indicator here if needed */}
                       </div>
                       <div className="text-sm text-muted-foreground flex items-center gap-2">
@@ -341,16 +346,17 @@ export default function TeamSettings({ teamData }: TeamSettingsProps) {
                       </div>
                     </div>
                   </div>
-                  
+
                   <div className="flex items-center gap-2">
                     <Badge
                       variant="outline"
                       className={`${ROLE_COLORS[member.role as keyof typeof ROLE_COLORS] || ROLE_COLORS.member} flex items-center gap-1`}
                     >
                       {getRoleIcon(member.role)}
-                      {member.role.charAt(0).toUpperCase() + member.role.slice(1)}
+                      {member.role.charAt(0).toUpperCase() +
+                        member.role.slice(1)}
                     </Badge>
-                    
+
                     {canManageTeam && (
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
@@ -360,28 +366,36 @@ export default function TeamSettings({ teamData }: TeamSettingsProps) {
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
                           <DropdownMenuItem
-                            onClick={() => handleUpdateRole(member.id, 'viewer')}
-                            disabled={member.role === 'viewer' || isPendingRole}
+                            onClick={() =>
+                              handleUpdateRole(member.id, "viewer")
+                            }
+                            disabled={member.role === "viewer" || isPendingRole}
                           >
                             <Eye className="mr-2 h-3 w-3" />
                             Make Viewer
                           </DropdownMenuItem>
                           <DropdownMenuItem
-                            onClick={() => handleUpdateRole(member.id, 'member')}
-                            disabled={member.role === 'member' || isPendingRole}
+                            onClick={() =>
+                              handleUpdateRole(member.id, "member")
+                            }
+                            disabled={member.role === "member" || isPendingRole}
                           >
                             <Users className="mr-2 h-3 w-3" />
                             Make Member
                           </DropdownMenuItem>
                           <DropdownMenuItem
-                            onClick={() => handleUpdateRole(member.id, 'admin')}
-                            disabled={member.role === 'admin' || member.role === 'owner' || isPendingRole}
+                            onClick={() => handleUpdateRole(member.id, "admin")}
+                            disabled={
+                              member.role === "admin" ||
+                              member.role === "owner" ||
+                              isPendingRole
+                            }
                           >
                             <Shield className="mr-2 h-3 w-3" />
                             Make Admin
                           </DropdownMenuItem>
-                          {member.role !== 'owner' && (
-                            <DropdownMenuItem 
+                          {member.role !== "owner" && (
+                            <DropdownMenuItem
                               className="text-destructive focus:text-destructive"
                               onClick={() => {
                                 setMemberToRemove(member);
@@ -425,15 +439,19 @@ export default function TeamSettings({ teamData }: TeamSettingsProps) {
                   <div>
                     <div className="font-medium">{invitation.email}</div>
                     <div className="text-sm text-muted-foreground">
-                      Invited as {invitation.role} by {invitation.invitedBy.name || invitation.invitedBy.email}
+                      Invited as {invitation.role} by{" "}
+                      {invitation.invitedBy.name || invitation.invitedBy.email}
                     </div>
                     <div className="text-xs text-muted-foreground">
                       {formatDate(invitation.invitedAt)}
                     </div>
                   </div>
-                  
+
                   <div className="flex items-center gap-2">
-                    <Badge variant="outline" className="bg-yellow-100 text-yellow-800">
+                    <Badge
+                      variant="outline"
+                      className="bg-yellow-100 text-yellow-800"
+                    >
                       Pending
                     </Badge>
                     {canManageTeam && (
@@ -455,13 +473,17 @@ export default function TeamSettings({ teamData }: TeamSettingsProps) {
       )}
 
       {/* Confirmation Dialog for Removing Members */}
-      <Dialog open={confirmRemoveDialogOpen} onOpenChange={setConfirmRemoveDialogOpen}>
+      <Dialog
+        open={confirmRemoveDialogOpen}
+        onOpenChange={setConfirmRemoveDialogOpen}
+      >
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Remove Team Member</DialogTitle>
             <DialogDescription>
-              Are you sure you want to remove {memberToRemove?.user.name || memberToRemove?.user.email} from the team? 
-              This action cannot be undone.
+              Are you sure you want to remove{" "}
+              {memberToRemove?.user.name || memberToRemove?.user.email} from the
+              team? This action cannot be undone.
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
@@ -485,7 +507,7 @@ export default function TeamSettings({ teamData }: TeamSettingsProps) {
               }}
               disabled={isPendingRemove}
             >
-              {isPendingRemove ? 'Removing...' : 'Remove Member'}
+              {isPendingRemove ? "Removing..." : "Remove Member"}
             </Button>
           </DialogFooter>
         </DialogContent>

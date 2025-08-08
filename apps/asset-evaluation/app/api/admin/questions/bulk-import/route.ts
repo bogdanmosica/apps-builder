@@ -1,8 +1,12 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { getUser } from '../../../../../lib/db/queries';
-import { db } from '../../../../../lib/db/drizzle';
-import { questionCategories, questions, answers } from '../../../../../lib/db/schema';
-import { eq, and } from 'drizzle-orm';
+import { and, eq } from "drizzle-orm";
+import { type NextRequest, NextResponse } from "next/server";
+import { db } from "../../../../../lib/db/drizzle";
+import { getUser } from "../../../../../lib/db/queries";
+import {
+  answers,
+  questionCategories,
+  questions,
+} from "../../../../../lib/db/schema";
 
 interface ImportData {
   property_type: string;
@@ -18,27 +22,30 @@ interface ImportData {
 export async function POST(request: NextRequest) {
   try {
     const user = await getUser();
-    
-    if (!user || !['admin', 'owner'].includes(user.role)) {
+
+    if (!user || !["admin", "owner"].includes(user.role)) {
       return NextResponse.json(
-        { error: 'Unauthorized. Admin access required.' },
-        { status: 403 }
+        { error: "Unauthorized. Admin access required." },
+        { status: 403 },
       );
     }
 
-    const { propertyTypeId, data }: { propertyTypeId: number; data: ImportData[] } = await request.json();
+    const {
+      propertyTypeId,
+      data,
+    }: { propertyTypeId: number; data: ImportData[] } = await request.json();
 
     if (!propertyTypeId || !data || !Array.isArray(data)) {
       return NextResponse.json(
-        { error: 'Invalid request data' },
-        { status: 400 }
+        { error: "Invalid request data" },
+        { status: 400 },
       );
     }
 
     // Group data by question to handle multiple answers per question
     const questionGroups: Record<string, ImportData[]> = {};
-    
-    data.forEach(row => {
+
+    data.forEach((row) => {
       const questionKey = `${row.question_ro}|${row.question_en}`;
       if (!questionGroups[questionKey]) {
         questionGroups[questionKey] = [];
@@ -53,7 +60,7 @@ export async function POST(request: NextRequest) {
     // Process each question group
     for (const [questionKey, questionRows] of Object.entries(questionGroups)) {
       const firstRow = questionRows[0];
-      
+
       // Find or create category
       let category = await db
         .select()
@@ -61,8 +68,8 @@ export async function POST(request: NextRequest) {
         .where(
           and(
             eq(questionCategories.propertyTypeId, propertyTypeId),
-            eq(questionCategories.name_ro, firstRow.category_name)
-          )
+            eq(questionCategories.name_ro, firstRow.category_name),
+          ),
         )
         .limit(1);
 
@@ -76,7 +83,7 @@ export async function POST(request: NextRequest) {
             propertyTypeId: propertyTypeId,
           })
           .returning();
-        
+
         category = newCategory;
         categoriesCreated++;
       }
@@ -90,8 +97,8 @@ export async function POST(request: NextRequest) {
         .where(
           and(
             eq(questions.categoryId, categoryId),
-            eq(questions.text_ro, firstRow.question_ro)
-          )
+            eq(questions.text_ro, firstRow.question_ro),
+          ),
         )
         .limit(1);
 
@@ -108,12 +115,12 @@ export async function POST(request: NextRequest) {
             categoryId: categoryId,
           })
           .returning();
-        
+
         questionId = newQuestion[0].id;
         questionsCreated++;
       } else {
         questionId = existingQuestion[0].id;
-        
+
         // Update existing question
         await db
           .update(questions)
@@ -133,22 +140,20 @@ export async function POST(request: NextRequest) {
           .where(
             and(
               eq(answers.questionId, questionId),
-              eq(answers.text_ro, row.answer_ro)
-            )
+              eq(answers.text_ro, row.answer_ro),
+            ),
           )
           .limit(1);
 
         if (existingAnswer.length === 0) {
           // Create new answer
-          await db
-            .insert(answers)
-            .values({
-              text_ro: row.answer_ro,
-              text_en: row.answer_en,
-              weight: row.answer_weight,
-              questionId: questionId,
-            });
-          
+          await db.insert(answers).values({
+            text_ro: row.answer_ro,
+            text_en: row.answer_en,
+            weight: row.answer_weight,
+            questionId: questionId,
+          });
+
           answersCreated++;
         } else {
           // Update existing answer
@@ -168,14 +173,13 @@ export async function POST(request: NextRequest) {
       questionsCreated,
       answersCreated,
       categoriesCreated,
-      message: `Successfully imported ${questionsCreated} questions, ${answersCreated} answers, and created ${categoriesCreated} new categories.`
+      message: `Successfully imported ${questionsCreated} questions, ${answersCreated} answers, and created ${categoriesCreated} new categories.`,
     });
-
   } catch (error) {
-    console.error('Error importing questions:', error);
+    console.error("Error importing questions:", error);
     return NextResponse.json(
-      { error: 'Failed to import questions' },
-      { status: 500 }
+      { error: "Failed to import questions" },
+      { status: 500 },
     );
   }
 }

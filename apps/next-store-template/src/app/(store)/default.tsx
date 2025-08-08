@@ -1,3 +1,3 @@
 export default function ModalCartDefault() {
-	return null;
+  return null;
 }

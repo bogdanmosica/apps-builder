@@ -1,15 +1,40 @@
-'use client';
+"use client";
 
-import { useState, useRef } from 'react';
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@workspace/ui/components/dialog';
-import { Button } from '@workspace/ui/components/button';
-import { Alert, AlertDescription } from '@workspace/ui/components/alert';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@workspace/ui/components/table';
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@workspace/ui/components/accordion';
-import { Badge } from '@workspace/ui/components/badge';
-import { Upload, AlertCircle, CheckCircle, Download, FileText } from 'lucide-react';
-import { toast } from 'sonner';
-import * as XLSX from 'xlsx';
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@workspace/ui/components/accordion";
+import { Alert, AlertDescription } from "@workspace/ui/components/alert";
+import { Badge } from "@workspace/ui/components/badge";
+import { Button } from "@workspace/ui/components/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@workspace/ui/components/dialog";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@workspace/ui/components/table";
+import {
+  AlertCircle,
+  CheckCircle,
+  Download,
+  FileText,
+  Upload,
+} from "lucide-react";
+import { useRef, useState } from "react";
+import { toast } from "sonner";
+import * as XLSX from "xlsx";
 
 interface ParsedQuestion {
   property_type_id?: number;
@@ -51,19 +76,26 @@ interface Props {
   onSuccess: () => void;
 }
 
-export default function BulkImportDialog({ open, onOpenChange, propertyTypeId, propertyTypeName, onSuccess }: Props) {
+export default function BulkImportDialog({
+  open,
+  onOpenChange,
+  propertyTypeId,
+  propertyTypeName,
+  onSuccess,
+}: Props) {
   const [dragActive, setDragActive] = useState(false);
   const [file, setFile] = useState<File | null>(null);
-  const [validationResult, setValidationResult] = useState<ValidationResult | null>(null);
+  const [validationResult, setValidationResult] =
+    useState<ValidationResult | null>(null);
   const [importing, setImporting] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleDrag = (e: React.DragEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    if (e.type === 'dragenter' || e.type === 'dragover') {
+    if (e.type === "dragenter" || e.type === "dragover") {
       setDragActive(true);
-    } else if (e.type === 'dragleave') {
+    } else if (e.type === "dragleave") {
       setDragActive(false);
     }
   };
@@ -72,7 +104,7 @@ export default function BulkImportDialog({ open, onOpenChange, propertyTypeId, p
     e.preventDefault();
     e.stopPropagation();
     setDragActive(false);
-    
+
     if (e.dataTransfer.files && e.dataTransfer.files[0]) {
       handleFileUpload(e.dataTransfer.files[0]);
     }
@@ -86,121 +118,134 @@ export default function BulkImportDialog({ open, onOpenChange, propertyTypeId, p
 
   const handleFileUpload = async (uploadedFile: File) => {
     if (!uploadedFile.name.match(/\.(xlsx|xls|csv)$/)) {
-      toast.error('Please upload an Excel (.xlsx, .xls) or CSV file');
+      toast.error("Please upload an Excel (.xlsx, .xls) or CSV file");
       return;
     }
 
     setFile(uploadedFile);
-    
+
     try {
       const arrayBuffer = await uploadedFile.arrayBuffer();
       const workbook = XLSX.read(arrayBuffer);
       const sheetName = workbook.SheetNames[0];
       const worksheet = workbook.Sheets[sheetName];
       const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
-      
+
       const result = validateData(jsonData as any[][]);
       setValidationResult(result);
     } catch (error) {
-      console.error('Error parsing file:', error);
-      toast.error('Error parsing file. Please check the format.');
+      console.error("Error parsing file:", error);
+      toast.error("Error parsing file. Please check the format.");
     }
   };
 
   const validateData = (data: any[][]): ValidationResult => {
     const headers = data[0];
     const rows = data.slice(1);
-    
+
     // Detect format type based on headers
-    const hasIdColumns = headers.some((h: string) => h?.includes('_id'));
+    const hasIdColumns = headers.some((h: string) => h?.includes("_id"));
     const isIdBasedFormat = hasIdColumns;
-    
+
     const valid: ParsedQuestion[] = [];
     const invalid: ParsedQuestion[] = [];
     const categories = new Set<string>();
-    
+
     rows.forEach((row, index) => {
       let parsedRow: ParsedQuestion;
-      
+
       if (isIdBasedFormat) {
         // New ID-based format
         parsedRow = {
           property_type_id: parseInt(row[0]) || undefined,
           category_id: parseInt(row[1]) || 0,
-          category_name_ro: row[2]?.toString().trim() || '',
-          category_name_en: row[3]?.toString().trim() || '',
+          category_name_ro: row[2]?.toString().trim() || "",
+          category_name_en: row[3]?.toString().trim() || "",
           question_id: parseInt(row[4]) || 0,
-          question_ro: row[5]?.toString().trim() || '',
-          question_en: row[6]?.toString().trim() || '',
+          question_ro: row[5]?.toString().trim() || "",
+          question_en: row[6]?.toString().trim() || "",
           question_weight: parseInt(row[7]) || 0,
           answer_id: parseInt(row[8]) || 0,
-          answer_ro: row[9]?.toString().trim() || '',
-          answer_en: row[10]?.toString().trim() || '',
+          answer_ro: row[9]?.toString().trim() || "",
+          answer_en: row[10]?.toString().trim() || "",
           answer_weight: parseInt(row[11]) || 0,
           rowIndex: index + 2,
-          errors: []
+          errors: [],
         };
-        
+
         // Validation for ID-based format
-        if (!parsedRow.property_type_id) parsedRow.errors.push('Property type ID is required');
-        if (!parsedRow.category_name_ro) parsedRow.errors.push('Romanian category name is required');
-        if (!parsedRow.question_ro) parsedRow.errors.push('Romanian question is required');
-        if (!parsedRow.answer_ro) parsedRow.errors.push('Romanian answer is required');
-        
+        if (!parsedRow.property_type_id)
+          parsedRow.errors.push("Property type ID is required");
+        if (!parsedRow.category_name_ro)
+          parsedRow.errors.push("Romanian category name is required");
+        if (!parsedRow.question_ro)
+          parsedRow.errors.push("Romanian question is required");
+        if (!parsedRow.answer_ro)
+          parsedRow.errors.push("Romanian answer is required");
+
         if (parsedRow.category_name_ro) {
           categories.add(parsedRow.category_name_ro);
         }
       } else {
         // Legacy string-based format
         parsedRow = {
-          property_type: row[0]?.toString().trim() || '',
-          category_name: row[1]?.toString().trim() || '',
-          question_ro: row[2]?.toString().trim() || '',
-          question_en: row[3]?.toString().trim() || '',
+          property_type: row[0]?.toString().trim() || "",
+          category_name: row[1]?.toString().trim() || "",
+          question_ro: row[2]?.toString().trim() || "",
+          question_en: row[3]?.toString().trim() || "",
           question_weight: parseInt(row[4]) || 0,
-          answer_ro: row[5]?.toString().trim() || '',
-          answer_en: row[6]?.toString().trim() || '',
+          answer_ro: row[5]?.toString().trim() || "",
+          answer_en: row[6]?.toString().trim() || "",
           answer_weight: parseInt(row[7]) || 0,
           rowIndex: index + 2,
-          errors: []
+          errors: [],
         };
-        
+
         // Validation for legacy format
-        if (!parsedRow.property_type) parsedRow.errors.push('Property type is required');
-        if (!parsedRow.category_name) parsedRow.errors.push('Category name is required');
-        if (!parsedRow.question_ro) parsedRow.errors.push('Romanian question is required');
-        if (!parsedRow.answer_ro) parsedRow.errors.push('Romanian answer is required');
-        
+        if (!parsedRow.property_type)
+          parsedRow.errors.push("Property type is required");
+        if (!parsedRow.category_name)
+          parsedRow.errors.push("Category name is required");
+        if (!parsedRow.question_ro)
+          parsedRow.errors.push("Romanian question is required");
+        if (!parsedRow.answer_ro)
+          parsedRow.errors.push("Romanian answer is required");
+
         if (parsedRow.category_name) {
           categories.add(parsedRow.category_name);
         }
       }
-      
+
       // Common validation with better error messages
       if (parsedRow.question_weight < 1 || parsedRow.question_weight > 10) {
         if (parsedRow.question_weight === 0) {
-          parsedRow.errors.push('Question weight is required (1-10). If missing from template, please download a fresh template.');
+          parsedRow.errors.push(
+            "Question weight is required (1-10). If missing from template, please download a fresh template.",
+          );
         } else {
-          parsedRow.errors.push('Question weight must be between 1-10');
+          parsedRow.errors.push("Question weight must be between 1-10");
         }
       }
       if (parsedRow.answer_weight < 1 || parsedRow.answer_weight > 10) {
         if (parsedRow.answer_weight === 0) {
-          parsedRow.errors.push('Answer weight is required (1-10). If missing from template, please download a fresh template.');
+          parsedRow.errors.push(
+            "Answer weight is required (1-10). If missing from template, please download a fresh template.",
+          );
         } else {
-          parsedRow.errors.push('Answer weight must be between 1-10');
+          parsedRow.errors.push("Answer weight must be between 1-10");
         }
       }
-      
+
       if (parsedRow.errors.length === 0) {
         valid.push(parsedRow);
       } else {
         invalid.push(parsedRow);
       }
     });
-    
-    const uniqueQuestions = new Set(valid.map(row => `${row.question_ro}`)).size;
-    
+
+    const uniqueQuestions = new Set(valid.map((row) => `${row.question_ro}`))
+      .size;
+
     return {
       valid,
       invalid,
@@ -209,14 +254,14 @@ export default function BulkImportDialog({ open, onOpenChange, propertyTypeId, p
         validRows: valid.length,
         invalidRows: invalid.length,
         uniqueQuestions,
-        categories
-      }
+        categories,
+      },
     };
   };
 
   const handleImport = async () => {
     if (!validationResult || validationResult.valid.length === 0) {
-      toast.error('No valid data to import');
+      toast.error("No valid data to import");
       return;
     }
 
@@ -225,7 +270,7 @@ export default function BulkImportDialog({ open, onOpenChange, propertyTypeId, p
     try {
       // Convert to ID-based format for the new endpoint
       const questionsForImport = [];
-      
+
       for (const question of validationResult.valid) {
         if (question.property_type_id !== undefined) {
           // Already ID-based format - pass through directly
@@ -248,8 +293,8 @@ export default function BulkImportDialog({ open, onOpenChange, propertyTypeId, p
           questionsForImport.push({
             property_type_id: propertyTypeId || 1, // Use selected property type or default
             category_id: 0, // Always 0 for new categories in legacy format
-            category_name_ro: question.category_name || '',
-            category_name_en: question.category_name || '',
+            category_name_ro: question.category_name || "",
+            category_name_en: question.category_name || "",
             question_id: 0, // Always 0 for new questions in legacy format
             question_ro: question.question_ro,
             question_en: question.question_en || question.question_ro,
@@ -262,32 +307,32 @@ export default function BulkImportDialog({ open, onOpenChange, propertyTypeId, p
         }
       }
 
-      const response = await fetch('/api/questions/bulk-import', {
-        method: 'POST',
+      const response = await fetch("/api/questions/bulk-import", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           questions: questionsForImport,
-          replaceExisting: false
+          replaceExisting: false,
         }),
       });
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.error || 'Failed to import questions');
+        throw new Error(errorData.error || "Failed to import questions");
       }
 
       const result = await response.json();
-      
+
       toast.success(
-        `ID-based import completed! Created: ${result.results.categoriesCreated} categories, ${result.results.questionsCreated} questions, ${result.results.answersCreated} answers`
+        `ID-based import completed! Created: ${result.results.categoriesCreated} categories, ${result.results.questionsCreated} questions, ${result.results.answersCreated} answers`,
       );
       onSuccess();
       handleClose();
     } catch (error) {
-      console.error('Error importing questions:', error);
-      toast.error('Failed to import questions. Please try again.');
+      console.error("Error importing questions:", error);
+      toast.error("Failed to import questions. Please try again.");
     } finally {
       setImporting(false);
     }
@@ -302,23 +347,25 @@ export default function BulkImportDialog({ open, onOpenChange, propertyTypeId, p
 
   const downloadTemplate = async () => {
     try {
-      const response = await fetch(`/api/admin/questions/template?propertyTypeId=${propertyTypeId}`);
-      if (!response.ok) throw new Error('Failed to download template');
-      
+      const response = await fetch(
+        `/api/admin/questions/template?propertyTypeId=${propertyTypeId}`,
+      );
+      if (!response.ok) throw new Error("Failed to download template");
+
       const blob = await response.blob();
       const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
+      const a = document.createElement("a");
       a.href = url;
-      a.download = `questions-template-${(propertyTypeName || 'all').toLowerCase().replace(/\s+/g, '-')}.xlsx`;
+      a.download = `questions-template-${(propertyTypeName || "all").toLowerCase().replace(/\s+/g, "-")}.xlsx`;
       document.body.appendChild(a);
       a.click();
       window.URL.revokeObjectURL(url);
       document.body.removeChild(a);
-      
-      toast.success('Template downloaded successfully');
+
+      toast.success("Template downloaded successfully");
     } catch (error) {
-      console.error('Error downloading template:', error);
-      toast.error('Failed to download template');
+      console.error("Error downloading template:", error);
+      toast.error("Failed to download template");
     }
   };
 
@@ -326,9 +373,13 @@ export default function BulkImportDialog({ open, onOpenChange, propertyTypeId, p
     <Dialog open={open} onOpenChange={handleClose}>
       <DialogContent className="max-w-6xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>Bulk Import Questions{propertyTypeName ? ` - ${propertyTypeName}` : ''}</DialogTitle>
+          <DialogTitle>
+            Bulk Import Questions
+            {propertyTypeName ? ` - ${propertyTypeName}` : ""}
+          </DialogTitle>
           <DialogDescription>
-            Upload an Excel file with questions and answers{propertyTypeName ? ` for ${propertyTypeName} properties` : ''}.
+            Upload an Excel file with questions and answers
+            {propertyTypeName ? ` for ${propertyTypeName} properties` : ""}.
           </DialogDescription>
         </DialogHeader>
 
@@ -340,7 +391,8 @@ export default function BulkImportDialog({ open, onOpenChange, propertyTypeId, p
               <div>
                 <p className="font-medium">Need a template?</p>
                 <p className="text-sm text-muted-foreground">
-                  Download the Excel template with pre-filled headers and example data
+                  Download the Excel template with pre-filled headers and
+                  example data
                 </p>
               </div>
             </div>
@@ -355,8 +407,8 @@ export default function BulkImportDialog({ open, onOpenChange, propertyTypeId, p
             <div
               className={`border-2 border-dashed rounded-lg p-8 text-center transition-colors ${
                 dragActive
-                  ? 'border-primary bg-primary/5'
-                  : 'border-muted-foreground/25 hover:border-muted-foreground/50'
+                  ? "border-primary bg-primary/5"
+                  : "border-muted-foreground/25 hover:border-muted-foreground/50"
               }`}
               onDragEnter={handleDrag}
               onDragLeave={handleDrag}
@@ -364,7 +416,9 @@ export default function BulkImportDialog({ open, onOpenChange, propertyTypeId, p
               onDrop={handleDrop}
             >
               <Upload className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
-              <p className="text-lg font-medium mb-2">Drop your Excel file here</p>
+              <p className="text-lg font-medium mb-2">
+                Drop your Excel file here
+              </p>
               <p className="text-muted-foreground mb-4">
                 or click to browse (supports .xlsx, .xls, .csv)
               </p>
@@ -398,22 +452,30 @@ export default function BulkImportDialog({ open, onOpenChange, propertyTypeId, p
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 <div className="bg-muted p-3 rounded-lg">
                   <p className="text-sm text-muted-foreground">Total Rows</p>
-                  <p className="text-2xl font-bold">{validationResult.summary.totalRows}</p>
+                  <p className="text-2xl font-bold">
+                    {validationResult.summary.totalRows}
+                  </p>
                 </div>
                 <div className="bg-green-50 dark:bg-green-900/20 p-3 rounded-lg">
-                  <p className="text-sm text-green-600 dark:text-green-400">Valid Rows</p>
+                  <p className="text-sm text-green-600 dark:text-green-400">
+                    Valid Rows
+                  </p>
                   <p className="text-2xl font-bold text-green-600 dark:text-green-400">
                     {validationResult.summary.validRows}
                   </p>
                 </div>
                 <div className="bg-red-50 dark:bg-red-900/20 p-3 rounded-lg">
-                  <p className="text-sm text-red-600 dark:text-red-400">Invalid Rows</p>
+                  <p className="text-sm text-red-600 dark:text-red-400">
+                    Invalid Rows
+                  </p>
                   <p className="text-2xl font-bold text-red-600 dark:text-red-400">
                     {validationResult.summary.invalidRows}
                   </p>
                 </div>
                 <div className="bg-blue-50 dark:bg-blue-900/20 p-3 rounded-lg">
-                  <p className="text-sm text-blue-600 dark:text-blue-400">Questions</p>
+                  <p className="text-sm text-blue-600 dark:text-blue-400">
+                    Questions
+                  </p>
                   <p className="text-2xl font-bold text-blue-600 dark:text-blue-400">
                     {validationResult.summary.uniqueQuestions}
                   </p>
@@ -423,13 +485,17 @@ export default function BulkImportDialog({ open, onOpenChange, propertyTypeId, p
               {/* Categories */}
               {validationResult.summary.categories.size > 0 && (
                 <div>
-                  <p className="text-sm font-medium mb-2">Categories to be created/updated:</p>
+                  <p className="text-sm font-medium mb-2">
+                    Categories to be created/updated:
+                  </p>
                   <div className="flex flex-wrap gap-2">
-                    {Array.from(validationResult.summary.categories).map((category) => (
-                      <Badge key={category} variant="secondary">
-                        {category}
-                      </Badge>
-                    ))}
+                    {Array.from(validationResult.summary.categories).map(
+                      (category) => (
+                        <Badge key={category} variant="secondary">
+                          {category}
+                        </Badge>
+                      ),
+                    )}
                   </div>
                 </div>
               )}
@@ -439,8 +505,9 @@ export default function BulkImportDialog({ open, onOpenChange, propertyTypeId, p
                 <Alert>
                   <AlertCircle className="h-4 w-4" />
                   <AlertDescription>
-                    {validationResult.invalid.length} rows have validation errors and will be skipped.
-                    Please review and fix the errors below.
+                    {validationResult.invalid.length} rows have validation
+                    errors and will be skipped. Please review and fix the errors
+                    below.
                   </AlertDescription>
                 </Alert>
               )}
@@ -452,7 +519,9 @@ export default function BulkImportDialog({ open, onOpenChange, propertyTypeId, p
                     <AccordionTrigger>
                       <div className="flex items-center space-x-2">
                         <CheckCircle className="h-4 w-4 text-green-500" />
-                        <span>Valid Data ({validationResult.valid.length} rows)</span>
+                        <span>
+                          Valid Data ({validationResult.valid.length} rows)
+                        </span>
                       </div>
                     </AccordionTrigger>
                     <AccordionContent>
@@ -471,23 +540,36 @@ export default function BulkImportDialog({ open, onOpenChange, propertyTypeId, p
                             </TableRow>
                           </TableHeader>
                           <TableBody>
-                            {validationResult.valid.slice(0, 10).map((row, index) => (
-                              <TableRow key={index}>
-                                <TableCell>{row.rowIndex}</TableCell>
-                                <TableCell>{row.category_name_ro || row.category_name}</TableCell>
-                                <TableCell className="max-w-32 truncate">{row.question_ro}</TableCell>
-                                <TableCell className="max-w-32 truncate">{row.question_en}</TableCell>
-                                <TableCell className="max-w-32 truncate">{row.answer_ro}</TableCell>
-                                <TableCell className="max-w-32 truncate">{row.answer_en}</TableCell>
-                                <TableCell>{row.question_weight}</TableCell>
-                                <TableCell>{row.answer_weight}</TableCell>
-                              </TableRow>
-                            ))}
+                            {validationResult.valid
+                              .slice(0, 10)
+                              .map((row, index) => (
+                                <TableRow key={index}>
+                                  <TableCell>{row.rowIndex}</TableCell>
+                                  <TableCell>
+                                    {row.category_name_ro || row.category_name}
+                                  </TableCell>
+                                  <TableCell className="max-w-32 truncate">
+                                    {row.question_ro}
+                                  </TableCell>
+                                  <TableCell className="max-w-32 truncate">
+                                    {row.question_en}
+                                  </TableCell>
+                                  <TableCell className="max-w-32 truncate">
+                                    {row.answer_ro}
+                                  </TableCell>
+                                  <TableCell className="max-w-32 truncate">
+                                    {row.answer_en}
+                                  </TableCell>
+                                  <TableCell>{row.question_weight}</TableCell>
+                                  <TableCell>{row.answer_weight}</TableCell>
+                                </TableRow>
+                              ))}
                           </TableBody>
                         </Table>
                         {validationResult.valid.length > 10 && (
                           <p className="text-sm text-muted-foreground mt-2 text-center">
-                            Showing first 10 rows of {validationResult.valid.length} valid rows
+                            Showing first 10 rows of{" "}
+                            {validationResult.valid.length} valid rows
                           </p>
                         )}
                       </div>
@@ -500,7 +582,9 @@ export default function BulkImportDialog({ open, onOpenChange, propertyTypeId, p
                     <AccordionTrigger>
                       <div className="flex items-center space-x-2">
                         <AlertCircle className="h-4 w-4 text-red-500" />
-                        <span>Invalid Data ({validationResult.invalid.length} rows)</span>
+                        <span>
+                          Invalid Data ({validationResult.invalid.length} rows)
+                        </span>
                       </div>
                     </AccordionTrigger>
                     <AccordionContent>
@@ -519,13 +603,23 @@ export default function BulkImportDialog({ open, onOpenChange, propertyTypeId, p
                             {validationResult.invalid.map((row, index) => (
                               <TableRow key={index}>
                                 <TableCell>{row.rowIndex}</TableCell>
-                                <TableCell>{row.category_name_ro || row.category_name}</TableCell>
-                                <TableCell className="max-w-32 truncate">{row.question_ro}</TableCell>
-                                <TableCell className="max-w-32 truncate">{row.question_en}</TableCell>
+                                <TableCell>
+                                  {row.category_name_ro || row.category_name}
+                                </TableCell>
+                                <TableCell className="max-w-32 truncate">
+                                  {row.question_ro}
+                                </TableCell>
+                                <TableCell className="max-w-32 truncate">
+                                  {row.question_en}
+                                </TableCell>
                                 <TableCell>
                                   <div className="space-y-1">
                                     {row.errors.map((error, errorIndex) => (
-                                      <Badge key={errorIndex} variant="destructive" className="text-xs">
+                                      <Badge
+                                        key={errorIndex}
+                                        variant="destructive"
+                                        className="text-xs"
+                                      >
                                         {error}
                                       </Badge>
                                     ))}
@@ -550,7 +644,9 @@ export default function BulkImportDialog({ open, onOpenChange, propertyTypeId, p
           </Button>
           {validationResult && validationResult.valid.length > 0 && (
             <Button onClick={handleImport} disabled={importing}>
-              {importing ? 'Importing...' : `Import ${validationResult.valid.length} Valid Rows`}
+              {importing
+                ? "Importing..."
+                : `Import ${validationResult.valid.length} Valid Rows`}
             </Button>
           )}
         </DialogFooter>

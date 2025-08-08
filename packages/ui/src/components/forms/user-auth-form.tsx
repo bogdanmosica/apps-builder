@@ -1,20 +1,18 @@
 "use client";
 
-import { HTMLAttributes, useState } from "react";
-import { useSearchParams } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import type * as z from "zod";
-
 import { cn } from "@hub/utils";
 import { userAuthSchema } from "@hub/validations";
-
+import { useSearchParams } from "next/navigation";
+import type { SignInOptions } from "next-auth/react";
+import { type HTMLAttributes, useState } from "react";
+import { useForm } from "react-hook-form";
+import type * as z from "zod";
+import { Icons } from "../icons";
 import { buttonVariants } from "../ui/button";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
 import { toast } from "../ui/use-toast";
-import { Icons } from "../icons";
-import { SignInOptions } from "next-auth/react";
 
 type UserAuthFormProps = HTMLAttributes<HTMLDivElement> & {
   signIn: (provider: string, options?: SignInOptions) => Promise<void>;

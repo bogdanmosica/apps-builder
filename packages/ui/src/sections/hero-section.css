@@ -1,18 +1,18 @@
 @keyframes hero-text-change {
   0% {
-    content: 'Powerful';
+    content: "Powerful";
   }
   25% {
-    content: 'Simple';
+    content: "Simple";
   }
   50% {
-    content: 'Unique';
+    content: "Unique";
   }
   75% {
-    content: 'Creative';
+    content: "Creative";
   }
 }
 .important_word:after {
-  content: 'Powerful';
+  content: "Powerful";
   animation: hero-text-change 8s infinite;
 }

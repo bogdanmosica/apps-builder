@@ -1,17 +1,17 @@
-import { db } from '@/lib/db/drizzle';
+import { and, desc, eq } from "drizzle-orm";
+import { db } from "@/lib/db/drizzle";
 import {
-  evaluationQuestions,
-  evaluationAnswerChoices,
-  propertyEvaluations,
-  propertyQualityScores,
-  type EvaluationQuestion,
   type EvaluationAnswerChoice,
-  type PropertyEvaluation,
-  type PropertyQualityScore,
+  type EvaluationQuestion,
+  evaluationAnswerChoices,
+  evaluationQuestions,
   type NewPropertyEvaluation,
   type NewPropertyQualityScore,
-} from '@/lib/db/schema';
-import { eq, and, desc } from 'drizzle-orm';
+  type PropertyEvaluation,
+  type PropertyQualityScore,
+  propertyEvaluations,
+  propertyQualityScores,
+} from "@/lib/db/schema";
 
 export interface EvaluationQuestionWithChoices extends EvaluationQuestion {
   answerChoices: EvaluationAnswerChoice[];
@@ -37,7 +37,9 @@ export interface QualityScoreBreakdown {
 /**
  * Get all active evaluation questions with their answer choices
  */
-export async function getEvaluationQuestions(): Promise<EvaluationQuestionWithChoices[]> {
+export async function getEvaluationQuestions(): Promise<
+  EvaluationQuestionWithChoices[]
+> {
   const questions = await db
     .select()
     .from(evaluationQuestions)
@@ -68,7 +70,7 @@ export async function getEvaluationQuestions(): Promise<EvaluationQuestionWithCh
 export async function savePropertyEvaluation(
   propertyId: number,
   evaluations: PropertyEvaluationData[],
-  evaluatedBy: number
+  evaluatedBy: number,
 ): Promise<void> {
   // Delete existing evaluations for this property
   await db
@@ -97,7 +99,7 @@ export async function savePropertyEvaluation(
  */
 export async function calculateAndSaveQualityScore(
   propertyId: number,
-  calculatedBy?: number
+  calculatedBy?: number,
 ): Promise<PropertyQualityScore> {
   const breakdown = await calculateQualityScoreBreakdown(propertyId);
 
@@ -126,7 +128,7 @@ export async function calculateAndSaveQualityScore(
  * Calculate detailed quality score breakdown
  */
 export async function calculateQualityScoreBreakdown(
-  propertyId: number
+  propertyId: number,
 ): Promise<QualityScoreBreakdown> {
   // Get all evaluations for this property with question and answer details
   const evaluationData = await db
@@ -138,20 +140,23 @@ export async function calculateQualityScoreBreakdown(
     .from(propertyEvaluations)
     .innerJoin(
       evaluationQuestions,
-      eq(propertyEvaluations.questionId, evaluationQuestions.id)
+      eq(propertyEvaluations.questionId, evaluationQuestions.id),
     )
     .leftJoin(
       evaluationAnswerChoices,
-      eq(propertyEvaluations.answerChoiceId, evaluationAnswerChoices.id)
+      eq(propertyEvaluations.answerChoiceId, evaluationAnswerChoices.id),
     )
     .where(eq(propertyEvaluations.propertyId, propertyId));
 
   // Group by category
-  const categoriesMap = new Map<string, {
-    totalWeightedScore: number;
-    totalWeight: number;
-    maxPossibleScore: number;
-  }>();
+  const categoriesMap = new Map<
+    string,
+    {
+      totalWeightedScore: number;
+      totalWeight: number;
+      maxPossibleScore: number;
+    }
+  >();
 
   for (const item of evaluationData) {
     const { question, answerChoice } = item;
@@ -174,18 +179,21 @@ export async function calculateQualityScoreBreakdown(
   }
 
   // Calculate category scores
-  const categoryScores = Array.from(categoriesMap.entries()).map(([category, data]) => {
-    const score = data.totalWeight > 0 
-      ? Math.round((data.totalWeightedScore / data.totalWeight) * 100) 
-      : 0;
-    
-    return {
-      category,
-      score,
-      maxScore: 100,
-      weight: data.totalWeight,
-    };
-  });
+  const categoryScores = Array.from(categoriesMap.entries()).map(
+    ([category, data]) => {
+      const score =
+        data.totalWeight > 0
+          ? Math.round((data.totalWeightedScore / data.totalWeight) * 100)
+          : 0;
+
+      return {
+        category,
+        score,
+        maxScore: 100,
+        weight: data.totalWeight,
+      };
+    },
+  );
 
   // Calculate overall weighted score
   let totalWeightedScore = 0;
@@ -196,12 +204,14 @@ export async function calculateQualityScoreBreakdown(
     totalWeight += data.totalWeight;
   }
 
-  const totalScore = totalWeight > 0 
-    ? Math.round((totalWeightedScore / totalWeight) * 100) 
-    : 0;
+  const totalScore =
+    totalWeight > 0 ? Math.round((totalWeightedScore / totalWeight) * 100) : 0;
 
   // Convert to star rating (1-5 stars)
-  const starRating = Math.max(1, Math.min(5, Math.ceil((totalScore / 100) * 5)));
+  const starRating = Math.max(
+    1,
+    Math.min(5, Math.ceil((totalScore / 100) * 5)),
+  );
 
   return {
     categoryScores,
@@ -214,7 +224,7 @@ export async function calculateQualityScoreBreakdown(
  * Get property quality score
  */
 export async function getPropertyQualityScore(
-  propertyId: number
+  propertyId: number,
 ): Promise<PropertyQualityScore | null> {
   const [qualityScore] = await db
     .select()
@@ -238,11 +248,11 @@ export async function getPropertyEvaluations(propertyId: number) {
     .from(propertyEvaluations)
     .innerJoin(
       evaluationQuestions,
-      eq(propertyEvaluations.questionId, evaluationQuestions.id)
+      eq(propertyEvaluations.questionId, evaluationQuestions.id),
     )
     .leftJoin(
       evaluationAnswerChoices,
-      eq(propertyEvaluations.answerChoiceId, evaluationAnswerChoices.id)
+      eq(propertyEvaluations.answerChoiceId, evaluationAnswerChoices.id),
     )
     .where(eq(propertyEvaluations.propertyId, propertyId))
     .orderBy(evaluationQuestions.sortOrder);
@@ -251,7 +261,9 @@ export async function getPropertyEvaluations(propertyId: number) {
 /**
  * Check if property has been evaluated
  */
-export async function isPropertyEvaluated(propertyId: number): Promise<boolean> {
+export async function isPropertyEvaluated(
+  propertyId: number,
+): Promise<boolean> {
   const [evaluation] = await db
     .select()
     .from(propertyEvaluations)

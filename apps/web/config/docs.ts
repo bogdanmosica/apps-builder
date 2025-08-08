@@ -1,4 +1,4 @@
-import { DocsConfig } from "@workspace/types";
+import type { DocsConfig } from "@workspace/types";
 
 export const docsConfig: DocsConfig = {
   mainNav: [

@@ -1,21 +1,21 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { db } from '@/lib/db/drizzle';
-import { 
-  payments, 
-  subscriptions, 
-  users, 
-  userSessions, 
-  teamMembers, 
-  teams 
-} from '@/lib/db/schema';
-import { getUser } from '@/lib/db/queries';
-import { eq, and, gte, sql, desc } from 'drizzle-orm';
+import { and, desc, eq, gte, sql } from "drizzle-orm";
+import { type NextRequest, NextResponse } from "next/server";
+import { db } from "@/lib/db/drizzle";
+import { getUser } from "@/lib/db/queries";
+import {
+  payments,
+  subscriptions,
+  teamMembers,
+  teams,
+  userSessions,
+  users,
+} from "@/lib/db/schema";
 
 export async function GET(request: NextRequest) {
   try {
     const user = await getUser();
     if (!user) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     // Get user's team
@@ -26,7 +26,7 @@ export async function GET(request: NextRequest) {
       .limit(1);
 
     if (userWithTeam.length === 0) {
-      return NextResponse.json({ error: 'Team not found' }, { status: 404 });
+      return NextResponse.json({ error: "Team not found" }, { status: 404 });
     }
 
     const teamId = userWithTeam[0].teamId;
@@ -44,9 +44,9 @@ export async function GET(request: NextRequest) {
         .where(
           and(
             eq(payments.teamId, teamId),
-            eq(payments.status, 'completed'),
-            gte(payments.createdAt, thirtyDaysAgo)
-          )
+            eq(payments.status, "completed"),
+            gte(payments.createdAt, thirtyDaysAgo),
+          ),
         ),
       db
         .select({ total: sql<number>`sum(amount)` })
@@ -54,10 +54,10 @@ export async function GET(request: NextRequest) {
         .where(
           and(
             eq(payments.teamId, teamId),
-            eq(payments.status, 'completed'),
+            eq(payments.status, "completed"),
             gte(payments.createdAt, sixtyDaysAgo),
-            sql`created_at < ${thirtyDaysAgo.toISOString()}`
-          )
+            sql`created_at < ${thirtyDaysAgo.toISOString()}`,
+          ),
         ),
     ]);
 
@@ -69,9 +69,9 @@ export async function GET(request: NextRequest) {
         .where(
           and(
             eq(subscriptions.teamId, teamId),
-            eq(subscriptions.status, 'active'),
-            gte(subscriptions.createdAt, thirtyDaysAgo)
-          )
+            eq(subscriptions.status, "active"),
+            gte(subscriptions.createdAt, thirtyDaysAgo),
+          ),
         ),
       db
         .select({ count: sql<number>`count(*)` })
@@ -79,10 +79,10 @@ export async function GET(request: NextRequest) {
         .where(
           and(
             eq(subscriptions.teamId, teamId),
-            eq(subscriptions.status, 'active'),
+            eq(subscriptions.status, "active"),
             gte(subscriptions.createdAt, sixtyDaysAgo),
-            sql`created_at < ${thirtyDaysAgo.toISOString()}`
-          )
+            sql`created_at < ${thirtyDaysAgo.toISOString()}`,
+          ),
         ),
     ]);
 
@@ -94,8 +94,8 @@ export async function GET(request: NextRequest) {
         .where(
           and(
             eq(userSessions.teamId, teamId),
-            gte(userSessions.startTime, thirtyDaysAgo)
-          )
+            gte(userSessions.startTime, thirtyDaysAgo),
+          ),
         ),
       db
         .select({ count: sql<number>`count(distinct user_id)` })
@@ -104,8 +104,8 @@ export async function GET(request: NextRequest) {
           and(
             eq(userSessions.teamId, teamId),
             gte(userSessions.startTime, sixtyDaysAgo),
-            sql`start_time < ${thirtyDaysAgo.toISOString()}`
-          )
+            sql`start_time < ${thirtyDaysAgo.toISOString()}`,
+          ),
         ),
     ]);
 
@@ -116,7 +116,12 @@ export async function GET(request: NextRequest) {
     };
 
     // Calculate conversion rate (subscriptions vs total users) with historical comparison
-    const [totalUsers, subscribedUsers, previousTotalUsers, previousSubscribedUsers] = await Promise.all([
+    const [
+      totalUsers,
+      subscribedUsers,
+      previousTotalUsers,
+      previousSubscribedUsers,
+    ] = await Promise.all([
       // Current month
       db
         .select({ count: sql<number>`count(*)` })
@@ -128,8 +133,8 @@ export async function GET(request: NextRequest) {
         .where(
           and(
             eq(subscriptions.teamId, teamId),
-            eq(subscriptions.status, 'active')
-          )
+            eq(subscriptions.status, "active"),
+          ),
         ),
       // Previous month
       db
@@ -138,8 +143,8 @@ export async function GET(request: NextRequest) {
         .where(
           and(
             eq(teamMembers.teamId, teamId),
-            sql`joined_at < ${thirtyDaysAgo.toISOString()}`
-          )
+            sql`joined_at < ${thirtyDaysAgo.toISOString()}`,
+          ),
         ),
       db
         .select({ count: sql<number>`count(distinct user_id)` })
@@ -147,9 +152,9 @@ export async function GET(request: NextRequest) {
         .where(
           and(
             eq(subscriptions.teamId, teamId),
-            eq(subscriptions.status, 'active'),
-            sql`created_at < ${thirtyDaysAgo.toISOString()}`
-          )
+            eq(subscriptions.status, "active"),
+            sql`created_at < ${thirtyDaysAgo.toISOString()}`,
+          ),
         ),
     ]);
 
@@ -158,20 +163,26 @@ export async function GET(request: NextRequest) {
       // Ensure we have valid numbers
       const curr = Number(current) || 0;
       const prev = Number(previous) || 0;
-      
-      if (prev === 0) return curr > 0 ? '+100%' : '0%';
+
+      if (prev === 0) return curr > 0 ? "+100%" : "0%";
       const change = ((curr - prev) / prev) * 100;
-      return `${change >= 0 ? '+' : ''}${change.toFixed(1)}%`;
+      return `${change >= 0 ? "+" : ""}${change.toFixed(1)}%`;
     };
 
     // Calculate conversion rates
-    const currentConversionRate = safeNumber(totalUsers[0]?.count) > 0 
-      ? (safeNumber(subscribedUsers[0]?.count) / safeNumber(totalUsers[0]?.count)) * 100
-      : 0;
-    
-    const previousConversionRate = safeNumber(previousTotalUsers[0]?.count) > 0 
-      ? (safeNumber(previousSubscribedUsers[0]?.count) / safeNumber(previousTotalUsers[0]?.count)) * 100
-      : 0;
+    const currentConversionRate =
+      safeNumber(totalUsers[0]?.count) > 0
+        ? (safeNumber(subscribedUsers[0]?.count) /
+            safeNumber(totalUsers[0]?.count)) *
+          100
+        : 0;
+
+    const previousConversionRate =
+      safeNumber(previousTotalUsers[0]?.count) > 0
+        ? (safeNumber(previousSubscribedUsers[0]?.count) /
+            safeNumber(previousTotalUsers[0]?.count)) *
+          100
+        : 0;
 
     // Format currency
     const formatCurrency = (cents: number): string => {
@@ -181,50 +192,62 @@ export async function GET(request: NextRequest) {
 
     const metrics = [
       {
-        title: 'Total Revenue',
+        title: "Total Revenue",
         value: formatCurrency(safeNumber(currentRevenue[0]?.total)),
         change: calculateChange(
           safeNumber(currentRevenue[0]?.total),
-          safeNumber(previousRevenue[0]?.total)
+          safeNumber(previousRevenue[0]?.total),
         ),
-        trend: safeNumber(currentRevenue[0]?.total) >= safeNumber(previousRevenue[0]?.total) ? 'up' : 'down',
-        icon: 'DollarSign',
+        trend:
+          safeNumber(currentRevenue[0]?.total) >=
+          safeNumber(previousRevenue[0]?.total)
+            ? "up"
+            : "down",
+        icon: "DollarSign",
       },
       {
-        title: 'Subscriptions',
+        title: "Subscriptions",
         value: safeNumber(currentSubs[0]?.count).toLocaleString(),
         change: calculateChange(
           safeNumber(currentSubs[0]?.count),
-          safeNumber(previousSubs[0]?.count)
+          safeNumber(previousSubs[0]?.count),
         ),
-        trend: safeNumber(currentSubs[0]?.count) >= safeNumber(previousSubs[0]?.count) ? 'up' : 'down',
-        icon: 'Users',
+        trend:
+          safeNumber(currentSubs[0]?.count) >=
+          safeNumber(previousSubs[0]?.count)
+            ? "up"
+            : "down",
+        icon: "Users",
       },
       {
-        title: 'Active Users',
+        title: "Active Users",
         value: safeNumber(currentActiveUsers[0]?.count).toLocaleString(),
         change: calculateChange(
           safeNumber(currentActiveUsers[0]?.count),
-          safeNumber(previousActiveUsers[0]?.count)
+          safeNumber(previousActiveUsers[0]?.count),
         ),
-        trend: safeNumber(currentActiveUsers[0]?.count) >= safeNumber(previousActiveUsers[0]?.count) ? 'up' : 'down',
-        icon: 'Activity',
+        trend:
+          safeNumber(currentActiveUsers[0]?.count) >=
+          safeNumber(previousActiveUsers[0]?.count)
+            ? "up"
+            : "down",
+        icon: "Activity",
       },
       {
-        title: 'Conversion Rate',
+        title: "Conversion Rate",
         value: `${currentConversionRate.toFixed(1)}%`,
         change: calculateChange(currentConversionRate, previousConversionRate),
-        trend: currentConversionRate >= previousConversionRate ? 'up' : 'down',
-        icon: 'TrendingUp',
+        trend: currentConversionRate >= previousConversionRate ? "up" : "down",
+        icon: "TrendingUp",
       },
     ];
 
     return NextResponse.json({ metrics });
   } catch (error) {
-    console.error('Error fetching dashboard metrics:', error);
+    console.error("Error fetching dashboard metrics:", error);
     return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
+      { error: "Internal server error" },
+      { status: 500 },
     );
   }
 }

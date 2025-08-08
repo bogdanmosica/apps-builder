@@ -1,19 +1,19 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
+import { Badge } from "@workspace/ui/components/badge";
+import { Button } from "@workspace/ui/components/button";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from '@workspace/ui/components/card';
-import { Button } from '@workspace/ui/components/button';
-import { PropertyEvaluationForm } from '@/components/evaluation/property-evaluation-form';
-import { PropertyQualityScore } from '@/components/evaluation/property-quality-score';
-import { Badge } from '@workspace/ui/components/badge';
-import { ArrowLeft, Star, BarChart3 } from 'lucide-react';
-import Link from 'next/link';
+} from "@workspace/ui/components/card";
+import { ArrowLeft, BarChart3, Star } from "lucide-react";
+import Link from "next/link";
+import { useState } from "react";
+import { PropertyEvaluationForm } from "@/components/evaluation/property-evaluation-form";
+import { PropertyQualityScore } from "@/components/evaluation/property-quality-score";
 
 export default function EvaluationTestPage() {
   const [showEvaluationForm, setShowEvaluationForm] = useState(false);
@@ -22,12 +22,12 @@ export default function EvaluationTestPage() {
   // Mock property data for testing
   const mockProperty = {
     id: 1,
-    title: 'Apartament modern cu 3 camere în centrul Bucureștiului',
-    address: 'Strada Victoriei 123',
-    city: 'București',
-    county: 'București',
+    title: "Apartament modern cu 3 camere în centrul Bucureștiului",
+    address: "Strada Victoriei 123",
+    city: "București",
+    county: "București",
     price: 250000,
-    currency: 'EUR',
+    currency: "EUR",
     area: 85,
     bedrooms: 2,
     bathrooms: 2,
@@ -39,56 +39,56 @@ export default function EvaluationTestPage() {
   };
 
   return (
-    <div className='min-h-screen bg-gray-50'>
-      <div className='container mx-auto py-6 px-4 max-w-4xl'>
-        <div className='mb-4'>
+    <div className="min-h-screen bg-gray-50">
+      <div className="container mx-auto py-6 px-4 max-w-4xl">
+        <div className="mb-4">
           <Link
-            href='/properties'
-            className='inline-flex items-center text-sm text-gray-600 hover:text-gray-900 mb-4'
+            href="/properties"
+            className="inline-flex items-center text-sm text-gray-600 hover:text-gray-900 mb-4"
           >
-            <ArrowLeft className='h-4 w-4 mr-1' />
+            <ArrowLeft className="h-4 w-4 mr-1" />
             Back to Properties
           </Link>
-          <h1 className='text-2xl font-bold text-gray-900 mb-2'>
+          <h1 className="text-2xl font-bold text-gray-900 mb-2">
             Property Evaluation Test
           </h1>
-          <p className='text-gray-600'>
+          <p className="text-gray-600">
             Test the weighted scoring evaluation system for properties
           </p>
         </div>
 
         {/* Mock Property Card */}
-        <Card className='mb-8'>
+        <Card className="mb-8">
           <CardHeader>
-            <div className='flex justify-between items-start'>
+            <div className="flex justify-between items-start">
               <div>
-                <CardTitle className='text-xl'>{mockProperty.title}</CardTitle>
-                <CardDescription className='mt-1'>
-                  {mockProperty.address}, {mockProperty.city},{' '}
+                <CardTitle className="text-xl">{mockProperty.title}</CardTitle>
+                <CardDescription className="mt-1">
+                  {mockProperty.address}, {mockProperty.city},{" "}
                   {mockProperty.county}
                 </CardDescription>
-                <div className='flex items-center gap-4 mt-2 text-sm text-gray-600'>
+                <div className="flex items-center gap-4 mt-2 text-sm text-gray-600">
                   <span>{mockProperty.area} mp</span>
                   <span>{mockProperty.bedrooms} bedrooms</span>
                   <span>{mockProperty.bathrooms} bathrooms</span>
                 </div>
               </div>
-              <div className='text-right'>
-                <div className='text-2xl font-bold text-blue-600'>
+              <div className="text-right">
+                <div className="text-2xl font-bold text-blue-600">
                   €{mockProperty.price.toLocaleString()}
                 </div>
-                <Badge variant='secondary'>Test Property</Badge>
+                <Badge variant="secondary">Test Property</Badge>
               </div>
             </div>
           </CardHeader>
         </Card>
 
         {/* Evaluation Controls */}
-        <div className='grid grid-cols-1 md:grid-cols-2 gap-6 mb-8'>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
           <Card>
             <CardHeader>
-              <CardTitle className='flex items-center gap-2'>
-                <Star className='h-5 w-5' />
+              <CardTitle className="flex items-center gap-2">
+                <Star className="h-5 w-5" />
                 Quality Rating
               </CardTitle>
               <CardDescription>
@@ -105,8 +105,8 @@ export default function EvaluationTestPage() {
 
           <Card>
             <CardHeader>
-              <CardTitle className='flex items-center gap-2'>
-                <BarChart3 className='h-5 w-5' />
+              <CardTitle className="flex items-center gap-2">
+                <BarChart3 className="h-5 w-5" />
                 Evaluation Form
               </CardTitle>
               <CardDescription>
@@ -115,21 +115,21 @@ export default function EvaluationTestPage() {
             </CardHeader>
             <CardContent>
               {!showEvaluationForm ? (
-                <div className='space-y-4'>
-                  <p className='text-sm text-gray-600'>
+                <div className="space-y-4">
+                  <p className="text-sm text-gray-600">
                     Click the button below to start evaluating this property.
                     You'll answer questions about location, condition,
                     efficiency, and amenities.
                   </p>
                   <Button
                     onClick={() => setShowEvaluationForm(true)}
-                    className='w-full'
+                    className="w-full"
                   >
                     Start Evaluation
                   </Button>
                   {evaluationComplete && (
-                    <div className='p-3 bg-green-50 border border-green-200 rounded-md'>
-                      <p className='text-sm text-green-800'>
+                    <div className="p-3 bg-green-50 border border-green-200 rounded-md">
+                      <p className="text-sm text-green-800">
                         ✅ Evaluation completed! The quality score has been
                         updated.
                       </p>
@@ -138,9 +138,9 @@ export default function EvaluationTestPage() {
                 </div>
               ) : (
                 <Button
-                  variant='outline'
+                  variant="outline"
                   onClick={() => setShowEvaluationForm(false)}
-                  className='w-full'
+                  className="w-full"
                 >
                   Hide Evaluation Form
                 </Button>
@@ -168,10 +168,10 @@ export default function EvaluationTestPage() {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <h4 className='font-semibold mb-2'>✅ Implemented Features</h4>
-                <ul className='text-sm space-y-1 text-gray-600'>
+                <h4 className="font-semibold mb-2">✅ Implemented Features</h4>
+                <ul className="text-sm space-y-1 text-gray-600">
                   <li>• Weighted evaluation questions</li>
                   <li>• Multiple choice answers with scores</li>
                   <li>• Category-based question grouping</li>
@@ -183,8 +183,8 @@ export default function EvaluationTestPage() {
                 </ul>
               </div>
               <div>
-                <h4 className='font-semibold mb-2'>🎯 User Stories Covered</h4>
-                <ul className='text-sm space-y-1 text-gray-600'>
+                <h4 className="font-semibold mb-2">🎯 User Stories Covered</h4>
+                <ul className="text-sm space-y-1 text-gray-600">
                   <li>
                     • <strong>US-E1:</strong> Evaluation questions with weighted
                     scoring

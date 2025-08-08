@@ -1,19 +1,19 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { db } from '@/lib/db/drizzle';
-import { notifications, users } from '@/lib/db/schema';
-import { eq, desc, and, or, isNull } from 'drizzle-orm';
-import { getSession } from '@/lib/auth/session';
+import { and, desc, eq, isNull, or } from "drizzle-orm";
+import { type NextRequest, NextResponse } from "next/server";
+import { getSession } from "@/lib/auth/session";
+import { db } from "@/lib/db/drizzle";
+import { notifications, users } from "@/lib/db/schema";
 
 export async function GET(request: NextRequest) {
   try {
     const session = await getSession();
 
     if (!session?.user?.id) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const { searchParams } = new URL(request.url);
-    const unreadOnly = searchParams.get('unread') === 'true';
+    const unreadOnly = searchParams.get("unread") === "true";
 
     // Get user's team
     const user = await db.query.users.findFirst({
@@ -28,7 +28,10 @@ export async function GET(request: NextRequest) {
     });
 
     if (!user || !user.teamMembers[0]) {
-      return NextResponse.json({ error: 'User not found or not part of a team' }, { status: 404 });
+      return NextResponse.json(
+        { error: "User not found or not part of a team" },
+        { status: 404 },
+      );
     }
 
     const teamId = user.teamMembers[0].teamId;
@@ -38,8 +41,8 @@ export async function GET(request: NextRequest) {
       eq(notifications.teamId, teamId),
       or(
         eq(notifications.userId, session.user.id),
-        isNull(notifications.userId) // System notifications
-      )
+        isNull(notifications.userId), // System notifications
+      ),
     ];
 
     if (unreadOnly) {
@@ -66,8 +69,11 @@ export async function GET(request: NextRequest) {
       })),
     });
   } catch (error) {
-    console.error('Error fetching notifications:', error);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    console.error("Error fetching notifications:", error);
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 },
+    );
   }
 }
 
@@ -76,14 +82,17 @@ export async function POST(request: NextRequest) {
     const session = await getSession();
 
     if (!session?.user?.id) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const body = await request.json();
-    const { title, description, type = 'info', actionUrl } = body;
+    const { title, description, type = "info", actionUrl } = body;
 
     if (!title) {
-      return NextResponse.json({ error: 'Notification title is required' }, { status: 400 });
+      return NextResponse.json(
+        { error: "Notification title is required" },
+        { status: 400 },
+      );
     }
 
     // Get user's team
@@ -99,7 +108,10 @@ export async function POST(request: NextRequest) {
     });
 
     if (!user || !user.teamMembers[0]) {
-      return NextResponse.json({ error: 'User not found or not part of a team' }, { status: 404 });
+      return NextResponse.json(
+        { error: "User not found or not part of a team" },
+        { status: 404 },
+      );
     }
 
     const teamId = user.teamMembers[0].teamId;
@@ -117,20 +129,26 @@ export async function POST(request: NextRequest) {
       })
       .returning();
 
-    return NextResponse.json({
-      notification: {
-        id: newNotification.id,
-        title: newNotification.title,
-        description: newNotification.description,
-        type: newNotification.type,
-        timestamp: newNotification.createdAt.toISOString(),
-        read: newNotification.isRead,
-        actionUrl: newNotification.actionUrl,
+    return NextResponse.json(
+      {
+        notification: {
+          id: newNotification.id,
+          title: newNotification.title,
+          description: newNotification.description,
+          type: newNotification.type,
+          timestamp: newNotification.createdAt.toISOString(),
+          read: newNotification.isRead,
+          actionUrl: newNotification.actionUrl,
+        },
       },
-    }, { status: 201 });
+      { status: 201 },
+    );
   } catch (error) {
-    console.error('Error creating notification:', error);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    console.error("Error creating notification:", error);
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 },
+    );
   }
 }
 
@@ -139,14 +157,17 @@ export async function PATCH(request: NextRequest) {
     const session = await getSession();
 
     if (!session?.user?.id) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const body = await request.json();
     const { notificationIds, markAsRead = true } = body;
 
     if (!notificationIds || !Array.isArray(notificationIds)) {
-      return NextResponse.json({ error: 'Notification IDs are required' }, { status: 400 });
+      return NextResponse.json(
+        { error: "Notification IDs are required" },
+        { status: 400 },
+      );
     }
 
     // Get user's team
@@ -162,7 +183,10 @@ export async function PATCH(request: NextRequest) {
     });
 
     if (!user || !user.teamMembers[0]) {
-      return NextResponse.json({ error: 'User not found or not part of a team' }, { status: 404 });
+      return NextResponse.json(
+        { error: "User not found or not part of a team" },
+        { status: 404 },
+      );
     }
 
     const teamId = user.teamMembers[0].teamId;
@@ -178,15 +202,18 @@ export async function PATCH(request: NextRequest) {
             eq(notifications.teamId, teamId),
             or(
               eq(notifications.userId, session.user.id),
-              isNull(notifications.userId)
-            )
-          )
+              isNull(notifications.userId),
+            ),
+          ),
         );
     }
 
     return NextResponse.json({ success: true });
   } catch (error) {
-    console.error('Error updating notifications:', error);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    console.error("Error updating notifications:", error);
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 },
+    );
   }
 }

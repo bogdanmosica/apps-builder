@@ -1,7 +1,6 @@
-import { z } from "zod";
-
-import db from "@workspace/prisma";
 import { userNameSchema } from "@hub/validations";
+
+import { z } from "zod";
 import { auth } from "@/auth";
 
 const routeContextSchema = z.object({

@@ -1,21 +1,26 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { z } from 'zod';
-import { db } from '../../../../lib/db/drizzle';
-import { questions, answers, questionCategories, propertyTypes } from '../../../../lib/db/schema';
-import { eq, and } from 'drizzle-orm';
+import { and, eq } from "drizzle-orm";
+import { type NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
+import { db } from "../../../../lib/db/drizzle";
+import {
+  answers,
+  propertyTypes,
+  questionCategories,
+  questions,
+} from "../../../../lib/db/schema";
 
 // Validation schema for ID-based import question data
 const ImportQuestionSchema = z.object({
-  propertyTypeId: z.number().int().min(1, 'Property Type ID must be valid'),
-  categoryId: z.number().int().min(0, 'Category ID must be 0 or positive'), // 0 = new
-  categoryNameRo: z.string().min(1, 'Romanian category name is required'),
+  propertyTypeId: z.number().int().min(1, "Property Type ID must be valid"),
+  categoryId: z.number().int().min(0, "Category ID must be 0 or positive"), // 0 = new
+  categoryNameRo: z.string().min(1, "Romanian category name is required"),
   categoryNameEn: z.string().optional(),
-  questionId: z.number().int().min(0, 'Question ID must be 0 or positive'), // 0 = new
-  questionRo: z.string().min(1, 'Romanian question is required'),
+  questionId: z.number().int().min(0, "Question ID must be 0 or positive"), // 0 = new
+  questionRo: z.string().min(1, "Romanian question is required"),
   questionEn: z.string().optional(),
   questionWeight: z.number().int().min(1).max(10),
-  answerId: z.number().int().min(0, 'Answer ID must be 0 or positive'), // 0 = new
-  answerRo: z.string().min(1, 'Romanian answer is required'),
+  answerId: z.number().int().min(0, "Answer ID must be 0 or positive"), // 0 = new
+  answerRo: z.string().min(1, "Romanian answer is required"),
   answerEn: z.string().optional(),
   answerWeight: z.number().int().min(1).max(10),
 });
@@ -28,12 +33,13 @@ interface ProcessingContext {
 
 export async function POST(request: NextRequest) {
   try {
-    const { questions: questionsData, replaceExisting = false } = await request.json();
+    const { questions: questionsData, replaceExisting = false } =
+      await request.json();
 
     if (!Array.isArray(questionsData) || questionsData.length === 0) {
       return NextResponse.json(
-        { error: 'Invalid data format. Expected array of questions.' },
-        { status: 400 }
+        { error: "Invalid data format. Expected array of questions." },
+        { status: 400 },
       );
     }
 
@@ -66,7 +72,9 @@ export async function POST(request: NextRequest) {
         if (error instanceof z.ZodError) {
           validationErrors.push({
             row: i + 1,
-            errors: error.errors.map(e => `${e.path.join('.')}: ${e.message}`).join(', ')
+            errors: error.errors
+              .map((e) => `${e.path.join(".")}: ${e.message}`)
+              .join(", "),
           });
         }
       }
@@ -74,12 +82,12 @@ export async function POST(request: NextRequest) {
 
     if (validationErrors.length > 0) {
       return NextResponse.json(
-        { 
-          error: 'Validation failed', 
+        {
+          error: "Validation failed",
           validationErrors,
-          message: `${validationErrors.length} rows have validation errors`
+          message: `${validationErrors.length} rows have validation errors`,
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -87,22 +95,24 @@ export async function POST(request: NextRequest) {
     const context: ProcessingContext = {
       categoryIdMap: new Map(),
       questionIdMap: new Map(),
-      answerIdMap: new Map()
+      answerIdMap: new Map(),
     };
 
     // Verify all property types exist
-    const propertyTypeIds = [...new Set(validatedQuestions.map(q => q.propertyTypeId))];
+    const propertyTypeIds = [
+      ...new Set(validatedQuestions.map((q) => q.propertyTypeId)),
+    ];
     for (const ptId of propertyTypeIds) {
       const exists = await db
         .select({ id: propertyTypes.id })
         .from(propertyTypes)
         .where(eq(propertyTypes.id, ptId))
         .limit(1);
-      
+
       if (exists.length === 0) {
         return NextResponse.json(
           { error: `Property Type ID ${ptId} does not exist` },
-          { status: 400 }
+          { status: 400 },
         );
       }
     }
@@ -115,20 +125,35 @@ export async function POST(request: NextRequest) {
       answersCreated: 0,
       answersUpdated: 0,
       failed: 0,
-      details: [] as any[]
+      details: [] as any[],
     };
 
     // Process in order: categories, questions, answers
-    await processCategories(validatedQuestions, context, results, replaceExisting);
-    await processQuestions(validatedQuestions, context, results, replaceExisting);
+    await processCategories(
+      validatedQuestions,
+      context,
+      results,
+      replaceExisting,
+    );
+    await processQuestions(
+      validatedQuestions,
+      context,
+      results,
+      replaceExisting,
+    );
     await processAnswers(validatedQuestions, context, results, replaceExisting);
 
     return NextResponse.json({
-      message: 'ID-based bulk import completed successfully',
+      message: "ID-based bulk import completed successfully",
       results: {
-        totalProcessed: results.categoriesCreated + results.categoriesUpdated + 
-                       results.questionsCreated + results.questionsUpdated + 
-                       results.answersCreated + results.answersUpdated + results.failed,
+        totalProcessed:
+          results.categoriesCreated +
+          results.categoriesUpdated +
+          results.questionsCreated +
+          results.questionsUpdated +
+          results.answersCreated +
+          results.answersUpdated +
+          results.failed,
         categoriesCreated: results.categoriesCreated,
         categoriesUpdated: results.categoriesUpdated,
         questionsCreated: results.questionsCreated,
@@ -140,32 +165,31 @@ export async function POST(request: NextRequest) {
         idMappings: {
           categories: Object.fromEntries(context.categoryIdMap),
           questions: Object.fromEntries(context.questionIdMap),
-          answers: Object.fromEntries(context.answerIdMap)
-        }
-      }
-    });
-
-  } catch (error) {
-    console.error('ID-based bulk import error:', error);
-    return NextResponse.json(
-      { 
-        error: 'Failed to process ID-based bulk import',
-        message: error instanceof Error ? error.message : 'Unknown error'
+          answers: Object.fromEntries(context.answerIdMap),
+        },
       },
-      { status: 500 }
+    });
+  } catch (error) {
+    console.error("ID-based bulk import error:", error);
+    return NextResponse.json(
+      {
+        error: "Failed to process ID-based bulk import",
+        message: error instanceof Error ? error.message : "Unknown error",
+      },
+      { status: 500 },
     );
   }
 }
 
 async function processCategories(
-  validatedQuestions: any[], 
-  context: ProcessingContext, 
-  results: any, 
-  replaceExisting: boolean
+  validatedQuestions: any[],
+  context: ProcessingContext,
+  results: any,
+  replaceExisting: boolean,
 ) {
   // Group unique categories
   const uniqueCategories = new Map<string, any>();
-  
+
   for (const q of validatedQuestions) {
     const key = `${q.propertyTypeId}-${q.categoryNameRo}`;
     if (!uniqueCategories.has(key)) {
@@ -173,7 +197,7 @@ async function processCategories(
         propertyTypeId: q.propertyTypeId,
         categoryId: q.categoryId,
         categoryNameRo: q.categoryNameRo,
-        categoryNameEn: q.categoryNameEn
+        categoryNameEn: q.categoryNameEn,
       });
     }
   }
@@ -189,10 +213,10 @@ async function processCategories(
           .values({
             name_ro: category.categoryNameRo,
             name_en: category.categoryNameEn || category.categoryNameRo,
-            propertyTypeId: category.propertyTypeId
+            propertyTypeId: category.propertyTypeId,
           })
           .returning();
-        
+
         realCategoryId = newCategory.id;
         context.categoryIdMap.set(key, realCategoryId);
         results.categoriesCreated++;
@@ -214,7 +238,7 @@ async function processCategories(
             .set({
               name_ro: category.categoryNameRo,
               name_en: category.categoryNameEn || category.categoryNameRo,
-              updatedAt: new Date()
+              updatedAt: new Date(),
             })
             .where(eq(questionCategories.id, category.categoryId));
           results.categoriesUpdated++;
@@ -224,30 +248,30 @@ async function processCategories(
         context.categoryIdMap.set(key, realCategoryId);
       }
     } catch (error) {
-      console.error('Error processing category:', error);
+      console.error("Error processing category:", error);
       results.failed++;
       results.details.push({
-        type: 'category',
+        type: "category",
         name: category.categoryNameRo,
-        error: error instanceof Error ? error.message : 'Unknown error'
+        error: error instanceof Error ? error.message : "Unknown error",
       });
     }
   }
 }
 
 async function processQuestions(
-  validatedQuestions: any[], 
-  context: ProcessingContext, 
-  results: any, 
-  replaceExisting: boolean
+  validatedQuestions: any[],
+  context: ProcessingContext,
+  results: any,
+  replaceExisting: boolean,
 ) {
   // Group unique questions
   const uniqueQuestions = new Map<string, any>();
-  
+
   for (const q of validatedQuestions) {
     const categoryKey = `${q.propertyTypeId}-${q.categoryNameRo}`;
     const realCategoryId = context.categoryIdMap.get(categoryKey);
-    
+
     if (realCategoryId) {
       const questionKey = `${realCategoryId}-${q.questionRo}`;
       if (!uniqueQuestions.has(questionKey)) {
@@ -256,7 +280,7 @@ async function processQuestions(
           questionRo: q.questionRo,
           questionEn: q.questionEn,
           questionWeight: q.questionWeight,
-          categoryId: realCategoryId
+          categoryId: realCategoryId,
         });
       }
     }
@@ -274,10 +298,10 @@ async function processQuestions(
             text_ro: question.questionRo,
             text_en: question.questionEn || question.questionRo,
             weight: question.questionWeight,
-            categoryId: question.categoryId
+            categoryId: question.categoryId,
           })
           .returning();
-        
+
         realQuestionId = newQuestion.id;
         context.questionIdMap.set(key, realQuestionId);
         results.questionsCreated++;
@@ -300,7 +324,7 @@ async function processQuestions(
               text_ro: question.questionRo,
               text_en: question.questionEn || question.questionRo,
               weight: question.questionWeight,
-              updatedAt: new Date()
+              updatedAt: new Date(),
             })
             .where(eq(questions.id, question.questionId));
           results.questionsUpdated++;
@@ -310,35 +334,35 @@ async function processQuestions(
         context.questionIdMap.set(key, realQuestionId);
       }
     } catch (error) {
-      console.error('Error processing question:', error);
+      console.error("Error processing question:", error);
       results.failed++;
       results.details.push({
-        type: 'question',
+        type: "question",
         text: question.questionRo,
-        error: error instanceof Error ? error.message : 'Unknown error'
+        error: error instanceof Error ? error.message : "Unknown error",
       });
     }
   }
 }
 
 async function processAnswers(
-  validatedQuestions: any[], 
-  context: ProcessingContext, 
-  results: any, 
-  replaceExisting: boolean
+  validatedQuestions: any[],
+  context: ProcessingContext,
+  results: any,
+  replaceExisting: boolean,
 ) {
   for (const q of validatedQuestions) {
     try {
       const categoryKey = `${q.propertyTypeId}-${q.categoryNameRo}`;
       const realCategoryId = context.categoryIdMap.get(categoryKey);
-      
+
       if (!realCategoryId) {
         throw new Error(`Category not found for ${q.categoryNameRo}`);
       }
 
       const questionKey = `${realCategoryId}-${q.questionRo}`;
       const realQuestionId = context.questionIdMap.get(questionKey);
-      
+
       if (!realQuestionId) {
         throw new Error(`Question not found for ${q.questionRo}`);
       }
@@ -353,10 +377,10 @@ async function processAnswers(
             text_ro: q.answerRo,
             text_en: q.answerEn || q.answerRo,
             weight: q.answerWeight,
-            questionId: realQuestionId
+            questionId: realQuestionId,
           })
           .returning();
-        
+
         realAnswerId = newAnswer.id;
         const answerKey = `${realQuestionId}-${q.answerRo}`;
         context.answerIdMap.set(answerKey, realAnswerId);
@@ -380,7 +404,7 @@ async function processAnswers(
               text_ro: q.answerRo,
               text_en: q.answerEn || q.answerRo,
               weight: q.answerWeight,
-              updatedAt: new Date()
+              updatedAt: new Date(),
             })
             .where(eq(answers.id, q.answerId));
           results.answersUpdated++;
@@ -391,12 +415,12 @@ async function processAnswers(
         context.answerIdMap.set(answerKey, realAnswerId);
       }
     } catch (error) {
-      console.error('Error processing answer:', error);
+      console.error("Error processing answer:", error);
       results.failed++;
       results.details.push({
-        type: 'answer',
+        type: "answer",
         text: q.answerRo,
-        error: error instanceof Error ? error.message : 'Unknown error'
+        error: error instanceof Error ? error.message : "Unknown error",
       });
     }
   }

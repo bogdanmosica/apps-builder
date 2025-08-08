@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import AddProductModal from './add-product-modal';
-import ProductsList from './products-list';
+import { useState } from "react";
+import AddProductModal from "./add-product-modal";
+import ProductsList from "./products-list";
 
 export function DashboardProducts() {
   const [refreshKey, setRefreshKey] = useState(0);
@@ -14,17 +14,17 @@ export function DashboardProducts() {
 
   return (
     <>
-      <div className='flex items-center justify-between mb-8'>
+      <div className="flex items-center justify-between mb-8">
         <div>
-          <h1 className='text-3xl font-bold tracking-tight'>Dashboard</h1>
-          <p className='text-muted-foreground'>
+          <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
+          <p className="text-muted-foreground">
             Welcome back! Here's what's happening with your SaaS.
           </p>
         </div>
         <AddProductModal onProductAdded={handleProductAdded} />
       </div>
 
-      <div className='mt-8'>
+      <div className="mt-8">
         <ProductsList key={refreshKey} />
       </div>
     </>

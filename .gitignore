@@ -30,6 +30,24 @@ dist
 
 # Debug
 npm-debug.log*
+debug-*.ts
+debug-*.js
+test-*.ts
+test-*.js
+
+# Database maintenance (keep in scripts/ folders only)
+clean-database.ts
+drop-tables.ts
+apply-migration.ts
+create-*-tables.ts
+seed-*.ts
+consolidate-*.ts
+
+# Temporary files
+temp-*
+tmp-*
+*.tmp
+*.temp
 
 # Misc
 .DS_Store

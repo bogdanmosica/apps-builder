@@ -1,23 +1,28 @@
-import { db } from '@/lib/db/drizzle';
-import { users, userSecuritySettings, userLoginSessions, securityEvents } from '@/lib/db/schema';
-import { eq, desc, and } from 'drizzle-orm';
-import { getSession } from '@/lib/auth/session';
+import { and, desc, eq } from "drizzle-orm";
+import { getSession } from "@/lib/auth/session";
+import { db } from "@/lib/db/drizzle";
+import {
+  securityEvents,
+  userLoginSessions,
+  userSecuritySettings,
+  users,
+} from "@/lib/db/schema";
 
 async function getCurrentUser() {
   const session = await getSession();
   if (!session) return null;
-  
+
   const user = await db.query.users.findFirst({
     where: eq(users.id, session.user.id),
   });
-  
+
   return user;
 }
 
 export async function getSecurityData() {
   try {
     const currentUser = await getCurrentUser();
-    
+
     if (!currentUser) {
       return null;
     }
@@ -43,15 +48,18 @@ export async function getSecurityData() {
 
     // Create default security settings if they don't exist
     if (!securitySettings) {
-      const [newSettings] = await db.insert(userSecuritySettings).values({
-        userId: user.id,
-        twoFactorEnabled: false,
-        loginNotifications: true,
-        securityAlerts: true,
-        sessionTimeout: 24, // 24 hours default
-        lastPasswordChange: new Date(),
-      }).returning();
-      
+      const [newSettings] = await db
+        .insert(userSecuritySettings)
+        .values({
+          userId: user.id,
+          twoFactorEnabled: false,
+          loginNotifications: true,
+          securityAlerts: true,
+          sessionTimeout: 24, // 24 hours default
+          lastPasswordChange: new Date(),
+        })
+        .returning();
+
       securitySettings = newSettings;
     }
 
@@ -59,7 +67,7 @@ export async function getSecurityData() {
     const activeSessions = await db.query.userLoginSessions.findMany({
       where: and(
         eq(userLoginSessions.userId, user.id),
-        eq(userLoginSessions.isActive, true)
+        eq(userLoginSessions.isActive, true),
       ),
       orderBy: [desc(userLoginSessions.lastActivity)],
       limit: 10,
@@ -101,7 +109,7 @@ export async function getSecurityData() {
       })),
     };
   } catch (error) {
-    console.error('Error fetching security data:', error);
+    console.error("Error fetching security data:", error);
     return null;
   }
 }

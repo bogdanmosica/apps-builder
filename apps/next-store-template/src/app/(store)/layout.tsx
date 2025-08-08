@@ -1,12 +1,12 @@
-import '@/app/globals.css';
-import { TooltipProvider } from '@workspace/ui/components/tooltip';
-import { CartModalProvider } from '@/context/cart-modal';
-import { CommerceGPT } from '@/ui/commerce-gpt';
-import { Footer } from '@/ui/footer/footer';
-import { JsonLd, accountToWebsiteJsonLd } from '@/ui/json-ld';
-import { Nav } from '@/ui/nav/nav';
-import * as Commerce from 'commerce-kit';
-import { CartModalPage } from './cart/cart-modal';
+import "@/app/globals.css";
+import { TooltipProvider } from "@workspace/ui/components/tooltip";
+import * as Commerce from "commerce-kit";
+import { CartModalProvider } from "@/context/cart-modal";
+import { CommerceGPT } from "@/ui/commerce-gpt";
+import { Footer } from "@/ui/footer/footer";
+import { accountToWebsiteJsonLd, JsonLd } from "@/ui/json-ld";
+import { Nav } from "@/ui/nav/nav";
+import { CartModalPage } from "./cart/cart-modal";
 
 export default async function StoreLayout({
   children,
@@ -26,7 +26,7 @@ export default async function StoreLayout({
       <CartModalProvider>
         <Nav />
         <TooltipProvider>
-          <main className='mx-auto flex w-full max-w-7xl flex-1 flex-col px-4 pb-6 pt-2 sm:px-6 lg:px-8'>
+          <main className="mx-auto flex w-full max-w-7xl flex-1 flex-col px-4 pb-6 pt-2 sm:px-6 lg:px-8">
             {children}
             <CartModalPage />
           </main>

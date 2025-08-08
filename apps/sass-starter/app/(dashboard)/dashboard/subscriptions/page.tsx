@@ -1,11 +1,24 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@workspace/ui/components/card';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@workspace/ui/components/table';
-import { Badge } from '@workspace/ui/components/badge';
-import { Loader2, CreditCard } from 'lucide-react';
-import { toast } from 'sonner';
+import { Badge } from "@workspace/ui/components/badge";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@workspace/ui/components/card";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@workspace/ui/components/table";
+import { CreditCard, Loader2 } from "lucide-react";
+import { useEffect, useState } from "react";
+import { toast } from "sonner";
 
 interface Subscription {
   id: number;
@@ -29,16 +42,16 @@ export default function SubscriptionsPage() {
 
   const fetchSubscriptions = async () => {
     try {
-      const response = await fetch('/api/dashboard/subscriptions');
+      const response = await fetch("/api/dashboard/subscriptions");
       if (response.ok) {
         const data = await response.json();
         setSubscriptions(data.subscriptions || []);
       } else {
-        toast.error('Failed to load subscriptions');
+        toast.error("Failed to load subscriptions");
       }
     } catch (error) {
-      console.error('Error fetching subscriptions:', error);
-      toast.error('Failed to load subscriptions');
+      console.error("Error fetching subscriptions:", error);
+      toast.error("Failed to load subscriptions");
     } finally {
       setLoading(false);
     }
@@ -48,10 +61,21 @@ export default function SubscriptionsPage() {
     fetchSubscriptions();
   }, []);
 
-  const formatAmount = (amount: number, currency: string, billingPeriod: string) => {
+  const formatAmount = (
+    amount: number,
+    currency: string,
+    billingPeriod: string,
+  ) => {
     const formattedAmount = `$${(amount / 100).toFixed(2)}`;
-    const period = billingPeriod === 'monthly' ? 'month' : billingPeriod === 'yearly' ? 'year' : 'one-time';
-    return billingPeriod === 'one_time' ? formattedAmount : `${formattedAmount}/${period}`;
+    const period =
+      billingPeriod === "monthly"
+        ? "month"
+        : billingPeriod === "yearly"
+          ? "year"
+          : "one-time";
+    return billingPeriod === "one_time"
+      ? formattedAmount
+      : `${formattedAmount}/${period}`;
   };
 
   const formatDate = (dateString: string) => {
@@ -95,7 +119,8 @@ export default function SubscriptionsPage() {
                     No subscriptions yet
                   </h3>
                   <p className="text-sm text-muted-foreground mb-4">
-                    Customer subscriptions will appear here once they start subscribing to your products
+                    Customer subscriptions will appear here once they start
+                    subscribing to your products
                   </p>
                 </div>
               ) : (
@@ -115,33 +140,42 @@ export default function SubscriptionsPage() {
                     {subscriptions.map((subscription) => (
                       <TableRow key={subscription.id}>
                         <TableCell className="font-medium">
-                          {subscription.user.name || 'Unknown'}
+                          {subscription.user.name || "Unknown"}
                         </TableCell>
                         <TableCell>{subscription.user.email}</TableCell>
                         <TableCell>{subscription.planName}</TableCell>
                         <TableCell>
                           <Badge
                             variant={
-                              subscription.status === 'active'
-                                ? 'default'
-                                : subscription.status === 'cancelled'
-                                ? 'secondary'
-                                : 'outline'
+                              subscription.status === "active"
+                                ? "default"
+                                : subscription.status === "cancelled"
+                                  ? "secondary"
+                                  : "outline"
                             }
                           >
                             {subscription.status}
                           </Badge>
                         </TableCell>
                         <TableCell>
-                          {formatAmount(subscription.amount, subscription.currency, subscription.billingPeriod)}
+                          {formatAmount(
+                            subscription.amount,
+                            subscription.currency,
+                            subscription.billingPeriod,
+                          )}
                         </TableCell>
                         <TableCell>
                           <Badge variant="outline">
-                            {subscription.billingPeriod === 'monthly' ? 'Monthly' : 
-                             subscription.billingPeriod === 'yearly' ? 'Yearly' : 'One-time'}
+                            {subscription.billingPeriod === "monthly"
+                              ? "Monthly"
+                              : subscription.billingPeriod === "yearly"
+                                ? "Yearly"
+                                : "One-time"}
                           </Badge>
                         </TableCell>
-                        <TableCell>{formatDate(subscription.createdAt)}</TableCell>
+                        <TableCell>
+                          {formatDate(subscription.createdAt)}
+                        </TableCell>
                       </TableRow>
                     ))}
                   </TableBody>

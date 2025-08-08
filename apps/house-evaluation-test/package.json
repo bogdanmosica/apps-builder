@@ -16,7 +16,6 @@
     "@types/react": "19.1.4",
     "@types/react-dom": "19.1.5",
     "@workspace/next-auth": "workspace:*",
-    "@workspace/prisma": "workspace:*",
     "@workspace/types": "workspace:*",
     "@workspace/ui": "workspace:*",
     "@workspace/utils": "workspace:*",
@@ -47,7 +46,6 @@
     "zod": "^3.24.4"
   },
   "devDependencies": {
-    "@workspace/eslint-config": "workspace:^",
     "@workspace/typescript-config": "workspace:*"
   },
   "name": "house-evaluation-test"

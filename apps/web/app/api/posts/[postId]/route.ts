@@ -1,9 +1,8 @@
-import * as z from "zod";
-
-import db from "@workspace/prisma";
 import { postPatchSchema } from "@hub/validations";
-import { authConfig } from "@/config/auth";
+
+import * as z from "zod";
 import { auth } from "@/auth";
+import { authConfig } from "@/config/auth";
 
 const routeContextSchema = z.object({
   params: z.object({

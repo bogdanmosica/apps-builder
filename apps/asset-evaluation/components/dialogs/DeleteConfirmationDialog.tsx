@@ -1,7 +1,6 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { Button } from '@workspace/ui/components/button';
+import { Button } from "@workspace/ui/components/button";
 import {
   Dialog,
   DialogClose,
@@ -10,9 +9,10 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from '@workspace/ui/components/dialog';
-import { toast } from 'sonner';
-import { Trash2 } from 'lucide-react';
+} from "@workspace/ui/components/dialog";
+import { Trash2 } from "lucide-react";
+import { useState } from "react";
+import { toast } from "sonner";
 
 interface DeleteConfirmationDialogProps {
   isOpen: boolean;
@@ -27,11 +27,11 @@ interface DeleteConfirmationDialogProps {
   onSuccess: () => void;
 }
 
-export default function DeleteConfirmationDialog({ 
-  isOpen, 
-  onClose, 
-  evaluation, 
-  onSuccess 
+export default function DeleteConfirmationDialog({
+  isOpen,
+  onClose,
+  evaluation,
+  onSuccess,
 }: DeleteConfirmationDialogProps) {
   const [isLoading, setIsLoading] = useState(false);
 
@@ -39,26 +39,28 @@ export default function DeleteConfirmationDialog({
     setIsLoading(true);
     try {
       const response = await fetch(`/api/evaluation/${evaluation.id}`, {
-        method: 'DELETE',
+        method: "DELETE",
       });
 
       if (!response.ok) {
-        throw new Error('Failed to delete evaluation');
+        throw new Error("Failed to delete evaluation");
       }
 
-      toast.success('Property evaluation deleted successfully!');
+      toast.success("Property evaluation deleted successfully!");
 
       onSuccess();
       onClose();
     } catch (error) {
-      console.error('Error deleting evaluation:', error);
-      toast.error('Failed to delete evaluation. Please try again.');
+      console.error("Error deleting evaluation:", error);
+      toast.error("Failed to delete evaluation. Please try again.");
     } finally {
       setIsLoading(false);
     }
   };
 
-  const propertyName = evaluation.propertyName || `${evaluation.propertyType.name} #${evaluation.id}`;
+  const propertyName =
+    evaluation.propertyName ||
+    `${evaluation.propertyType.name} #${evaluation.id}`;
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -69,11 +71,12 @@ export default function DeleteConfirmationDialog({
             Delete Property Evaluation
           </DialogTitle>
           <DialogDescription>
-            Are you sure you want to delete the evaluation for "{propertyName}"? 
-            This action cannot be undone and will permanently remove all evaluation data.
+            Are you sure you want to delete the evaluation for "{propertyName}"?
+            This action cannot be undone and will permanently remove all
+            evaluation data.
           </DialogDescription>
         </DialogHeader>
-        
+
         <DialogFooter className="sm:justify-start">
           <Button
             onClick={handleDelete}
@@ -81,7 +84,7 @@ export default function DeleteConfirmationDialog({
             variant="destructive"
             className="bg-red-600 hover:bg-red-700"
           >
-            {isLoading ? 'Deleting...' : 'Delete Evaluation'}
+            {isLoading ? "Deleting..." : "Delete Evaluation"}
           </Button>
           <DialogClose asChild>
             <Button type="button" variant="secondary">

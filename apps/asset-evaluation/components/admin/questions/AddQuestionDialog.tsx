@@ -1,30 +1,45 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { Button } from '@workspace/ui/components/button';
-import { 
-  Dialog, 
-  DialogContent, 
-  DialogDescription, 
-  DialogFooter, 
-  DialogHeader, 
-  DialogTitle 
-} from '@workspace/ui/components/dialog';
-import { Input } from '@workspace/ui/components/input';
-import { Label } from '@workspace/ui/components/label';
-import { Textarea } from '@workspace/ui/components/textarea';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@workspace/ui/components/select';
+import { Button } from "@workspace/ui/components/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@workspace/ui/components/dialog";
+import { Input } from "@workspace/ui/components/input";
+import { Label } from "@workspace/ui/components/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@workspace/ui/components/select";
+import { Textarea } from "@workspace/ui/components/textarea";
+import { useState } from "react";
 
 interface AddQuestionDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  onSubmit: (data: { text_ro: string; text_en: string | null; weight: number; categoryId: number }) => void;
+  onSubmit: (data: {
+    text_ro: string;
+    text_en: string | null;
+    weight: number;
+    categoryId: number;
+  }) => void;
 }
 
-export default function AddQuestionDialog({ open, onOpenChange, onSubmit }: AddQuestionDialogProps) {
+export default function AddQuestionDialog({
+  open,
+  onOpenChange,
+  onSubmit,
+}: AddQuestionDialogProps) {
   const [formData, setFormData] = useState({
-    text_ro: '',
-    text_en: '',
+    text_ro: "",
+    text_en: "",
     weight: 1,
     categoryId: 1,
   });
@@ -32,13 +47,13 @@ export default function AddQuestionDialog({ open, onOpenChange, onSubmit }: AddQ
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!formData.text_ro.trim()) {
       return;
     }
 
     setIsSubmitting(true);
-    
+
     try {
       await onSubmit({
         text_ro: formData.text_ro.trim(),
@@ -46,11 +61,11 @@ export default function AddQuestionDialog({ open, onOpenChange, onSubmit }: AddQ
         weight: formData.weight,
         categoryId: formData.categoryId,
       });
-      
+
       // Reset form
       setFormData({
-        text_ro: '',
-        text_en: '',
+        text_ro: "",
+        text_en: "",
         weight: 1,
         categoryId: 1,
       });
@@ -65,8 +80,8 @@ export default function AddQuestionDialog({ open, onOpenChange, onSubmit }: AddQ
       if (!newOpen) {
         // Reset form when dialog closes
         setFormData({
-          text_ro: '',
-          text_en: '',
+          text_ro: "",
+          text_en: "",
           weight: 1,
           categoryId: 1,
         });
@@ -80,7 +95,8 @@ export default function AddQuestionDialog({ open, onOpenChange, onSubmit }: AddQ
         <DialogHeader>
           <DialogTitle>Add New Question</DialogTitle>
           <DialogDescription>
-            Create a new question for property evaluations. Provide both Romanian and English versions if possible.
+            Create a new question for property evaluations. Provide both
+            Romanian and English versions if possible.
           </DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit}>
@@ -91,7 +107,9 @@ export default function AddQuestionDialog({ open, onOpenChange, onSubmit }: AddQ
                 id="text_ro"
                 placeholder="Enter question in Romanian..."
                 value={formData.text_ro}
-                onChange={(e) => setFormData(prev => ({ ...prev, text_ro: e.target.value }))}
+                onChange={(e) =>
+                  setFormData((prev) => ({ ...prev, text_ro: e.target.value }))
+                }
                 required
                 rows={3}
               />
@@ -102,7 +120,9 @@ export default function AddQuestionDialog({ open, onOpenChange, onSubmit }: AddQ
                 id="text_en"
                 placeholder="Enter question in English (optional)..."
                 value={formData.text_en}
-                onChange={(e) => setFormData(prev => ({ ...prev, text_en: e.target.value }))}
+                onChange={(e) =>
+                  setFormData((prev) => ({ ...prev, text_en: e.target.value }))
+                }
                 rows={3}
               />
             </div>
@@ -115,15 +135,25 @@ export default function AddQuestionDialog({ open, onOpenChange, onSubmit }: AddQ
                   min="1"
                   max="10"
                   value={formData.weight}
-                  onChange={(e) => setFormData(prev => ({ ...prev, weight: parseInt(e.target.value) || 1 }))}
+                  onChange={(e) =>
+                    setFormData((prev) => ({
+                      ...prev,
+                      weight: parseInt(e.target.value) || 1,
+                    }))
+                  }
                   required
                 />
               </div>
               <div className="grid gap-2">
                 <Label htmlFor="categoryId">Category ID</Label>
-                <Select 
-                  value={formData.categoryId.toString()} 
-                  onValueChange={(value) => setFormData(prev => ({ ...prev, categoryId: parseInt(value) }))}
+                <Select
+                  value={formData.categoryId.toString()}
+                  onValueChange={(value) =>
+                    setFormData((prev) => ({
+                      ...prev,
+                      categoryId: parseInt(value),
+                    }))
+                  }
                 >
                   <SelectTrigger>
                     <SelectValue placeholder="Select category" />
@@ -138,16 +168,19 @@ export default function AddQuestionDialog({ open, onOpenChange, onSubmit }: AddQ
             </div>
           </div>
           <DialogFooter>
-            <Button 
-              type="button" 
-              variant="outline" 
+            <Button
+              type="button"
+              variant="outline"
               onClick={() => handleOpenChange(false)}
               disabled={isSubmitting}
             >
               Cancel
             </Button>
-            <Button type="submit" disabled={isSubmitting || !formData.text_ro.trim()}>
-              {isSubmitting ? 'Creating...' : 'Create Question'}
+            <Button
+              type="submit"
+              disabled={isSubmitting || !formData.text_ro.trim()}
+            >
+              {isSubmitting ? "Creating..." : "Create Question"}
             </Button>
           </DialogFooter>
         </form>

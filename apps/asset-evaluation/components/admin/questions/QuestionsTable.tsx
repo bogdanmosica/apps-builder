@@ -1,16 +1,29 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { Button } from '@workspace/ui/components/button';
-import { Input } from '@workspace/ui/components/input';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@workspace/ui/components/table';
-import { Plus, Pencil, Trash, Search, MessageCircleQuestion } from 'lucide-react';
-import { useRouter } from 'next/navigation';
-import { toast } from 'sonner';
-import AddQuestionDialog from './AddQuestionDialog';
-import EditQuestionDialog from './EditQuestionDialog';
-import DeleteQuestionDialog from './DeleteQuestionDialog';
-import HydrationSafeDate from '../../hydration-safe-date';
+import { Button } from "@workspace/ui/components/button";
+import { Input } from "@workspace/ui/components/input";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@workspace/ui/components/table";
+import {
+  MessageCircleQuestion,
+  Pencil,
+  Plus,
+  Search,
+  Trash,
+} from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { toast } from "sonner";
+import HydrationSafeDate from "../../hydration-safe-date";
+import AddQuestionDialog from "./AddQuestionDialog";
+import DeleteQuestionDialog from "./DeleteQuestionDialog";
+import EditQuestionDialog from "./EditQuestionDialog";
 
 interface Question {
   id: number;
@@ -26,83 +39,104 @@ interface QuestionsTableProps {
   initialQuestions: Question[];
 }
 
-export default function QuestionsTable({ initialQuestions }: QuestionsTableProps) {
+export default function QuestionsTable({
+  initialQuestions,
+}: QuestionsTableProps) {
   const router = useRouter();
   const [questions, setQuestions] = useState<Question[]>(initialQuestions);
-  const [searchQuery, setSearchQuery] = useState('');
-  
+  const [searchQuery, setSearchQuery] = useState("");
+
   // Dialog states
   const [addDialogOpen, setAddDialogOpen] = useState(false);
-  const [editDialogState, setEditDialogState] = useState<{ open: boolean; question: Question | null }>({
+  const [editDialogState, setEditDialogState] = useState<{
+    open: boolean;
+    question: Question | null;
+  }>({
     open: false,
     question: null,
   });
-  const [deleteDialogState, setDeleteDialogState] = useState<{ open: boolean; question: Question | null }>({
+  const [deleteDialogState, setDeleteDialogState] = useState<{
+    open: boolean;
+    question: Question | null;
+  }>({
     open: false,
     question: null,
   });
 
   // Handle creating a new question
-  const handleAddQuestion = async (data: { text_ro: string; text_en: string | null; weight: number; categoryId: number }) => {
+  const handleAddQuestion = async (data: {
+    text_ro: string;
+    text_en: string | null;
+    weight: number;
+    categoryId: number;
+  }) => {
     try {
-      const response = await fetch('/api/questions', {
-        method: 'POST',
+      const response = await fetch("/api/questions", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify(data),
       });
 
       if (!response.ok) {
-        throw new Error('Failed to create question');
+        throw new Error("Failed to create question");
       }
 
       const result = await response.json();
-      
+
       if (result.success) {
         // Add to local state
         setQuestions((prev) => [...prev, result.data]);
-        toast.success('Question created successfully');
+        toast.success("Question created successfully");
         setAddDialogOpen(false);
       } else {
-        throw new Error(result.error || 'Unknown error');
+        throw new Error(result.error || "Unknown error");
       }
     } catch (error) {
-      console.error('Error creating question:', error);
-      toast.error('Failed to create question');
+      console.error("Error creating question:", error);
+      toast.error("Failed to create question");
     }
   };
 
   // Handle updating a question
-  const handleUpdateQuestion = async (id: number, data: { text_ro: string; text_en: string | null; weight: number; categoryId: number }) => {
+  const handleUpdateQuestion = async (
+    id: number,
+    data: {
+      text_ro: string;
+      text_en: string | null;
+      weight: number;
+      categoryId: number;
+    },
+  ) => {
     try {
       const response = await fetch(`/api/questions/${id}`, {
-        method: 'PATCH',
+        method: "PATCH",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify(data),
       });
 
       if (!response.ok) {
-        throw new Error('Failed to update question');
+        throw new Error("Failed to update question");
       }
 
       const result = await response.json();
-      
+
       if (result.success) {
         // Update in local state
         setQuestions((prev) =>
-          prev.map((q) => (q.id === id ? { ...q, ...data } : q))
+          prev.map((q) => (q.id === id ? { ...q, ...data } : q)),
         );
-        toast.success('Question updated successfully');
+        toast.success("Question updated successfully");
         setEditDialogState({ open: false, question: null });
       } else {
-        throw new Error(result.error || 'Unknown error');
+        throw new Error(result.error || "Unknown error");
       }
     } catch (error) {
-      console.error('Error updating question:', error);
-      toast.error('Failed to update question');
+      console.error("Error updating question:", error);
+      toast.error("Failed to update question");
     }
   };
 
@@ -110,29 +144,29 @@ export default function QuestionsTable({ initialQuestions }: QuestionsTableProps
   const handleDeleteQuestion = async (id: number) => {
     try {
       const response = await fetch(`/api/questions/${id}`, {
-        method: 'DELETE',
+        method: "DELETE",
       });
 
       if (!response.ok) {
-        throw new Error('Failed to delete question');
+        throw new Error("Failed to delete question");
       }
 
       const result = await response.json();
-      
+
       if (result.success) {
         // Remove from local state
         setQuestions((prev) => prev.filter((q) => q.id !== id));
-        toast.success('Question deleted successfully');
+        toast.success("Question deleted successfully");
         setDeleteDialogState({ open: false, question: null });
-        
+
         // Refresh the page data
         router.refresh();
       } else {
-        throw new Error(result.error || 'Unknown error');
+        throw new Error(result.error || "Unknown error");
       }
     } catch (error) {
-      console.error('Error deleting question:', error);
-      toast.error('Failed to delete question');
+      console.error("Error deleting question:", error);
+      toast.error("Failed to delete question");
     }
   };
 
@@ -141,7 +175,8 @@ export default function QuestionsTable({ initialQuestions }: QuestionsTableProps
     const query = searchQuery.toLowerCase();
     return (
       q.text_ro.toLowerCase().includes(query) ||
-      (q.text_en?.toLowerCase().includes(query) || false)
+      q.text_en?.toLowerCase().includes(query) ||
+      false
     );
   });
 
@@ -181,8 +216,12 @@ export default function QuestionsTable({ initialQuestions }: QuestionsTableProps
               filteredQuestions.map((question) => (
                 <TableRow key={question.id}>
                   <TableCell className="font-medium">{question.id}</TableCell>
-                  <TableCell className="max-w-xs truncate">{question.text_ro}</TableCell>
-                  <TableCell className="max-w-xs truncate">{question.text_en || '—'}</TableCell>
+                  <TableCell className="max-w-xs truncate">
+                    {question.text_ro}
+                  </TableCell>
+                  <TableCell className="max-w-xs truncate">
+                    {question.text_en || "—"}
+                  </TableCell>
                   <TableCell>{question.weight}</TableCell>
                   <TableCell>{question.categoryId}</TableCell>
                   <TableCell className="hidden md:table-cell">
@@ -190,17 +229,21 @@ export default function QuestionsTable({ initialQuestions }: QuestionsTableProps
                   </TableCell>
                   <TableCell className="text-right">
                     <div className="flex justify-end gap-2">
-                      <Button 
-                        variant="ghost" 
+                      <Button
+                        variant="ghost"
                         size="icon"
-                        onClick={() => setEditDialogState({ open: true, question })}
+                        onClick={() =>
+                          setEditDialogState({ open: true, question })
+                        }
                       >
                         <Pencil className="h-4 w-4" />
                       </Button>
-                      <Button 
-                        variant="ghost" 
+                      <Button
+                        variant="ghost"
                         size="icon"
-                        onClick={() => setDeleteDialogState({ open: true, question })}
+                        onClick={() =>
+                          setDeleteDialogState({ open: true, question })
+                        }
                       >
                         <Trash className="h-4 w-4" />
                       </Button>
@@ -223,25 +266,35 @@ export default function QuestionsTable({ initialQuestions }: QuestionsTableProps
       </div>
 
       {/* Add Question Dialog */}
-      <AddQuestionDialog 
-        open={addDialogOpen} 
-        onOpenChange={setAddDialogOpen} 
+      <AddQuestionDialog
+        open={addDialogOpen}
+        onOpenChange={setAddDialogOpen}
         onSubmit={handleAddQuestion}
       />
 
       {/* Edit Question Dialog */}
-      <EditQuestionDialog 
-        open={editDialogState.open} 
-        question={editDialogState.question} 
-        onOpenChange={(open: boolean) => setEditDialogState({ open, question: open ? editDialogState.question : null })} 
+      <EditQuestionDialog
+        open={editDialogState.open}
+        question={editDialogState.question}
+        onOpenChange={(open: boolean) =>
+          setEditDialogState({
+            open,
+            question: open ? editDialogState.question : null,
+          })
+        }
         onSubmit={handleUpdateQuestion}
       />
 
       {/* Delete Question Dialog */}
-      <DeleteQuestionDialog 
-        open={deleteDialogState.open} 
-        question={deleteDialogState.question} 
-        onOpenChange={(open: boolean) => setDeleteDialogState({ open, question: open ? deleteDialogState.question : null })} 
+      <DeleteQuestionDialog
+        open={deleteDialogState.open}
+        question={deleteDialogState.question}
+        onOpenChange={(open: boolean) =>
+          setDeleteDialogState({
+            open,
+            question: open ? deleteDialogState.question : null,
+          })
+        }
         onDelete={handleDeleteQuestion}
       />
     </div>

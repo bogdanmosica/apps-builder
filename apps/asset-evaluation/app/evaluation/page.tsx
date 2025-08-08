@@ -1,9 +1,9 @@
-import { Suspense } from 'react';
-import { redirect } from 'next/navigation';
-import { getPropertyTypesWithData } from '@/lib/evaluation-server';
-import EvaluationFlow from '@/components/evaluation/EvaluationFlow';
-import { Skeleton } from '@workspace/ui/components/skeleton';
-import { Card, CardContent } from '@workspace/ui/components/card';
+import { Card, CardContent } from "@workspace/ui/components/card";
+import { Skeleton } from "@workspace/ui/components/skeleton";
+import { redirect } from "next/navigation";
+import { Suspense } from "react";
+import EvaluationFlow from "@/components/evaluation/EvaluationFlow";
+import { getPropertyTypesWithData } from "@/lib/evaluation-server";
 
 // Loading component
 function EvaluationLoading() {
@@ -16,13 +16,13 @@ function EvaluationLoading() {
             <Skeleton className="h-8 w-64 mx-auto" />
             <Skeleton className="h-4 w-80 mx-auto" />
           </div>
-          
+
           <div className="grid grid-cols-3 gap-4">
             <Skeleton className="h-16 w-full" />
             <Skeleton className="h-16 w-full" />
             <Skeleton className="h-16 w-full" />
           </div>
-          
+
           <div className="space-y-3">
             <Skeleton className="h-4 w-48 mx-auto" />
             <div className="space-y-2">
@@ -31,7 +31,7 @@ function EvaluationLoading() {
               ))}
             </div>
           </div>
-          
+
           <Skeleton className="h-12 w-full max-w-md mx-auto" />
         </CardContent>
       </Card>
@@ -43,44 +43,50 @@ function EvaluationLoading() {
 async function EvaluationContent({
   searchParams,
 }: {
-  searchParams: Promise<{ type?: string }>
+  searchParams: Promise<{ type?: string }>;
 }) {
   // Await the searchParams promise
   const params = await searchParams;
-  
+
   try {
     const propertyTypes = await getPropertyTypesWithData();
-    
+
     if (!propertyTypes || propertyTypes.length === 0) {
-      throw new Error('No property types found. Please seed the database first.');
+      throw new Error(
+        "No property types found. Please seed the database first.",
+      );
     }
 
     // Get the property type from the URL parameter, or use the first one as fallback
     let selectedPropertyType;
-    
+
     if (params.type) {
       // If type is provided, try to find it by ID or name
       const typeId = parseInt(params.type);
-      selectedPropertyType = propertyTypes.find(pt => 
-        pt.id === typeId || 
-        pt.name_ro.toLowerCase() === params.type?.toLowerCase() ||
-        pt.name_en?.toLowerCase() === params.type?.toLowerCase()
+      selectedPropertyType = propertyTypes.find(
+        (pt) =>
+          pt.id === typeId ||
+          pt.name_ro.toLowerCase() === params.type?.toLowerCase() ||
+          pt.name_en?.toLowerCase() === params.type?.toLowerCase(),
       );
     }
-    
+
     // Fallback to first property type if not found or not specified
     if (!selectedPropertyType) {
       selectedPropertyType = propertyTypes[0];
     }
 
-    if (!selectedPropertyType.categories || selectedPropertyType.categories.length === 0) {
-      throw new Error('No categories found for this property type.');
+    if (
+      !selectedPropertyType.categories ||
+      selectedPropertyType.categories.length === 0
+    ) {
+      throw new Error("No categories found for this property type.");
     }
 
     return <EvaluationFlow propertyData={selectedPropertyType} />;
   } catch (error) {
-    console.error('Error loading evaluation data:', error);
-    
+    console.error("Error loading evaluation data:", error);
+
     return (
       <div className="min-h-screen bg-gradient-to-br from-background via-secondary/5 to-primary/5 flex items-center justify-center p-4">
         <Card className="w-full max-w-md">
@@ -92,7 +98,9 @@ async function EvaluationContent({
               Unable to Load Evaluation
             </h2>
             <p className="text-muted-foreground">
-              {error instanceof Error ? error.message : 'An unexpected error occurred.'}
+              {error instanceof Error
+                ? error.message
+                : "An unexpected error occurred."}
             </p>
             <div className="space-y-2">
               <p className="text-sm text-muted-foreground">
@@ -113,7 +121,7 @@ async function EvaluationContent({
 export default function EvaluationPage({
   searchParams,
 }: {
-  searchParams: Promise<{ type?: string }>
+  searchParams: Promise<{ type?: string }>;
 }) {
   return (
     <Suspense fallback={<EvaluationLoading />}>
@@ -124,6 +132,7 @@ export default function EvaluationPage({
 
 // Metadata for the page
 export const metadata = {
-  title: 'Property Evaluation | Interactive Assessment',
-  description: 'Evaluate your property with our comprehensive interactive assessment tool. Get instant feedback and detailed insights.',
+  title: "Property Evaluation | Interactive Assessment",
+  description:
+    "Evaluate your property with our comprehensive interactive assessment tool. Get instant feedback and detailed insights.",
 };

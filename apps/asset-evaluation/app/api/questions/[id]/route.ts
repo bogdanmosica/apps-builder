@@ -1,21 +1,21 @@
-import { NextResponse } from 'next/server';
-import { db } from '@/lib/db/drizzle';
-import { questions } from '@/lib/db/schema';
-import { getUser } from '@/lib/db/queries';
-import { eq } from 'drizzle-orm';
+import { eq } from "drizzle-orm";
+import { NextResponse } from "next/server";
+import { db } from "@/lib/db/drizzle";
+import { getUser } from "@/lib/db/queries";
+import { questions } from "@/lib/db/schema";
 
 export async function GET(
-  request: Request, 
-  { params }: { params: Promise<{ id: string }> }
+  request: Request,
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     const { id: idParam } = await params;
     const id = parseInt(idParam);
-    
+
     if (isNaN(id)) {
       return NextResponse.json(
-        { success: false, error: 'Invalid question ID' },
-        { status: 400 }
+        { success: false, error: "Invalid question ID" },
+        { status: 400 },
       );
     }
 
@@ -27,8 +27,8 @@ export async function GET(
 
     if (question.length === 0) {
       return NextResponse.json(
-        { success: false, error: 'Question not found' },
-        { status: 404 }
+        { success: false, error: "Question not found" },
+        { status: 404 },
       );
     }
 
@@ -37,46 +37,46 @@ export async function GET(
       data: question[0],
     });
   } catch (error) {
-    console.error('Error fetching question:', error);
+    console.error("Error fetching question:", error);
     return NextResponse.json(
-      { success: false, error: 'Failed to fetch question' },
-      { status: 500 }
+      { success: false, error: "Failed to fetch question" },
+      { status: 500 },
     );
   }
 }
 
 export async function PATCH(
-  request: Request, 
-  { params }: { params: Promise<{ id: string }> }
+  request: Request,
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     const user = await getUser();
-    
+
     // Only admin/owner users can update questions
-    if (!user || !['admin', 'owner'].includes(user.role)) {
+    if (!user || !["admin", "owner"].includes(user.role)) {
       return NextResponse.json(
-        { success: false, error: 'Unauthorized' },
-        { status: 401 }
+        { success: false, error: "Unauthorized" },
+        { status: 401 },
       );
     }
 
     const { id: idParam } = await params;
     const id = parseInt(idParam);
-    
+
     if (isNaN(id)) {
       return NextResponse.json(
-        { success: false, error: 'Invalid question ID' },
-        { status: 400 }
+        { success: false, error: "Invalid question ID" },
+        { status: 400 },
       );
     }
 
     const body = await request.json();
 
     // Validate request body
-    if (!body.text_ro || typeof body.text_ro !== 'string') {
+    if (!body.text_ro || typeof body.text_ro !== "string") {
       return NextResponse.json(
-        { success: false, error: 'Question text (Romanian) is required' },
-        { status: 400 }
+        { success: false, error: "Question text (Romanian) is required" },
+        { status: 400 },
       );
     }
 
@@ -89,8 +89,8 @@ export async function PATCH(
 
     if (existingQuestion.length === 0) {
       return NextResponse.json(
-        { success: false, error: 'Question not found' },
-        { status: 404 }
+        { success: false, error: "Question not found" },
+        { status: 404 },
       );
     }
 
@@ -112,36 +112,36 @@ export async function PATCH(
       data: updatedQuestion,
     });
   } catch (error) {
-    console.error('Error updating question:', error);
+    console.error("Error updating question:", error);
     return NextResponse.json(
-      { success: false, error: 'Failed to update question' },
-      { status: 500 }
+      { success: false, error: "Failed to update question" },
+      { status: 500 },
     );
   }
 }
 
 export async function DELETE(
-  request: Request, 
-  { params }: { params: Promise<{ id: string }> }
+  request: Request,
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     const user = await getUser();
-    
+
     // Only admin/owner users can delete questions
-    if (!user || !['admin', 'owner'].includes(user.role)) {
+    if (!user || !["admin", "owner"].includes(user.role)) {
       return NextResponse.json(
-        { success: false, error: 'Unauthorized' },
-        { status: 401 }
+        { success: false, error: "Unauthorized" },
+        { status: 401 },
       );
     }
 
     const { id: idParam } = await params;
     const id = parseInt(idParam);
-    
+
     if (isNaN(id)) {
       return NextResponse.json(
-        { success: false, error: 'Invalid question ID' },
-        { status: 400 }
+        { success: false, error: "Invalid question ID" },
+        { status: 400 },
       );
     }
 
@@ -154,8 +154,8 @@ export async function DELETE(
 
     if (existingQuestion.length === 0) {
       return NextResponse.json(
-        { success: false, error: 'Question not found' },
-        { status: 404 }
+        { success: false, error: "Question not found" },
+        { status: 404 },
       );
     }
 
@@ -163,19 +163,17 @@ export async function DELETE(
     // and possibly prevent deletion if it's in use
 
     // Delete question
-    await db
-      .delete(questions)
-      .where(eq(questions.id, id));
+    await db.delete(questions).where(eq(questions.id, id));
 
     return NextResponse.json({
       success: true,
-      message: 'Question deleted successfully',
+      message: "Question deleted successfully",
     });
   } catch (error) {
-    console.error('Error deleting question:', error);
+    console.error("Error deleting question:", error);
     return NextResponse.json(
-      { success: false, error: 'Failed to delete question' },
-      { status: 500 }
+      { success: false, error: "Failed to delete question" },
+      { status: 500 },
     );
   }
 }

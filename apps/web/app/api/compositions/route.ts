@@ -1,16 +1,16 @@
-import { NextResponse } from 'next/server';
-import { auth } from '@/auth'; // Import your NextAuth v5 authentication
+import { NextResponse } from "next/server";
 import {
-  getUserCompositions,
+  type CompositionData,
   createComposition,
-  CompositionData,
-} from '@/actions/compositions';
+  getUserCompositions,
+} from "@/actions/compositions";
+import { auth } from "@/auth"; // Import your NextAuth v5 authentication
 
 export const GET = auth(async (req) => {
   const session = req.auth;
 
   if (!session) {
-    return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
+    return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
   }
 
   const userId = session?.user?.id as string;
@@ -21,8 +21,8 @@ export const GET = auth(async (req) => {
     return NextResponse.json(compositions, { status: 200 });
   } catch (error: any) {
     return NextResponse.json(
-      { message: 'Error fetching compositions', error: error.message },
-      { status: 500 }
+      { message: "Error fetching compositions", error: error.message },
+      { status: 500 },
     );
   }
 });
@@ -31,7 +31,7 @@ export const POST = auth(async (req) => {
   const session = req.auth;
 
   if (!session) {
-    return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
+    return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
   }
 
   const userId = session?.user?.id as string;
@@ -52,8 +52,8 @@ export const POST = auth(async (req) => {
     return NextResponse.json(newComposition, { status: 201 });
   } catch (error: any) {
     return NextResponse.json(
-      { message: 'Error creating composition', error: error.message },
-      { status: 500 }
+      { message: "Error creating composition", error: error.message },
+      { status: 500 },
     );
   }
 });

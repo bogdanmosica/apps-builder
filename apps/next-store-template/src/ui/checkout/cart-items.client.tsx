@@ -1,12 +1,12 @@
-import { setQuantity } from '@/actions/cart-actions';
-import { Button } from '@workspace/ui/components/button';
-import { formatMoney } from '@/lib/utils';
-import { useElements } from '@stripe/react-stripe-js';
-import { Loader2 } from 'lucide-react';
-import { useRouter } from 'next/navigation';
-import { useRef } from 'react';
-import { useFormStatus } from 'react-dom';
-import { cn } from '@workspace/ui/lib/utils';
+import { useElements } from "@stripe/react-stripe-js";
+import { Button } from "@workspace/ui/components/button";
+import { cn } from "@workspace/ui/lib/utils";
+import { Loader2 } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useRef } from "react";
+import { useFormStatus } from "react-dom";
+import { setQuantity } from "@/actions/cart-actions";
+import { formatMoney } from "@/lib/utils";
 
 export const CartItemQuantity = ({
   quantity,
@@ -19,7 +19,7 @@ export const CartItemQuantity = ({
   cartId: string;
   onChange: (args: {
     productId: string;
-    action: 'INCREASE' | 'DECREASE';
+    action: "INCREASE" | "DECREASE";
   }) => void;
 }) => {
   const { pending } = useFormStatus();
@@ -34,12 +34,12 @@ export const CartItemQuantity = ({
   const elements = useElements();
   const router = useRouter();
 
-  const formAction = async (action: 'INCREASE' | 'DECREASE') => {
+  const formAction = async (action: "INCREASE" | "DECREASE") => {
     onChange({ productId, action });
 
     const doWork = async () => {
       try {
-        const modifier = action === 'INCREASE' ? 1 : -1;
+        const modifier = action === "INCREASE" ? 1 : -1;
         await setQuantity({ cartId, productId, quantity: quantity + modifier });
         await elements?.fetchUpdates();
         router.refresh();
@@ -66,33 +66,33 @@ export const CartItemQuantity = ({
   return (
     <span
       className={cn(
-        'flex flex-row items-center',
-        isPending ? 'cursor-wait text-foreground/50' : 'text-foreground'
+        "flex flex-row items-center",
+        isPending ? "cursor-wait text-foreground/50" : "text-foreground",
       )}
     >
       <Button
-        variant='ghost'
-        size='sm'
-        type='submit'
+        variant="ghost"
+        size="sm"
+        type="submit"
         disabled={quantity <= 0}
-        className='group aspect-square p-0'
-        formAction={() => formAction('DECREASE')}
+        className="group aspect-square p-0"
+        formAction={() => formAction("DECREASE")}
       >
-        <span className='flex h-4 w-4 items-center justify-center rounded-full bg-neutral-100 pb-0.5 font-bold leading-none text-black transition-colors group-hover:bg-neutral-500 group-hover:text-white'>
+        <span className="flex h-4 w-4 items-center justify-center rounded-full bg-neutral-100 pb-0.5 font-bold leading-none text-black transition-colors group-hover:bg-neutral-500 group-hover:text-white">
           –
         </span>
       </Button>
-      <span className='inline-block min-w-8 px-1 text-center tabular-nums'>
+      <span className="inline-block min-w-8 px-1 text-center tabular-nums">
         {quantity}
       </span>
       <Button
-        variant='ghost'
-        size='sm'
-        type='submit'
-        className='group aspect-square p-0'
-        formAction={() => formAction('INCREASE')}
+        variant="ghost"
+        size="sm"
+        type="submit"
+        className="group aspect-square p-0"
+        formAction={() => formAction("INCREASE")}
       >
-        <span className='flex h-4 w-4 items-center justify-center rounded-full bg-neutral-100 pb-0.5 font-bold leading-none text-black transition-colors group-hover:bg-neutral-500 group-hover:text-white'>
+        <span className="flex h-4 w-4 items-center justify-center rounded-full bg-neutral-100 pb-0.5 font-bold leading-none text-black transition-colors group-hover:bg-neutral-500 group-hover:text-white">
           +
         </span>
       </Button>
@@ -114,8 +114,8 @@ export const CartItemLineTotal = ({
   locale: string;
 }) => {
   const { pending, data: formData } = useFormStatus();
-  const increaseQuantity = formData?.get('increaseQuantity')?.toString();
-  const decreaseQuantity = formData?.get('decreaseQuantity')?.toString();
+  const increaseQuantity = formData?.get("increaseQuantity")?.toString();
+  const decreaseQuantity = formData?.get("decreaseQuantity")?.toString();
   const isPending =
     pending &&
     (increaseQuantity === productId || decreaseQuantity === productId);
@@ -123,8 +123,8 @@ export const CartItemLineTotal = ({
   return (
     <span
       className={cn(
-        'whitespace-nowrap tabular-nums',
-        isPending ? 'cursor-wait text-foreground/50' : 'text-foreground'
+        "whitespace-nowrap tabular-nums",
+        isPending ? "cursor-wait text-foreground/50" : "text-foreground",
       )}
     >
       {formatMoney({
@@ -150,12 +150,12 @@ export const CartAmountWithSpinner = ({
   return (
     <span
       className={cn(
-        'relative tabular-nums',
-        pending ? 'cursor-wait text-foreground/50' : 'text-foreground'
+        "relative tabular-nums",
+        pending ? "cursor-wait text-foreground/50" : "text-foreground",
       )}
     >
       {pending && (
-        <Loader2 className='absolute -left-[.85rem] top-[.1rem] inline-block size-3 animate-spin text-foreground' />
+        <Loader2 className="absolute -left-[.85rem] top-[.1rem] inline-block size-3 animate-spin text-foreground" />
       )}
       {formatMoney({
         amount: total,

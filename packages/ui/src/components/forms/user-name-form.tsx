@@ -1,12 +1,16 @@
 "use client";
 
-import * as React from "react";
-import { useRouter } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import axios from "axios";
-import type * as z from "zod";
+import type { User } from "@hub/types";
 import { cn } from "@hub/utils";
+import { userNameSchema } from "@hub/validations";
+import axios from "axios";
+import { useRouter } from "next/navigation";
+import * as React from "react";
+import { useForm } from "react-hook-form";
+import type * as z from "zod";
+import { Icons } from "../icons";
+import { buttonVariants } from "../ui/button";
 import {
   Card,
   CardContent,
@@ -15,12 +19,8 @@ import {
   CardHeader,
   CardTitle,
 } from "../ui/card";
-import { userNameSchema } from "@hub/validations";
-import { Icons } from "../icons";
-import { Label } from "../ui/label";
 import { Input } from "../ui/input";
-import { buttonVariants } from "../ui/button";
-import { User } from "@hub/types";
+import { Label } from "../ui/label";
 import { toast } from "../ui/use-toast";
 
 type UserNameFormProps = React.HTMLAttributes<HTMLFormElement> & { user: User };
@@ -44,7 +44,7 @@ export function UserNameForm({
     },
   });
   const [isSaving, setIsSaving] = React.useState<boolean>(false);
-  const [updateUser, setUpdateUser] = React.useState<User>(user);
+  const [_updateUser, setUpdateUser] = React.useState<User>(user);
 
   async function onSubmit(data: FormData) {
     setIsSaving(true);

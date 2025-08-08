@@ -1,18 +1,18 @@
-'use client';
+"use client";
 
+import { Button } from "@workspace/ui/components/button";
+import { Card, CardContent } from "@workspace/ui/components/card";
+import { Input } from "@workspace/ui/components/input";
+import { useChat } from "ai/react";
+import { ArrowUp, ChevronDown } from "lucide-react";
+import { usePathname } from "next/navigation";
+import { startTransition, useEffect, useRef, useState } from "react";
 import {
   commerceGPTRevalidateAction,
   setInitialCartCookiesAction,
-} from '@/actions/cart-actions';
-import { Button } from '@workspace/ui/components/button';
-import { Card, CardContent } from '@workspace/ui/components/card';
-import { Input } from '@workspace/ui/components/input';
-import { useChat } from 'ai/react';
-import { ArrowUp, ChevronDown } from 'lucide-react';
-import { usePathname } from 'next/navigation';
-import { startTransition, useEffect, useRef, useState } from 'react';
-import { ProductList } from './commercegpt/product-list';
-import { YnsLink } from './yns-link';
+} from "@/actions/cart-actions";
+import { ProductList } from "./commercegpt/product-list";
+import { YnsLink } from "./yns-link";
 
 export function CommerceGPT() {
   const { messages, input, handleInputChange, handleSubmit, append, data } =
@@ -20,9 +20,9 @@ export function CommerceGPT() {
 
   useEffect(() => {
     const d = data as
-      | Array<{ operation?: 'cartAdd'; cartId: string } | undefined>
+      | Array<{ operation?: "cartAdd"; cartId: string } | undefined>
       | undefined;
-    const cartId = d?.find((d) => d?.operation === 'cartAdd')?.cartId;
+    const cartId = d?.find((d) => d?.operation === "cartAdd")?.cartId;
     if (cartId) {
       startTransition(async () => {
         await setInitialCartCookiesAction(cartId, 1);
@@ -32,34 +32,34 @@ export function CommerceGPT() {
   }, [data]);
   const [isOpen, setIsOpen] = useState(false);
 
-  const pathname = usePathname();
+  const _pathname = usePathname();
 
   const ref = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     setIsOpen(false);
-  }, [pathname]);
+  }, []);
 
   useEffect(() => {
     const handleEsc = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') setIsOpen(false);
+      if (event.key === "Escape") setIsOpen(false);
     };
-    window.addEventListener('keydown', handleEsc);
-    return () => window.removeEventListener('keydown', handleEsc);
+    window.addEventListener("keydown", handleEsc);
+    return () => window.removeEventListener("keydown", handleEsc);
   }, []);
 
   return (
-    <div className='flex flex-col'>
-      <div className='bg-linear-to-r from-orange-100 via-orange-200 to-red-300 px-4 py-3 text-indigo-900'>
-        <div className='flex items-center justify-between gap-x-4'>
-          <div className='mx-auto flex max-w-7xl items-center justify-between gap-x-4'>
-            <div className='flex items-center gap-x-4'>
-              <p className='text-center text-sm font-medium'>
+    <div className="flex flex-col">
+      <div className="bg-linear-to-r from-orange-100 via-orange-200 to-red-300 px-4 py-3 text-indigo-900">
+        <div className="flex items-center justify-between gap-x-4">
+          <div className="mx-auto flex max-w-7xl items-center justify-between gap-x-4">
+            <div className="flex items-center gap-x-4">
+              <p className="text-center text-sm font-medium">
                 🎉 You can use powerful OpenAI models to search and buy products
               </p>
               <Button
-                size='sm'
-                className='flex-none rounded-full bg-orange-600 px-3 py-1 text-sm font-semibold text-white shadow-xs hover:bg-orange-700 focus-visible:ring-0'
+                size="sm"
+                className="flex-none rounded-full bg-orange-600 px-3 py-1 text-sm font-semibold text-white shadow-xs hover:bg-orange-700 focus-visible:ring-0"
                 onClick={() => {
                   ref.current?.focus();
                   setIsOpen(!isOpen);
@@ -70,9 +70,9 @@ export function CommerceGPT() {
             </div>
           </div>
           <YnsLink
-            className='bg-black rounded-full text-white px-4 py-1 text-sm'
-            href='https://github.com/yournextstore/yournextstore'
-            target='_blank'
+            className="bg-black rounded-full text-white px-4 py-1 text-sm"
+            href="https://github.com/yournextstore/yournextstore"
+            target="_blank"
           >
             View on GitHub
           </YnsLink>
@@ -80,40 +80,40 @@ export function CommerceGPT() {
       </div>
       <div
         className={`z-100 overflow-clip fixed top-0 left-0 right-0 bg-neutral-50 transition-all duration-300 ease-in-out shadow-lg ${
-          isOpen ? 'h-2/3' : 'h-0'
+          isOpen ? "h-2/3" : "h-0"
         }`}
       >
-        <Card className='w-full h-full rounded-none max-w-(--breakpoint-lg) mx-auto border-transparent'>
-          <CardContent className='p-4 h-full flex flex-col'>
-            <div className='grow overflow-auto space-y-4 mb-4'>
+        <Card className="w-full h-full rounded-none max-w-(--breakpoint-lg) mx-auto border-transparent">
+          <CardContent className="p-4 h-full flex flex-col">
+            <div className="grow overflow-auto space-y-4 mb-4">
               {messages.length === 0 && (
-                <div className='flex-1 overflow-y-auto p-4 flex flex-col items-center justify-center space-y-6 h-full'>
-                  <h3 className='text-xl font-bold text-center'>
-                    Welcome to{' '}
-                    <span className='bg-linear-to-r from-orange-500 via-red-500 to-red-600 text-transparent bg-clip-text'>
+                <div className="flex-1 overflow-y-auto p-4 flex flex-col items-center justify-center space-y-6 h-full">
+                  <h3 className="text-xl font-bold text-center">
+                    Welcome to{" "}
+                    <span className="bg-linear-to-r from-orange-500 via-red-500 to-red-600 text-transparent bg-clip-text">
                       Commerce GPT
-                    </span>{' '}
+                    </span>{" "}
                     in Your Next Store
                   </h3>
-                  <div className='flex flex-wrap justify-center gap-2 w-full'>
+                  <div className="flex flex-wrap justify-center gap-2 w-full">
                     <Button
-                      variant='outline'
-                      className='text-lg text-neutral-500'
-                      size='lg'
+                      variant="outline"
+                      className="text-lg text-neutral-500"
+                      size="lg"
                       onClick={() =>
-                        append({ role: 'user', content: 'Show me some bags' })
+                        append({ role: "user", content: "Show me some bags" })
                       }
                     >
                       Show me some bags
                     </Button>
                     <Button
-                      variant='outline'
-                      className='text-lg text-neutral-500'
-                      size='lg'
+                      variant="outline"
+                      className="text-lg text-neutral-500"
+                      size="lg"
                       onClick={() =>
                         append({
-                          role: 'user',
-                          content: 'Show me cool sunglasses',
+                          role: "user",
+                          content: "Show me cool sunglasses",
                         })
                       }
                     >
@@ -125,35 +125,35 @@ export function CommerceGPT() {
               {messages.map((m) => (
                 <div
                   key={m.id}
-                  className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}
+                  className={`flex ${m.role === "user" ? "justify-end" : "justify-start"}`}
                 >
                   <div
-                    className={`text-lg rounded px-2 py-1 max-w-[80%] ${m.role === 'user' ? 'bg-linear-to-l from-orange-500 via-red-400 to-red-500 text-white' : (m.toolInvocations || []).length > 0 ? 'bg-transparent' : 'bg-neutral-100'}`}
+                    className={`text-lg rounded px-2 py-1 max-w-[80%] ${m.role === "user" ? "bg-linear-to-l from-orange-500 via-red-400 to-red-500 text-white" : (m.toolInvocations || []).length > 0 ? "bg-transparent" : "bg-neutral-100"}`}
                   >
                     {m.content}
                     {m.toolInvocations?.map((ti) => {
                       return (
-                        ti.state === 'result' && (
+                        ti.state === "result" && (
                           <div key={ti.toolCallId}>
                             {(() => {
                               switch (ti.toolName) {
-                                case 'productSearch':
+                                case "productSearch":
                                   if (ti.result.length === 0)
-                                    return <>No results</>;
+                                    return "No results";
                                   return (
-                                    <div className='grid cols-1 gap-4'>
+                                    <div className="grid cols-1 gap-4">
                                       <ProductList products={ti.result} />
 
-                                      <div className='flex flex-wrap justify-center gap-2 w-full'>
+                                      <div className="flex flex-wrap justify-center gap-2 w-full">
                                         <Button
-                                          variant='outline'
-                                          className='text-lg text-neutral-500'
-                                          size='lg'
+                                          variant="outline"
+                                          className="text-lg text-neutral-500"
+                                          size="lg"
                                           onClick={() =>
                                             append({
-                                              role: 'user',
+                                              role: "user",
                                               content:
-                                                'Add the first product to the cart',
+                                                "Add the first product to the cart",
                                             })
                                           }
                                         >
@@ -164,7 +164,7 @@ export function CommerceGPT() {
                                   );
                                 default:
                                   return (
-                                    <div className='text-lg rounded px-2 py-1 bg-neutral-100'>
+                                    <div className="text-lg rounded px-2 py-1 bg-neutral-100">
                                       {ti.result}
                                     </div>
                                   );
@@ -180,19 +180,19 @@ export function CommerceGPT() {
             </div>
             <form
               onSubmit={handleSubmit}
-              className='flex space-x-2 items-center'
+              className="flex space-x-2 items-center"
             >
               <Input
                 value={input}
                 onChange={handleInputChange}
-                placeholder='What do you want to buy today?'
-                className='grow h-12 md:text-xl'
+                placeholder="What do you want to buy today?"
+                className="grow h-12 md:text-xl"
                 ref={ref}
               />
               <Button
-                type='submit'
-                size='lg'
-                className='rounded-full text-lg h-12'
+                type="submit"
+                size="lg"
+                className="rounded-full text-lg h-12"
               >
                 <ArrowUp />
               </Button>
@@ -202,7 +202,7 @@ export function CommerceGPT() {
       </div>
       {isOpen && (
         <div
-          className='fixed inset-0 bg-black bg-opacity-50 transition-opacity ease-in-out duration-300'
+          className="fixed inset-0 bg-black bg-opacity-50 transition-opacity ease-in-out duration-300"
           onClick={() => setIsOpen(false)}
         />
       )}

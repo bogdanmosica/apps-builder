@@ -1,50 +1,50 @@
-'use client';
+"use client";
 
-import { clearCartCookieAction } from '@/actions/cart-actions';
-import {
-  Alert,
-  AlertDescription,
-  AlertTitle,
-} from '@workspace/ui/components/alert';
-import { Button } from '@workspace/ui/components/button';
-import { Checkbox } from '@workspace/ui/components/checkbox';
-import {
-  Collapsible,
-  CollapsibleContent,
-} from '@workspace/ui/components/collapsible';
-import { Label } from '@workspace/ui/components/label';
-import { useTranslations } from '@/i18n/client';
-import { useDebouncedValue } from '@/lib/hooks';
-import {
-  saveBillingAddressAction,
-  saveShippingRateAction,
-} from '@/ui/checkout/checkout-actions';
-import {
-  type AddressSchema,
-  getAddressSchema,
-} from '@/ui/checkout/checkout-form-schema';
-import { ShippingRatesSection } from '@/ui/checkout/shipping-rates-section';
-import { saveTaxIdAction } from '@/ui/checkout/tax-action';
-import { CountrySelect } from '@/ui/country-select';
-import { useDidUpdate } from '@/ui/hooks/lifecycle';
-import { InputWithErrors } from '@/ui/input-errors';
 import {
   AddressElement,
   LinkAuthenticationElement,
   PaymentElement,
   useElements,
   useStripe,
-} from '@stripe/react-stripe-js';
-import type * as Commerce from 'commerce-kit';
-import { AlertCircle, Loader2 } from 'lucide-react';
-import { useRouter } from 'next/navigation';
+} from "@stripe/react-stripe-js";
+import {
+  Alert,
+  AlertDescription,
+  AlertTitle,
+} from "@workspace/ui/components/alert";
+import { Button } from "@workspace/ui/components/button";
+import { Checkbox } from "@workspace/ui/components/checkbox";
+import {
+  Collapsible,
+  CollapsibleContent,
+} from "@workspace/ui/components/collapsible";
+import { Label } from "@workspace/ui/components/label";
+import type * as Commerce from "commerce-kit";
+import { AlertCircle, Loader2 } from "lucide-react";
+import { useRouter } from "next/navigation";
 import {
   type ChangeEvent,
   type FormEventHandler,
   useRef,
   useState,
   useTransition,
-} from 'react';
+} from "react";
+import { clearCartCookieAction } from "@/actions/cart-actions";
+import { useTranslations } from "@/i18n/client";
+import { useDebouncedValue } from "@/lib/hooks";
+import {
+  saveBillingAddressAction,
+  saveShippingRateAction,
+} from "@/ui/checkout/checkout-actions";
+import {
+  type AddressSchema,
+  getAddressSchema,
+} from "@/ui/checkout/checkout-form-schema";
+import { ShippingRatesSection } from "@/ui/checkout/shipping-rates-section";
+import { saveTaxIdAction } from "@/ui/checkout/tax-action";
+import { CountrySelect } from "@/ui/country-select";
+import { useDidUpdate } from "@/ui/hooks/lifecycle";
+import { InputWithErrors } from "@/ui/input-errors";
 
 export const StripePayment = ({
   shippingRateId,
@@ -78,15 +78,15 @@ const PaymentForm = ({
   allProductsDigital: boolean;
   locale: string;
 }) => {
-  const t = useTranslations('/cart.page.stripePayment');
+  const t = useTranslations("/cart.page.stripePayment");
 
-  const ft = useTranslations('/cart.page.formErrors');
+  const ft = useTranslations("/cart.page.formErrors");
   const addressSchema = getAddressSchema({
-    cityRequired: ft('cityRequired'),
-    countryRequired: ft('countryRequired'),
-    line1Required: ft('line1Required'),
-    nameRequired: ft('nameRequired'),
-    postalCodeRequired: ft('postalCodeRequired'),
+    cityRequired: ft("cityRequired"),
+    countryRequired: ft("countryRequired"),
+    line1Required: ft("line1Required"),
+    nameRequired: ft("nameRequired"),
+    postalCodeRequired: ft("postalCodeRequired"),
   });
 
   const [formErrorMessage, setFormErrorMessage] = useState<string | null>(null);
@@ -101,28 +101,28 @@ const PaymentForm = ({
   const [isPaymentReady, setIsPaymentReady] = useState(false);
   const [billingAddressValues, setBillingAddressValues] =
     useState<AddressSchema>({
-      name: '',
-      city: '',
-      country: '',
-      line1: '',
-      line2: '',
-      postalCode: '',
-      state: '',
-      phone: '',
-      taxId: '',
-      email: '',
+      name: "",
+      city: "",
+      country: "",
+      line1: "",
+      line2: "",
+      postalCode: "",
+      state: "",
+      phone: "",
+      taxId: "",
+      email: "",
     });
 
   const [isBillingAddressPending, debouncedBillingAddress] = useDebouncedValue(
     billingAddressValues,
-    1000
+    1000,
   );
   const [shippingRateId, setShippingRateId] = useState<string | null>(
-    cartShippingRateId
+    cartShippingRateId,
   );
 
   const [sameAsShipping, setSameAsShipping] = useState(true);
-  const [email, setEmail] = useState('');
+  const [email, setEmail] = useState("");
 
   const stripe = useStripe();
   const router = useRouter();
@@ -154,13 +154,13 @@ const PaymentForm = ({
     event.preventDefault();
 
     if (!stripe || !elements) {
-      console.warn('Stripe or Elements not ready');
+      console.warn("Stripe or Elements not ready");
       return;
     }
-    const shippingAddressElement = elements.getElement('address');
+    const shippingAddressElement = elements.getElement("address");
 
     if (!shippingAddressElement) {
-      console.warn('Address Element expected to exist but not found');
+      console.warn("Address Element expected to exist but not found");
       return;
     }
 
@@ -187,7 +187,7 @@ const PaymentForm = ({
       // when billing address form is visible we display billing errors inline under fields
       if (!validatedBillingAddress.success && !sameAsShipping) {
         setFieldErrors(
-          validatedBillingAddress.error?.flatten().fieldErrors ?? {}
+          validatedBillingAddress.error?.flatten().fieldErrors ?? {},
         );
       } else {
         setFieldErrors({});
@@ -197,11 +197,11 @@ const PaymentForm = ({
         !validatedShippingAddress.success ||
         !validatedBillingAddress.success
       ) {
-        console.error('Validation failed', {
+        console.error("Validation failed", {
           validatedShippingAddress,
           validatedBillingAddress,
         });
-        setFormErrorMessage(t('fillRequiredFields'));
+        setFormErrorMessage(t("fillRequiredFields"));
         return;
       }
 
@@ -214,7 +214,7 @@ const PaymentForm = ({
 
       const result = await stripe.confirmPayment({
         elements,
-        redirect: 'if_required',
+        redirect: "if_required",
         confirmParams: {
           return_url: `${window.location.origin}/order/success`,
           payment_method_data: {
@@ -226,9 +226,9 @@ const PaymentForm = ({
                 city: validatedBillingAddress.data.city,
                 country: validatedBillingAddress.data.country,
                 line1: validatedBillingAddress.data.line1,
-                line2: validatedBillingAddress.data.line2 ?? '',
+                line2: validatedBillingAddress.data.line2 ?? "",
                 postal_code: validatedBillingAddress.data.postalCode,
-                state: validatedBillingAddress.data.state ?? '',
+                state: validatedBillingAddress.data.state ?? "",
               },
             },
           },
@@ -239,9 +239,9 @@ const PaymentForm = ({
               city: validatedShippingAddress.data.city,
               country: validatedShippingAddress.data.country,
               line1: validatedShippingAddress.data.line1,
-              line2: validatedShippingAddress.data.line2 ?? '',
+              line2: validatedShippingAddress.data.line2 ?? "",
               postal_code: validatedShippingAddress.data.postalCode,
-              state: validatedShippingAddress.data.state ?? '',
+              state: validatedShippingAddress.data.state ?? "",
             },
           },
         },
@@ -249,7 +249,7 @@ const PaymentForm = ({
 
       if (result.error) {
         setIsLoading(false);
-        setFormErrorMessage(result.error.message ?? t('unexpectedError'));
+        setFormErrorMessage(result.error.message ?? t("unexpectedError"));
       } else {
         // clear cart cookie after successful payment for payment methods that do not require redirect
         // for payment methods that require redirect, we clear the cookie on the success page
@@ -257,22 +257,22 @@ const PaymentForm = ({
         const params = new URLSearchParams({
           payment_intent: result.paymentIntent.id,
           payment_intent_client_secret:
-            result.paymentIntent.client_secret ?? '',
+            result.paymentIntent.client_secret ?? "",
         });
-        router.push('/order/success?' + params.toString());
+        router.push(`/order/success?${params.toString()}`);
         // deliberately not setting isLoading to false here to prevent the button to flicker back to "Pay now" before redirecting
         // setIsLoading(false);
       }
     } catch (error) {
       setIsLoading(false);
       setFormErrorMessage(
-        error instanceof Error ? error.message : t('unexpectedError')
+        error instanceof Error ? error.message : t("unexpectedError"),
       );
     }
   };
 
   return (
-    <form onSubmit={handleSubmit} className='grid gap-4'>
+    <form onSubmit={handleSubmit} className="grid gap-4">
       <LinkAuthenticationElement
         onReady={() => setIsLinkAuthenticationReady(true)}
         onChange={(event) => {
@@ -283,9 +283,9 @@ const PaymentForm = ({
       />
       <AddressElement
         options={{
-          mode: 'shipping',
-          fields: { phone: 'always' },
-          validation: { phone: { required: 'auto' } },
+          mode: "shipping",
+          fields: { phone: "always" },
+          validation: { phone: { required: "auto" } },
         }}
         onChange={(e) => {
           // do not override billing address if it's manually edited
@@ -306,7 +306,7 @@ const PaymentForm = ({
             postalCode: e.value.address.postal_code,
             state: e.value.address.state ?? null,
             phone: e.value.phone ?? null,
-            taxId: '',
+            taxId: "",
             email: email,
           });
         }}
@@ -331,8 +331,8 @@ const PaymentForm = ({
 
       {readyToRender && (
         <Label
-          className='flex flex-row items-center gap-x-2'
-          aria-controls='billingAddressCollapsibleContent'
+          className="flex flex-row items-center gap-x-2"
+          aria-controls="billingAddressCollapsibleContent"
           aria-expanded={!sameAsShipping}
         >
           <Checkbox
@@ -340,28 +340,28 @@ const PaymentForm = ({
               setSameAsShipping(checked === true);
             }}
             checked={sameAsShipping}
-            name='sameAsShipping'
-            value={sameAsShipping ? 'true' : 'false'}
+            name="sameAsShipping"
+            value={sameAsShipping ? "true" : "false"}
           />
           {allProductsDigital
-            ? t('billingSameAsPayment')
-            : t('billingSameAsShipping')}
+            ? t("billingSameAsPayment")
+            : t("billingSameAsShipping")}
         </Label>
       )}
 
       {readyToRender && (
-        <Collapsible className='' open={!sameAsShipping}>
+        <Collapsible className="" open={!sameAsShipping}>
           <CollapsibleContent
-            id='billingAddressCollapsibleContent'
-            className='CollapsibleContent'
+            id="billingAddressCollapsibleContent"
+            className="CollapsibleContent"
           >
             <fieldset
               aria-hidden={sameAsShipping}
               tabIndex={sameAsShipping ? -1 : undefined}
               className={`grid gap-6 rounded-lg border p-4`}
             >
-              <legend className='-ml-1 whitespace-nowrap px-1 text-sm font-medium'>
-                {t('billingAddressTitle')}
+              <legend className="-ml-1 whitespace-nowrap px-1 text-sm font-medium">
+                {t("billingAddressTitle")}
               </legend>
               <BillingAddressSection
                 values={billingAddressValues}
@@ -378,28 +378,28 @@ const PaymentForm = ({
         options={{
           fields: {
             billingDetails: {
-              address: 'never',
+              address: "never",
             },
           },
         }}
       />
       {formErrorMessage && (
         <Alert
-          variant='destructive'
-          className='mt-2'
-          aria-live='polite'
+          variant="destructive"
+          className="mt-2"
+          aria-live="polite"
           aria-atomic
         >
-          <AlertCircle className='-mt-1 h-4 w-4' />
-          <AlertTitle>{t('errorTitle')}</AlertTitle>
+          <AlertCircle className="-mt-1 h-4 w-4" />
+          <AlertTitle>{t("errorTitle")}</AlertTitle>
           <AlertDescription>{formErrorMessage}</AlertDescription>
         </Alert>
       )}
       {readyToRender && (
         <Button
-          type='submit'
-          className='w-full rounded-full text-lg'
-          size='lg'
+          type="submit"
+          className="w-full rounded-full text-lg"
+          size="lg"
           aria-disabled={
             isBillingAddressPending || isLoading || isTransitioning
           }
@@ -410,9 +410,9 @@ const PaymentForm = ({
           }}
         >
           {isBillingAddressPending || isLoading || isTransitioning ? (
-            <Loader2 className='mr-2 h-4 w-4 animate-spin' />
+            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
           ) : (
-            t('payNowButton')
+            t("payNowButton")
           )}
         </Button>
       )}
@@ -429,9 +429,9 @@ const BillingAddressSection = ({
   onChange: (values: AddressSchema) => void;
   errors: Record<string, string[] | null | undefined>;
 }) => {
-  const t = useTranslations('/cart.page.stripePayment');
+  const t = useTranslations("/cart.page.stripePayment");
   const onFieldChange = (
-    e: ChangeEvent<HTMLInputElement> | ChangeEvent<HTMLSelectElement>
+    e: ChangeEvent<HTMLInputElement> | ChangeEvent<HTMLSelectElement>,
   ) => {
     const { name, value } = e.currentTarget;
     onChange({ ...values, [name]: value });
@@ -441,94 +441,94 @@ const BillingAddressSection = ({
     <>
       <InputWithErrors
         // required
-        label={t('fullName')}
-        name='name'
+        label={t("fullName")}
+        name="name"
         defaultValue={values.name ?? undefined}
-        autoComplete='shipping name'
-        className='mt-3 w-full'
+        autoComplete="shipping name"
+        className="mt-3 w-full"
         errors={errors}
         onChange={onFieldChange}
       />
       <InputWithErrors
         // required
-        label={t('address1')}
-        name='line1'
+        label={t("address1")}
+        name="line1"
         defaultValue={values.line1 ?? undefined}
-        autoComplete='shipping address-line1'
-        className='mt-3 w-full'
+        autoComplete="shipping address-line1"
+        className="mt-3 w-full"
         errors={errors}
         onChange={onFieldChange}
       />
       <InputWithErrors
-        label={t('address2')}
-        name='line2'
+        label={t("address2")}
+        name="line2"
         defaultValue={values.line2 ?? undefined}
-        autoComplete='shipping address-line2'
-        className='mt-3 w-full'
+        autoComplete="shipping address-line2"
+        className="mt-3 w-full"
         errors={errors}
         onChange={onFieldChange}
       />
-      <div className='grid gap-6 sm:grid-cols-2'>
+      <div className="grid gap-6 sm:grid-cols-2">
         <InputWithErrors
           // required
-          label={t('postalCode')}
-          name='postalCode'
+          label={t("postalCode")}
+          name="postalCode"
           defaultValue={values.postalCode ?? undefined}
-          autoComplete='shipping postal-code'
-          className='mt-3 w-full'
+          autoComplete="shipping postal-code"
+          className="mt-3 w-full"
           errors={errors}
           onChange={onFieldChange}
         />
         <InputWithErrors
           // required
-          label={t('city')}
-          name='city'
+          label={t("city")}
+          name="city"
           defaultValue={values.city ?? undefined}
-          autoComplete='shipping home city'
-          className='mt-3 w-full'
+          autoComplete="shipping home city"
+          className="mt-3 w-full"
           errors={errors}
           onChange={onFieldChange}
         />
       </div>
-      <div className='grid gap-6 sm:grid-cols-2 2xl:grid-cols-1'>
+      <div className="grid gap-6 sm:grid-cols-2 2xl:grid-cols-1">
         <InputWithErrors
-          label={t('state')}
-          name='state'
+          label={t("state")}
+          name="state"
           defaultValue={values.state ?? undefined}
-          autoComplete='shipping address-level1'
-          className='mt-3 w-full'
+          autoComplete="shipping address-level1"
+          className="mt-3 w-full"
           errors={errors}
           onChange={onFieldChange}
         />
         <CountrySelect
-          label={t('country')}
-          name='country'
-          autoComplete='shipping country'
+          label={t("country")}
+          name="country"
+          autoComplete="shipping country"
           onChangeValue={(value) => onChange({ ...values, country: value })}
-          value={values.country ?? ''}
+          value={values.country ?? ""}
           errors={errors}
         />
       </div>
       <InputWithErrors
         // required
-        label={t('phone')}
-        name='phone'
+        label={t("phone")}
+        name="phone"
         defaultValue={values.phone ?? undefined}
-        autoComplete='shipping tel'
-        type='tel'
-        className='mt-3 w-full'
+        autoComplete="shipping tel"
+        type="tel"
+        className="mt-3 w-full"
         errors={errors}
         onChange={onFieldChange}
       />
       <InputWithErrors
         // required
-        label={t('taxId')}
-        name='taxId'
+        label={t("taxId")}
+        name="taxId"
         defaultValue={values.taxId ?? undefined}
-        autoComplete=''
-        placeholder={t('taxIdPlaceholder')}
-        type='text'
-        className='mt-3 w-full'
+        autoComplete=""
+        placeholder={t("taxIdPlaceholder")}
+        type="text"
+        className="mt-3 w-full"
         errors={errors}
         onChange={onFieldChange}
       />

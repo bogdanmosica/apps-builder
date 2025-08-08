@@ -1,13 +1,8 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { db } from '@/lib/db/drizzle';
-import { 
-  subscriptions, 
-  users, 
-  teamMembers,
-  payments 
-} from '@/lib/db/schema';
-import { getUser } from '@/lib/db/queries';
-import { eq, and, desc } from 'drizzle-orm';
+import { and, desc, eq } from "drizzle-orm";
+import { type NextRequest, NextResponse } from "next/server";
+import { db } from "@/lib/db/drizzle";
+import { getUser } from "@/lib/db/queries";
+import { payments, subscriptions, teamMembers, users } from "@/lib/db/schema";
 
 // Type for subscription data with user info from custom query
 type SubscriptionWithUserData = {
@@ -28,7 +23,7 @@ export async function GET(request: NextRequest) {
   try {
     const user = await getUser();
     if (!user) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     // Get user's team
@@ -66,28 +61,30 @@ export async function GET(request: NextRequest) {
       .orderBy(desc(subscriptions.createdAt));
 
     // Format the data for the frontend
-    const formattedSubscriptions = teamSubscriptions.map((sub: SubscriptionWithUserData) => ({
-      id: sub.id,
-      planName: sub.planName,
-      status: sub.status,
-      amount: sub.amount,
-      currency: sub.currency,
-      billingPeriod: sub.billingPeriod,
-      currentPeriodStart: sub.currentPeriodStart.toISOString(),
-      currentPeriodEnd: sub.currentPeriodEnd.toISOString(),
-      createdAt: sub.createdAt.toISOString(),
-      user: {
-        name: sub.userName,
-        email: sub.userEmail || '',
-      },
-    }));
+    const formattedSubscriptions = teamSubscriptions.map(
+      (sub: SubscriptionWithUserData) => ({
+        id: sub.id,
+        planName: sub.planName,
+        status: sub.status,
+        amount: sub.amount,
+        currency: sub.currency,
+        billingPeriod: sub.billingPeriod,
+        currentPeriodStart: sub.currentPeriodStart.toISOString(),
+        currentPeriodEnd: sub.currentPeriodEnd.toISOString(),
+        createdAt: sub.createdAt.toISOString(),
+        user: {
+          name: sub.userName,
+          email: sub.userEmail || "",
+        },
+      }),
+    );
 
     return NextResponse.json({ subscriptions: formattedSubscriptions });
   } catch (error) {
-    console.error('Error fetching subscriptions:', error);
+    console.error("Error fetching subscriptions:", error);
     return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
+      { error: "Internal server error" },
+      { status: 500 },
     );
   }
 }

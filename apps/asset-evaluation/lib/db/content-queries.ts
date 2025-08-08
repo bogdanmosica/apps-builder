@@ -1,17 +1,17 @@
-import { db } from './drizzle';
-import { 
-  contentPosts, 
-  contentCategories, 
-  contentMedia, 
-  contentComments,
-  users,
-  teams,
-  type ContentPost,
+import { and, count, desc, eq, isNull, like, or, sql } from "drizzle-orm";
+import { db } from "./drizzle";
+import {
   type ContentCategory,
   type ContentMedia,
-  type User
-} from './schema';
-import { eq, desc, count, sql, and, or, like, isNull } from 'drizzle-orm';
+  type ContentPost,
+  contentCategories,
+  contentComments,
+  contentMedia,
+  contentPosts,
+  teams,
+  type User,
+  users,
+} from "./schema";
 
 // Type for post data from specific query
 type PostData = {
@@ -48,7 +48,7 @@ type RecentPostData = {
   type: string;
 };
 
-// Type for recent comment data from activity query  
+// Type for recent comment data from activity query
 type RecentCommentData = {
   id: number;
   title: string;
@@ -59,17 +59,20 @@ type RecentCommentData = {
 };
 
 // Content Posts Queries
-export async function getContentPosts(teamId: number, filters?: {
-  status?: string;
-  categoryId?: number;
-  search?: string;
-  limit?: number;
-  offset?: number;
-}) {
+export async function getContentPosts(
+  teamId: number,
+  filters?: {
+    status?: string;
+    categoryId?: number;
+    search?: string;
+    limit?: number;
+    offset?: number;
+  },
+) {
   // Build where conditions
   const conditions = [eq(contentPosts.teamId, teamId)];
 
-  if (filters?.status && filters.status !== 'all') {
+  if (filters?.status && filters.status !== "all") {
     conditions.push(eq(contentPosts.status, filters.status));
   }
 
@@ -81,8 +84,8 @@ export async function getContentPosts(teamId: number, filters?: {
     conditions.push(
       or(
         like(contentPosts.title, `%${filters.search}%`),
-        like(contentPosts.excerpt, `%${filters.search}%`)
-      )!
+        like(contentPosts.excerpt, `%${filters.search}%`),
+      )!,
     );
   }
 
@@ -112,7 +115,10 @@ export async function getContentPosts(teamId: number, filters?: {
     })
     .from(contentPosts)
     .leftJoin(users, eq(contentPosts.authorId, users.id))
-    .leftJoin(contentCategories, eq(contentPosts.categoryId, contentCategories.id))
+    .leftJoin(
+      contentCategories,
+      eq(contentPosts.categoryId, contentCategories.id),
+    )
     .where(and(...conditions))
     .orderBy(desc(contentPosts.createdAt))
     .limit(filters?.limit || 100)
@@ -124,16 +130,18 @@ export async function getContentPosts(teamId: number, filters?: {
       const commentCount = await db
         .select({ count: count() })
         .from(contentComments)
-        .where(and(
-          eq(contentComments.postId, post.id),
-          eq(contentComments.status, 'approved')
-        ));
-      
+        .where(
+          and(
+            eq(contentComments.postId, post.id),
+            eq(contentComments.status, "approved"),
+          ),
+        );
+
       return {
         ...post,
         commentCount: commentCount[0]?.count || 0,
       };
-    })
+    }),
   );
 
   return postsWithComments;
@@ -168,11 +176,11 @@ export async function getContentPostById(postId: number, teamId: number) {
     })
     .from(contentPosts)
     .leftJoin(users, eq(contentPosts.authorId, users.id))
-    .leftJoin(contentCategories, eq(contentPosts.categoryId, contentCategories.id))
-    .where(and(
-      eq(contentPosts.id, postId),
-      eq(contentPosts.teamId, teamId)
-    ))
+    .leftJoin(
+      contentCategories,
+      eq(contentPosts.categoryId, contentCategories.id),
+    )
+    .where(and(eq(contentPosts.id, postId), eq(contentPosts.teamId, teamId)))
     .limit(1);
 
   return result[0] || null;
@@ -200,7 +208,7 @@ export async function createContentPost(data: {
       slug: data.slug,
       content: data.content,
       excerpt: data.excerpt,
-      status: data.status || 'draft',
+      status: data.status || "draft",
       categoryId: data.categoryId,
       tags: data.tags || [],
       featuredImage: data.featuredImage,
@@ -211,28 +219,29 @@ export async function createContentPost(data: {
   return result[0];
 }
 
-export async function updateContentPost(postId: number, teamId: number, data: Partial<{
-  title: string;
-  slug: string;
-  content: string;
-  excerpt: string;
-  status: string;
-  categoryId: number;
-  tags: string[];
-  featuredImage: string;
-  isFeatured: boolean;
-  publishedAt: Date;
-}>) {
+export async function updateContentPost(
+  postId: number,
+  teamId: number,
+  data: Partial<{
+    title: string;
+    slug: string;
+    content: string;
+    excerpt: string;
+    status: string;
+    categoryId: number;
+    tags: string[];
+    featuredImage: string;
+    isFeatured: boolean;
+    publishedAt: Date;
+  }>,
+) {
   const result = await db
     .update(contentPosts)
     .set({
       ...data,
       updatedAt: new Date(),
     })
-    .where(and(
-      eq(contentPosts.id, postId),
-      eq(contentPosts.teamId, teamId)
-    ))
+    .where(and(eq(contentPosts.id, postId), eq(contentPosts.teamId, teamId)))
     .returning();
 
   return result[0] || null;
@@ -241,10 +250,7 @@ export async function updateContentPost(postId: number, teamId: number, data: Pa
 export async function deleteContentPost(postId: number, teamId: number) {
   const result = await db
     .delete(contentPosts)
-    .where(and(
-      eq(contentPosts.id, postId),
-      eq(contentPosts.teamId, teamId)
-    ))
+    .where(and(eq(contentPosts.id, postId), eq(contentPosts.teamId, teamId)))
     .returning();
 
   return result[0] || null;
@@ -275,10 +281,13 @@ export async function getContentCategories(teamId: number) {
       postCount: count(contentPosts.id),
     })
     .from(contentCategories)
-    .leftJoin(contentPosts, and(
-      eq(contentPosts.categoryId, contentCategories.id),
-      eq(contentPosts.status, 'published')
-    ))
+    .leftJoin(
+      contentPosts,
+      and(
+        eq(contentPosts.categoryId, contentCategories.id),
+        eq(contentPosts.status, "published"),
+      ),
+    )
     .where(eq(contentCategories.teamId, teamId))
     .groupBy(contentCategories.id)
     .orderBy(contentCategories.sortOrder, contentCategories.name);
@@ -294,38 +303,44 @@ export async function createContentCategory(data: {
   color?: string;
   sortOrder?: number;
 }) {
-  const result = await db
-    .insert(contentCategories)
-    .values(data)
-    .returning();
+  const result = await db.insert(contentCategories).values(data).returning();
 
   return result[0];
 }
 
-export async function updateContentCategory(categoryId: number, teamId: number, data: Partial<{
-  name: string;
-  slug: string;
-  description: string;
-  color: string;
-  sortOrder: number;
-  isActive: boolean;
-}>) {
+export async function updateContentCategory(
+  categoryId: number,
+  teamId: number,
+  data: Partial<{
+    name: string;
+    slug: string;
+    description: string;
+    color: string;
+    sortOrder: number;
+    isActive: boolean;
+  }>,
+) {
   const result = await db
     .update(contentCategories)
     .set({
       ...data,
       updatedAt: new Date(),
     })
-    .where(and(
-      eq(contentCategories.id, categoryId),
-      eq(contentCategories.teamId, teamId)
-    ))
+    .where(
+      and(
+        eq(contentCategories.id, categoryId),
+        eq(contentCategories.teamId, teamId),
+      ),
+    )
     .returning();
 
   return result[0] || null;
 }
 
-export async function deleteContentCategory(categoryId: number, teamId: number) {
+export async function deleteContentCategory(
+  categoryId: number,
+  teamId: number,
+) {
   // First, update all posts to remove the category reference
   await db
     .update(contentPosts)
@@ -335,22 +350,27 @@ export async function deleteContentCategory(categoryId: number, teamId: number) 
   // Then delete the category
   const result = await db
     .delete(contentCategories)
-    .where(and(
-      eq(contentCategories.id, categoryId),
-      eq(contentCategories.teamId, teamId)
-    ))
+    .where(
+      and(
+        eq(contentCategories.id, categoryId),
+        eq(contentCategories.teamId, teamId),
+      ),
+    )
     .returning();
 
   return result[0] || null;
 }
 
 // Content Media Queries
-export async function getContentMedia(teamId: number, filters?: {
-  search?: string;
-  mimeType?: string;
-  limit?: number;
-  offset?: number;
-}) {
+export async function getContentMedia(
+  teamId: number,
+  filters?: {
+    search?: string;
+    mimeType?: string;
+    limit?: number;
+    offset?: number;
+  },
+) {
   // Build where conditions
   const conditions = [eq(contentMedia.teamId, teamId)];
 
@@ -358,8 +378,8 @@ export async function getContentMedia(teamId: number, filters?: {
     conditions.push(
       or(
         like(contentMedia.name, `%${filters.search}%`),
-        like(contentMedia.originalName, `%${filters.search}%`)
-      )!
+        like(contentMedia.originalName, `%${filters.search}%`),
+      )!,
     );
   }
 
@@ -408,10 +428,7 @@ export async function createContentMedia(data: {
   dimensions?: string;
   duration?: number;
 }) {
-  const result = await db
-    .insert(contentMedia)
-    .values(data)
-    .returning();
+  const result = await db.insert(contentMedia).values(data).returning();
 
   return result[0];
 }
@@ -419,10 +436,7 @@ export async function createContentMedia(data: {
 export async function deleteContentMedia(mediaId: number, teamId: number) {
   const result = await db
     .delete(contentMedia)
-    .where(and(
-      eq(contentMedia.id, mediaId),
-      eq(contentMedia.teamId, teamId)
-    ))
+    .where(and(eq(contentMedia.id, mediaId), eq(contentMedia.teamId, teamId)))
     .returning();
 
   return result[0] || null;
@@ -444,53 +458,58 @@ export async function getContentStats(teamId: number) {
       .from(contentPosts)
       .where(eq(contentPosts.teamId, teamId))
       .then((result: { count: number }[]) => result[0]?.count || 0),
-    
+
     // Published posts
     db
       .select({ count: count() })
       .from(contentPosts)
-      .where(and(
-        eq(contentPosts.teamId, teamId),
-        eq(contentPosts.status, 'published')
-      ))
+      .where(
+        and(
+          eq(contentPosts.teamId, teamId),
+          eq(contentPosts.status, "published"),
+        ),
+      )
       .then((result: { count: number }[]) => result[0]?.count || 0),
-    
+
     // Draft posts
     db
       .select({ count: count() })
       .from(contentPosts)
-      .where(and(
-        eq(contentPosts.teamId, teamId),
-        eq(contentPosts.status, 'draft')
-      ))
+      .where(
+        and(eq(contentPosts.teamId, teamId), eq(contentPosts.status, "draft")),
+      )
       .then((result: { count: number }[]) => result[0]?.count || 0),
-    
+
     // Total views
     db
       .select({ total: sql<number>`COALESCE(SUM(${contentPosts.views}), 0)` })
       .from(contentPosts)
       .where(eq(contentPosts.teamId, teamId))
       .then((result: { total: number }[]) => result[0]?.total || 0),
-    
+
     // Total comments
     db
       .select({ count: count() })
       .from(contentComments)
       .leftJoin(contentPosts, eq(contentComments.postId, contentPosts.id))
-      .where(and(
-        eq(contentPosts.teamId, teamId),
-        eq(contentComments.status, 'approved')
-      ))
+      .where(
+        and(
+          eq(contentPosts.teamId, teamId),
+          eq(contentComments.status, "approved"),
+        ),
+      )
       .then((result: { count: number }[]) => result[0]?.count || 0),
-    
+
     // Total categories
     db
       .select({ count: count() })
       .from(contentCategories)
-      .where(and(
-        eq(contentCategories.teamId, teamId),
-        eq(contentCategories.isActive, true)
-      ))
+      .where(
+        and(
+          eq(contentCategories.teamId, teamId),
+          eq(contentCategories.isActive, true),
+        ),
+      )
       .then((result: { count: number }[]) => result[0]?.count || 0),
   ]);
 
@@ -505,7 +524,10 @@ export async function getContentStats(teamId: number) {
 }
 
 // Recent Activity Query
-export async function getRecentContentActivity(teamId: number, limit: number = 10) {
+export async function getRecentContentActivity(
+  teamId: number,
+  limit: number = 10,
+) {
   // Get recent posts
   const recentPosts = await db
     .select({
@@ -534,10 +556,12 @@ export async function getRecentContentActivity(teamId: number, limit: number = 1
     })
     .from(contentComments)
     .leftJoin(contentPosts, eq(contentComments.postId, contentPosts.id))
-    .where(and(
-      eq(contentPosts.teamId, teamId),
-      eq(contentComments.status, 'approved')
-    ))
+    .where(
+      and(
+        eq(contentPosts.teamId, teamId),
+        eq(contentComments.status, "approved"),
+      ),
+    )
     .orderBy(desc(contentComments.createdAt))
     .limit(limit);
 
@@ -545,22 +569,28 @@ export async function getRecentContentActivity(teamId: number, limit: number = 1
   const allActivity = [
     ...recentPosts.map((post: RecentPostData) => ({
       id: post.id,
-      type: 'post_created' as const,
-      title: post.status === 'published' ? 'New blog post published' : 'New draft created',
+      type: "post_created" as const,
+      title:
+        post.status === "published"
+          ? "New blog post published"
+          : "New draft created",
       description: post.title,
-      user: post.author || 'Unknown',
+      user: post.author || "Unknown",
       timestamp: post.timestamp,
     })),
     ...recentComments.map((comment: RecentCommentData) => ({
       id: comment.id,
-      type: 'comment_added' as const,
-      title: 'New comment on post',
-      description: comment.content?.substring(0, 100) + '...' || '',
+      type: "comment_added" as const,
+      title: "New comment on post",
+      description: comment.content?.substring(0, 100) + "..." || "",
       user: comment.author,
       timestamp: comment.timestamp,
     })),
   ]
-    .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())
+    .sort(
+      (a, b) =>
+        new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime(),
+    )
     .slice(0, limit);
 
   return allActivity;

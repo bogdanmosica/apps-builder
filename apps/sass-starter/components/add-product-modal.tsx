@@ -1,7 +1,6 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { Button } from '@workspace/ui/components/button';
+import { Button } from "@workspace/ui/components/button";
 import {
   Dialog,
   DialogContent,
@@ -9,20 +8,21 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from '@workspace/ui/components/dialog';
-import { Input } from '@workspace/ui/components/input';
-import { Label } from '@workspace/ui/components/label';
-import { Textarea } from '@workspace/ui/components/textarea';
+} from "@workspace/ui/components/dialog";
+import { Input } from "@workspace/ui/components/input";
+import { Label } from "@workspace/ui/components/label";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@workspace/ui/components/select';
-import { Package, Loader2, Plus } from 'lucide-react';
-import { toast } from 'sonner';
-import { cn } from '@/lib/utils';
+} from "@workspace/ui/components/select";
+import { Textarea } from "@workspace/ui/components/textarea";
+import { Loader2, Package, Plus } from "lucide-react";
+import { useState } from "react";
+import { toast } from "sonner";
+import { cn } from "@/lib/utils";
 
 interface AddProductModalProps {
   onProductAdded?: () => void;
@@ -34,21 +34,21 @@ export default function AddProductModal({
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
-    name: '',
-    description: '',
-    price: '',
-    currency: 'usd',
-    billingPeriod: 'monthly',
+    name: "",
+    description: "",
+    price: "",
+    currency: "usd",
+    billingPeriod: "monthly",
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   const resetForm = () => {
     setFormData({
-      name: '',
-      description: '',
-      price: '',
-      currency: 'usd',
-      billingPeriod: 'monthly',
+      name: "",
+      description: "",
+      price: "",
+      currency: "usd",
+      billingPeriod: "monthly",
     });
     setErrors({});
   };
@@ -57,17 +57,17 @@ export default function AddProductModal({
     const newErrors: Record<string, string> = {};
 
     if (!formData.name.trim()) {
-      newErrors.name = 'Product name is required';
+      newErrors.name = "Product name is required";
     } else if (formData.name.length > 100) {
-      newErrors.name = 'Product name must be less than 100 characters';
+      newErrors.name = "Product name must be less than 100 characters";
     }
 
     if (!formData.price.trim()) {
-      newErrors.price = 'Price is required';
+      newErrors.price = "Price is required";
     } else {
       const price = parseFloat(formData.price);
       if (isNaN(price) || price < 0) {
-        newErrors.price = 'Price must be a valid positive number';
+        newErrors.price = "Price must be a valid positive number";
       }
     }
 
@@ -79,18 +79,18 @@ export default function AddProductModal({
     e.preventDefault();
 
     if (!validateForm()) {
-      toast.error('Please check the form for errors');
+      toast.error("Please check the form for errors");
       return;
     }
 
     setLoading(true);
-    const loadingToast = toast.loading('Creating product...');
+    const loadingToast = toast.loading("Creating product...");
 
     try {
-      const response = await fetch('/api/products', {
-        method: 'POST',
+      const response = await fetch("/api/products", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           ...formData,
@@ -110,16 +110,16 @@ export default function AddProductModal({
             newErrors[error.path[0]] = error.message;
           });
           setErrors(newErrors);
-          toast.error('Please check the form for errors');
+          toast.error("Please check the form for errors");
         } else {
-          toast.error(data.error || 'Failed to create product');
+          toast.error(data.error || "Failed to create product");
         }
         return;
       }
 
       // Success
       toast.dismiss(loadingToast);
-      toast.success('Product created successfully!', {
+      toast.success("Product created successfully!", {
         description: `${data.product.name} has been added to your products.`,
       });
 
@@ -131,9 +131,9 @@ export default function AddProductModal({
         onProductAdded();
       }
     } catch (error) {
-      console.error('Error creating product:', error);
+      console.error("Error creating product:", error);
       toast.dismiss(loadingToast);
-      toast.error('Network error. Please try again.');
+      toast.error("Network error. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -143,7 +143,7 @@ export default function AddProductModal({
     setFormData((prev) => ({ ...prev, [field]: value }));
     // Clear error when user starts typing
     if (errors[field]) {
-      setErrors((prev) => ({ ...prev, [field]: '' }));
+      setErrors((prev) => ({ ...prev, [field]: "" }));
     }
   };
 
@@ -151,14 +151,14 @@ export default function AddProductModal({
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button>
-          <Plus className='mr-2 h-4 w-4' aria-hidden='true' />
+          <Plus className="mr-2 h-4 w-4" aria-hidden="true" />
           Add Product
         </Button>
       </DialogTrigger>
-      <DialogContent className='sm:max-w-[500px]'>
+      <DialogContent className="sm:max-w-[500px]">
         <DialogHeader>
-          <DialogTitle className='flex items-center gap-2'>
-            <Package className='h-5 w-5' />
+          <DialogTitle className="flex items-center gap-2">
+            <Package className="h-5 w-5" />
             Add New Product
           </DialogTitle>
           <DialogDescription>
@@ -167,113 +167,113 @@ export default function AddProductModal({
           </DialogDescription>
         </DialogHeader>
 
-        <form onSubmit={handleSubmit} className='space-y-4'>
-          <div className='space-y-2'>
-            <Label htmlFor='name'>Product Name *</Label>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div className="space-y-2">
+            <Label htmlFor="name">Product Name *</Label>
             <Input
-              id='name'
-              placeholder='e.g., Pro Plan, Premium Subscription'
+              id="name"
+              placeholder="e.g., Pro Plan, Premium Subscription"
               value={formData.name}
-              onChange={(e) => updateFormData('name', e.target.value)}
-              className={cn('', errors.name && 'border-destructive')}
+              onChange={(e) => updateFormData("name", e.target.value)}
+              className={cn("", errors.name && "border-destructive")}
               disabled={loading}
             />
             {errors.name && (
-              <p className='text-sm text-destructive'>{errors.name}</p>
+              <p className="text-sm text-destructive">{errors.name}</p>
             )}
           </div>
 
-          <div className='space-y-2'>
-            <Label htmlFor='description'>Description</Label>
+          <div className="space-y-2">
+            <Label htmlFor="description">Description</Label>
             <Textarea
-              id='description'
-              placeholder='Describe what this product includes...'
+              id="description"
+              placeholder="Describe what this product includes..."
               value={formData.description}
-              onChange={(e) => updateFormData('description', e.target.value)}
+              onChange={(e) => updateFormData("description", e.target.value)}
               rows={3}
               disabled={loading}
             />
           </div>
 
-          <div className='grid grid-cols-2 gap-4'>
-            <div className='space-y-2'>
-              <Label htmlFor='price'>Price *</Label>
-              <div className='relative'>
-                <span className='absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground'>
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="price">Price *</Label>
+              <div className="relative">
+                <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground">
                   $
                 </span>
                 <Input
-                  id='price'
-                  type='number'
-                  step='0.01'
-                  min='0'
-                  placeholder='0.00'
+                  id="price"
+                  type="number"
+                  step="0.01"
+                  min="0"
+                  placeholder="0.00"
                   value={formData.price}
-                  onChange={(e) => updateFormData('price', e.target.value)}
-                  className={cn('pl-7', errors.price && 'border-destructive')}
+                  onChange={(e) => updateFormData("price", e.target.value)}
+                  className={cn("pl-7", errors.price && "border-destructive")}
                   disabled={loading}
                 />
               </div>
               {errors.price && (
-                <p className='text-sm text-destructive'>{errors.price}</p>
+                <p className="text-sm text-destructive">{errors.price}</p>
               )}
             </div>
 
-            <div className='space-y-2'>
-              <Label htmlFor='currency'>Currency</Label>
+            <div className="space-y-2">
+              <Label htmlFor="currency">Currency</Label>
               <Select
                 value={formData.currency}
-                onValueChange={(value) => updateFormData('currency', value)}
+                onValueChange={(value) => updateFormData("currency", value)}
                 disabled={loading}
               >
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value='usd'>USD ($)</SelectItem>
-                  <SelectItem value='eur'>EUR (€)</SelectItem>
-                  <SelectItem value='gbp'>GBP (£)</SelectItem>
-                  <SelectItem value='cad'>CAD (C$)</SelectItem>
+                  <SelectItem value="usd">USD ($)</SelectItem>
+                  <SelectItem value="eur">EUR (€)</SelectItem>
+                  <SelectItem value="gbp">GBP (£)</SelectItem>
+                  <SelectItem value="cad">CAD (C$)</SelectItem>
                 </SelectContent>
               </Select>
             </div>
           </div>
 
-          <div className='space-y-2'>
-            <Label htmlFor='billingPeriod'>Billing Period</Label>
+          <div className="space-y-2">
+            <Label htmlFor="billingPeriod">Billing Period</Label>
             <Select
               value={formData.billingPeriod}
-              onValueChange={(value) => updateFormData('billingPeriod', value)}
+              onValueChange={(value) => updateFormData("billingPeriod", value)}
               disabled={loading}
             >
               <SelectTrigger>
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value='monthly'>Monthly</SelectItem>
-                <SelectItem value='yearly'>Yearly</SelectItem>
-                <SelectItem value='one_time'>One-time payment</SelectItem>
+                <SelectItem value="monthly">Monthly</SelectItem>
+                <SelectItem value="yearly">Yearly</SelectItem>
+                <SelectItem value="one_time">One-time payment</SelectItem>
               </SelectContent>
             </Select>
           </div>
 
-          <div className='flex justify-end space-x-2 pt-4'>
+          <div className="flex justify-end space-x-2 pt-4">
             <Button
-              type='button'
-              variant='outline'
+              type="button"
+              variant="outline"
               onClick={() => setOpen(false)}
               disabled={loading}
             >
               Cancel
             </Button>
-            <Button type='submit' disabled={loading}>
+            <Button type="submit" disabled={loading}>
               {loading ? (
                 <>
-                  <Loader2 className='w-4 h-4 mr-2 animate-spin' />
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
                   Creating...
                 </>
               ) : (
-                'Create Product'
+                "Create Product"
               )}
             </Button>
           </div>

@@ -1,17 +1,17 @@
-import { NextResponse } from 'next/server';
-import { auth } from '@/auth'; // Import your NextAuth v5 authentication
+import { NextResponse } from "next/server";
 import {
+  type CompositionData,
+  deleteComposition,
   getCompositionById,
   updateComposition,
-  deleteComposition,
-  CompositionData,
-} from '@/actions/compositions';
+} from "@/actions/compositions";
+import { auth } from "@/auth"; // Import your NextAuth v5 authentication
 
 export const GET = auth(async (req, { params }) => {
   const session = req.auth;
 
   if (!session) {
-    return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
+    return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
   }
 
   const userId = session.user?.id as string;
@@ -22,16 +22,16 @@ export const GET = auth(async (req, { params }) => {
 
     if (!composition) {
       return NextResponse.json(
-        { message: 'Composition not found' },
-        { status: 404 }
+        { message: "Composition not found" },
+        { status: 404 },
       );
     }
 
     return NextResponse.json(composition, { status: 200 });
   } catch (error: any) {
     return NextResponse.json(
-      { message: 'Error fetching composition', error: error.message },
-      { status: 500 }
+      { message: "Error fetching composition", error: error.message },
+      { status: 500 },
     );
   }
 });
@@ -40,7 +40,7 @@ export const PUT = auth(async (req, { params }) => {
   const session = req.auth;
 
   if (!session) {
-    return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
+    return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
   }
 
   const userId = session.user?.id as string;
@@ -61,19 +61,19 @@ export const PUT = auth(async (req, { params }) => {
 
     if (updatedCount === 0) {
       return NextResponse.json(
-        { message: 'Composition not found' },
-        { status: 404 }
+        { message: "Composition not found" },
+        { status: 404 },
       );
     }
 
     return NextResponse.json(
-      { message: 'Composition updated successfully' },
-      { status: 200 }
+      { message: "Composition updated successfully" },
+      { status: 200 },
     );
   } catch (error: any) {
     return NextResponse.json(
-      { message: 'Error updating composition', error: error.message },
-      { status: 500 }
+      { message: "Error updating composition", error: error.message },
+      { status: 500 },
     );
   }
 });
@@ -82,7 +82,7 @@ export const DELETE = auth(async (req, { params }) => {
   const session = req.auth;
 
   if (!session) {
-    return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
+    return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
   }
 
   const userId = session.user?.id as string;
@@ -93,19 +93,19 @@ export const DELETE = auth(async (req, { params }) => {
 
     if (deletedCount === 0) {
       return NextResponse.json(
-        { message: 'Composition not found' },
-        { status: 404 }
+        { message: "Composition not found" },
+        { status: 404 },
       );
     }
 
     return NextResponse.json(
-      { message: 'Composition deleted successfully' },
-      { status: 200 }
+      { message: "Composition deleted successfully" },
+      { status: 200 },
     );
   } catch (error: any) {
     return NextResponse.json(
-      { message: 'Error deleting composition', error: error.message },
-      { status: 500 }
+      { message: "Error deleting composition", error: error.message },
+      { status: 500 },
     );
   }
 });

@@ -1,38 +1,42 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { getUser } from '@/lib/db/queries';
-import { db } from '@/lib/db/drizzle';
-import { questions, answers } from '@/lib/db/schema';
-import { eq } from 'drizzle-orm';
-import { z } from 'zod';
+import { eq } from "drizzle-orm";
+import { type NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
+import { db } from "@/lib/db/drizzle";
+import { getUser } from "@/lib/db/queries";
+import { answers, questions } from "@/lib/db/schema";
 
 const createQuestionSchema = z.object({
-  text_ro: z.string().min(1, 'Romanian text is required'),
-  text_en: z.string().min(1, 'English text is required'),
+  text_ro: z.string().min(1, "Romanian text is required"),
+  text_en: z.string().min(1, "English text is required"),
   weight: z.number().int().min(1).max(100),
-  categoryId: z.number().int().positive('Category ID is required'),
-  answers: z.array(z.object({
-    text_ro: z.string().min(1, 'Romanian text is required'),
-    text_en: z.string().min(1, 'English text is required'),
-    weight: z.number().int().min(0).max(100),
-  })).min(2, 'At least 2 answers are required'),
+  categoryId: z.number().int().positive("Category ID is required"),
+  answers: z
+    .array(
+      z.object({
+        text_ro: z.string().min(1, "Romanian text is required"),
+        text_en: z.string().min(1, "English text is required"),
+        weight: z.number().int().min(0).max(100),
+      }),
+    )
+    .min(2, "At least 2 answers are required"),
 });
 
 const updateQuestionSchema = z.object({
-  text_ro: z.string().min(1, 'Romanian text is required'),
+  text_ro: z.string().min(1, "Romanian text is required"),
   text_en: z.string().nullable(),
   weight: z.number().int().min(1).max(10),
-  categoryId: z.number().int().positive('Category ID is required'),
+  categoryId: z.number().int().positive("Category ID is required"),
 });
 
 // GET /api/admin/questions
 export async function GET() {
   try {
     const user = await getUser();
-    
-    if (!user || !['admin', 'owner'].includes(user.role)) {
+
+    if (!user || !["admin", "owner"].includes(user.role)) {
       return NextResponse.json(
-        { success: false, error: 'Unauthorized' },
-        { status: 403 }
+        { success: false, error: "Unauthorized" },
+        { status: 403 },
       );
     }
 
@@ -47,10 +51,10 @@ export async function GET() {
       data: allQuestions,
     });
   } catch (error) {
-    console.error('Error fetching questions:', error);
+    console.error("Error fetching questions:", error);
     return NextResponse.json(
-      { success: false, error: 'Internal server error' },
-      { status: 500 }
+      { success: false, error: "Internal server error" },
+      { status: 500 },
     );
   }
 }
@@ -59,11 +63,11 @@ export async function GET() {
 export async function POST(request: NextRequest) {
   try {
     const user = await getUser();
-    
-    if (!user || !['admin', 'owner'].includes(user.role)) {
+
+    if (!user || !["admin", "owner"].includes(user.role)) {
       return NextResponse.json(
-        { success: false, error: 'Unauthorized' },
-        { status: 403 }
+        { success: false, error: "Unauthorized" },
+        { status: 403 },
       );
     }
 
@@ -72,12 +76,22 @@ export async function POST(request: NextRequest) {
 
     if (!validation.success) {
       return NextResponse.json(
-        { success: false, error: 'Invalid input', details: validation.error.issues },
-        { status: 400 }
+        {
+          success: false,
+          error: "Invalid input",
+          details: validation.error.issues,
+        },
+        { status: 400 },
       );
     }
 
-    const { text_ro, text_en, weight, categoryId, answers: answersData } = validation.data;
+    const {
+      text_ro,
+      text_en,
+      weight,
+      categoryId,
+      answers: answersData,
+    } = validation.data;
 
     // Create question and answers in transaction
     const result = await db.transaction(async (tx: any) => {
@@ -98,14 +112,14 @@ export async function POST(request: NextRequest) {
       const newAnswers = await tx
         .insert(answers)
         .values(
-          answersData.map(answer => ({
+          answersData.map((answer) => ({
             text_ro: answer.text_ro,
             text_en: answer.text_en,
             weight: answer.weight,
             questionId: newQuestion.id,
             createdAt: new Date(),
             updatedAt: new Date(),
-          }))
+          })),
         )
         .returning();
 
@@ -123,10 +137,10 @@ export async function POST(request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error('Error creating question:', error);
+    console.error("Error creating question:", error);
     return NextResponse.json(
-      { success: false, error: 'Internal server error' },
-      { status: 500 }
+      { success: false, error: "Internal server error" },
+      { status: 500 },
     );
   }
 }

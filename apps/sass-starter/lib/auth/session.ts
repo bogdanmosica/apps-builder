@@ -1,7 +1,7 @@
-import { compare, hash } from 'bcryptjs';
-import { SignJWT, jwtVerify } from 'jose';
-import { cookies } from 'next/headers';
-import { NewUser } from '@/lib/db/schema';
+import { compare, hash } from "bcryptjs";
+import { jwtVerify, SignJWT } from "jose";
+import { cookies } from "next/headers";
+import type { NewUser } from "@/lib/db/schema";
 
 const key = new TextEncoder().encode(process.env.AUTH_SECRET);
 const SALT_ROUNDS = 10;
@@ -12,7 +12,7 @@ export async function hashPassword(password: string) {
 
 export async function comparePasswords(
   plainTextPassword: string,
-  hashedPassword: string
+  hashedPassword: string,
 ) {
   return compare(plainTextPassword, hashedPassword);
 }
@@ -24,30 +24,30 @@ type SessionData = {
 
 export async function signToken(payload: SessionData) {
   return await new SignJWT(payload)
-    .setProtectedHeader({ alg: 'HS256' })
+    .setProtectedHeader({ alg: "HS256" })
     .setIssuedAt()
-    .setExpirationTime('1 day from now')
+    .setExpirationTime("1 day from now")
     .sign(key);
 }
 
 export async function verifyToken(input: string) {
   const { payload } = await jwtVerify(input, key, {
-    algorithms: ['HS256'],
+    algorithms: ["HS256"],
   });
   return payload as SessionData;
 }
 
 export async function getSession() {
   const cookieStore = await cookies();
-  const session = cookieStore.get('session')?.value;
+  const session = cookieStore.get("session")?.value;
   if (!session) return null;
-  
+
   try {
     return await verifyToken(session);
   } catch (error) {
     // If token verification fails, clear the invalid session cookie
-    console.error('Invalid session token, clearing cookie:', error);
-    cookieStore.delete('session');
+    console.error("Invalid session token, clearing cookie:", error);
+    cookieStore.delete("session");
     return null;
   }
 }
@@ -55,14 +55,14 @@ export async function getSession() {
 export async function setSession(user: NewUser) {
   const expiresInOneDay = new Date(Date.now() + 24 * 60 * 60 * 1000);
   const session: SessionData = {
-    user: { id: user.id!, role: user.role || 'member' },
+    user: { id: user.id!, role: user.role || "member" },
     expires: expiresInOneDay.toISOString(),
   };
   const encryptedSession = await signToken(session);
-  (await cookies()).set('session', encryptedSession, {
+  (await cookies()).set("session", encryptedSession, {
     expires: expiresInOneDay,
     httpOnly: true,
     secure: true,
-    sameSite: 'lax',
+    sameSite: "lax",
   });
 }

@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
+import { Button } from "@workspace/ui/components/button";
 import {
   Dialog,
   DialogContent,
@@ -8,10 +8,10 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from '@workspace/ui/components/dialog';
-import { Button } from '@workspace/ui/components/button';
-import { toast } from 'sonner';
-import { Loader2, AlertTriangle } from 'lucide-react';
+} from "@workspace/ui/components/dialog";
+import { AlertTriangle, Loader2 } from "lucide-react";
+import { useState } from "react";
+import { toast } from "sonner";
 
 interface DeleteConfirmationDialogProps {
   isOpen: boolean;
@@ -37,27 +37,29 @@ export default function DeleteConfirmationDialog({
 
     try {
       const response = await fetch(`/api/evaluation/${evaluation.id}`, {
-        method: 'DELETE',
+        method: "DELETE",
       });
 
       if (!response.ok) {
-        throw new Error('Failed to delete evaluation');
+        throw new Error("Failed to delete evaluation");
       }
 
       // Update the local state
       onDelete(evaluation.id);
-      
-      toast.success('Property evaluation deleted successfully!');
+
+      toast.success("Property evaluation deleted successfully!");
       onClose();
     } catch (error) {
-      console.error('Error deleting evaluation:', error);
-      toast.error('Failed to delete property evaluation');
+      console.error("Error deleting evaluation:", error);
+      toast.error("Failed to delete property evaluation");
     } finally {
       setIsLoading(false);
     }
   };
 
-  const propertyDisplayName = evaluation.propertyName || `${evaluation.propertyType.name} #${evaluation.id}`;
+  const propertyDisplayName =
+    evaluation.propertyName ||
+    `${evaluation.propertyType.name} #${evaluation.id}`;
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -70,7 +72,7 @@ export default function DeleteConfirmationDialog({
             <div>
               <DialogTitle>Delete Property Evaluation</DialogTitle>
               <DialogDescription className="mt-2">
-                Are you sure you want to delete the evaluation for{' '}
+                Are you sure you want to delete the evaluation for{" "}
                 <span className="font-medium text-foreground">
                   {propertyDisplayName}
                 </span>
@@ -79,21 +81,21 @@ export default function DeleteConfirmationDialog({
             </div>
           </div>
         </DialogHeader>
-        
+
         <div className="py-4">
           <p className="text-sm text-muted-foreground">
-            This action cannot be undone. All evaluation data, answers, and scores 
-            for this property will be permanently removed.
+            This action cannot be undone. All evaluation data, answers, and
+            scores for this property will be permanently removed.
           </p>
         </div>
-        
+
         <DialogFooter>
           <Button type="button" variant="outline" onClick={onClose}>
             Cancel
           </Button>
-          <Button 
-            type="button" 
-            variant="destructive" 
+          <Button
+            type="button"
+            variant="destructive"
             onClick={handleDelete}
             disabled={isLoading}
           >

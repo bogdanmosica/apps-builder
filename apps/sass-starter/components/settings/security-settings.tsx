@@ -1,25 +1,14 @@
-'use client';
+"use client";
 
-import { useState, useTransition } from 'react';
-import { Badge } from '@workspace/ui/components/badge';
-import { Button } from '@workspace/ui/components/button';
+import { Badge } from "@workspace/ui/components/badge";
+import { Button } from "@workspace/ui/components/button";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from '@workspace/ui/components/card';
-import { Input } from '@workspace/ui/components/input';
-import { Label } from '@workspace/ui/components/label';
-import { Switch } from '@workspace/ui/components/switch';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@workspace/ui/components/select';
+} from "@workspace/ui/components/card";
 import {
   Dialog,
   DialogContent,
@@ -28,43 +17,54 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from '@workspace/ui/components/dialog';
-import { 
-  Lock, 
-  Shield, 
-  Key, 
-  Eye, 
-  Smartphone,
-  Download,
-  AlertTriangle,
-  Monitor,
-  MapPin,
-  Clock,
-  CheckCircle,
-  XCircle,
-  MoreHorizontal,
-  Trash2,
-  RefreshCw,
-  QrCode,
-  Copy,
-  Activity
-} from 'lucide-react';
+} from "@workspace/ui/components/dialog";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from '@workspace/ui/components/dropdown-menu';
-import { 
+} from "@workspace/ui/components/dropdown-menu";
+import { Input } from "@workspace/ui/components/input";
+import { Label } from "@workspace/ui/components/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@workspace/ui/components/select";
+import { Switch } from "@workspace/ui/components/switch";
+import {
+  Activity,
+  AlertTriangle,
+  CheckCircle,
+  Clock,
+  Copy,
+  Download,
+  Eye,
+  Key,
+  Lock,
+  MapPin,
+  Monitor,
+  MoreHorizontal,
+  QrCode,
+  RefreshCw,
+  Shield,
+  Smartphone,
+  Trash2,
+  XCircle,
+} from "lucide-react";
+import { useState, useTransition } from "react";
+import { toast } from "sonner";
+import {
   changePassword,
-  enable2FA,
-  verify2FA,
   disable2FA,
-  updateSecuritySettings,
+  enable2FA,
+  revokeAllSessions,
   revokeSession,
-  revokeAllSessions
-} from '@/lib/actions/security-settings';
-import { toast } from 'sonner';
+  updateSecuritySettings,
+  verify2FA,
+} from "@/lib/actions/security-settings";
 
 interface SecurityData {
   user: {
@@ -107,19 +107,21 @@ const EVENT_ICONS = {
   login: CheckCircle,
   failed_login: XCircle,
   password_change: Lock,
-  '2fa_enabled': Shield,
-  '2fa_disabled': Shield,
+  "2fa_enabled": Shield,
+  "2fa_disabled": Shield,
   session_revoked: Monitor,
   all_sessions_revoked: RefreshCw,
 };
 
 const RISK_COLORS = {
-  low: 'bg-green-100 text-green-800',
-  medium: 'bg-yellow-100 text-yellow-800',
-  high: 'bg-red-100 text-red-800',
+  low: "bg-green-100 text-green-800",
+  medium: "bg-yellow-100 text-yellow-800",
+  high: "bg-red-100 text-red-800",
 };
 
-export default function SecuritySettings({ securityData }: SecuritySettingsProps) {
+export default function SecuritySettings({
+  securityData,
+}: SecuritySettingsProps) {
   const [show2FASetup, setShow2FASetup] = useState(false);
   const [show2FADisable, setShow2FADisable] = useState(false);
   const [twoFAData, setTwoFAData] = useState<any>(null);
@@ -139,7 +141,9 @@ export default function SecuritySettings({ securityData }: SecuritySettingsProps
         <CardContent className="flex items-center justify-center py-8">
           <div className="text-center">
             <Shield className="h-8 w-8 text-muted-foreground mx-auto mb-2" />
-            <p className="text-muted-foreground">Failed to load security data</p>
+            <p className="text-muted-foreground">
+              Failed to load security data
+            </p>
           </div>
         </CardContent>
       </Card>
@@ -152,7 +156,9 @@ export default function SecuritySettings({ securityData }: SecuritySettingsProps
       if (result.success) {
         toast.success(result.message);
         // Reset form
-        const form = document.getElementById('password-form') as HTMLFormElement;
+        const form = document.getElementById(
+          "password-form",
+        ) as HTMLFormElement;
         form?.reset();
       } else {
         toast.error(result.message);
@@ -174,9 +180,9 @@ export default function SecuritySettings({ securityData }: SecuritySettingsProps
 
   const handleVerify2FA = async (formData: FormData) => {
     if (!twoFAData) return;
-    
+
     // Add secret to form data
-    formData.append('secret', twoFAData.secret);
+    formData.append("secret", twoFAData.secret);
 
     startTransition2FA(async () => {
       const result = await verify2FA(formData);
@@ -219,7 +225,7 @@ export default function SecuritySettings({ securityData }: SecuritySettingsProps
 
   const handleRevokeSession = async (sessionId: number) => {
     const formData = new FormData();
-    formData.append('sessionId', sessionId.toString());
+    formData.append("sessionId", sessionId.toString());
 
     startTransitionSession(async () => {
       const result = await revokeSession(formData);
@@ -246,21 +252,22 @@ export default function SecuritySettings({ securityData }: SecuritySettingsProps
 
   const copyToClipboard = (text: string) => {
     navigator.clipboard.writeText(text);
-    toast.success('Copied to clipboard');
+    toast.success("Copied to clipboard");
   };
 
   const formatDate = (date: Date) => {
-    return new Intl.DateTimeFormat('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
+    return new Intl.DateTimeFormat("en-US", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
     }).format(new Date(date));
   };
 
   const getEventIcon = (eventType: string) => {
-    const IconComponent = EVENT_ICONS[eventType as keyof typeof EVENT_ICONS] || Activity;
+    const IconComponent =
+      EVENT_ICONS[eventType as keyof typeof EVENT_ICONS] || Activity;
     return <IconComponent className="h-4 w-4" />;
   };
 
@@ -278,7 +285,11 @@ export default function SecuritySettings({ securityData }: SecuritySettingsProps
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <form id="password-form" action={handlePasswordChange} className="space-y-4">
+          <form
+            id="password-form"
+            action={handlePasswordChange}
+            className="space-y-4"
+          >
             <div className="space-y-2">
               <Label htmlFor="currentPassword">Current Password</Label>
               <Input
@@ -297,7 +308,8 @@ export default function SecuritySettings({ securityData }: SecuritySettingsProps
                 required
               />
               <p className="text-xs text-muted-foreground">
-                Must be at least 8 characters with uppercase, lowercase, and number
+                Must be at least 8 characters with uppercase, lowercase, and
+                number
               </p>
             </div>
             <div className="space-y-2">
@@ -311,13 +323,13 @@ export default function SecuritySettings({ securityData }: SecuritySettingsProps
             </div>
             <div className="flex items-center gap-2">
               <Button type="submit" disabled={isPendingPassword}>
-                {isPendingPassword ? 'Updating...' : 'Update Password'}
+                {isPendingPassword ? "Updating..." : "Update Password"}
               </Button>
               <div className="text-sm text-muted-foreground">
-                Last changed: {securityData.securitySettings.lastPasswordChange 
+                Last changed:{" "}
+                {securityData.securitySettings.lastPasswordChange
                   ? formatDate(securityData.securitySettings.lastPasswordChange)
-                  : 'Never changed'
-                }
+                  : "Never changed"}
               </div>
             </div>
           </form>
@@ -340,16 +352,23 @@ export default function SecuritySettings({ securityData }: SecuritySettingsProps
             <div className="space-y-0.5">
               <div className="text-base">2FA Status</div>
               <div className="text-sm text-muted-foreground">
-                {securityData.securitySettings.twoFactorEnabled 
-                  ? 'Two-factor authentication is enabled' 
-                  : 'Two-factor authentication is disabled'
-                }
+                {securityData.securitySettings.twoFactorEnabled
+                  ? "Two-factor authentication is enabled"
+                  : "Two-factor authentication is disabled"}
               </div>
             </div>
             <div className="flex items-center gap-2">
-              <Badge 
-                variant={securityData.securitySettings.twoFactorEnabled ? "default" : "outline"}
-                className={securityData.securitySettings.twoFactorEnabled ? "bg-green-100 text-green-800" : ""}
+              <Badge
+                variant={
+                  securityData.securitySettings.twoFactorEnabled
+                    ? "default"
+                    : "outline"
+                }
+                className={
+                  securityData.securitySettings.twoFactorEnabled
+                    ? "bg-green-100 text-green-800"
+                    : ""
+                }
               >
                 {securityData.securitySettings.twoFactorEnabled ? (
                   <>
@@ -364,8 +383,8 @@ export default function SecuritySettings({ securityData }: SecuritySettingsProps
                 )}
               </Badge>
               {securityData.securitySettings.twoFactorEnabled ? (
-                <Button 
-                  variant="outline" 
+                <Button
+                  variant="outline"
                   size="sm"
                   onClick={() => setShow2FADisable(true)}
                   disabled={isPending2FA}
@@ -373,12 +392,12 @@ export default function SecuritySettings({ securityData }: SecuritySettingsProps
                   Disable 2FA
                 </Button>
               ) : (
-                <Button 
-                  size="sm" 
+                <Button
+                  size="sm"
                   onClick={handleEnable2FA}
                   disabled={isPending2FA}
                 >
-                  {isPending2FA ? 'Setting up...' : 'Enable 2FA'}
+                  {isPending2FA ? "Setting up..." : "Enable 2FA"}
                 </Button>
               )}
             </div>
@@ -406,10 +425,12 @@ export default function SecuritySettings({ securityData }: SecuritySettingsProps
                 </div>
                 <Switch
                   name="loginNotifications"
-                  defaultChecked={securityData.securitySettings.loginNotifications}
+                  defaultChecked={
+                    securityData.securitySettings.loginNotifications
+                  }
                 />
               </div>
-              
+
               <div className="flex items-center justify-between">
                 <div className="space-y-0.5">
                   <div className="text-base">Security Alerts</div>
@@ -425,7 +446,10 @@ export default function SecuritySettings({ securityData }: SecuritySettingsProps
 
               <div className="space-y-2">
                 <Label htmlFor="sessionTimeout">Session Timeout (hours)</Label>
-                <Select name="sessionTimeout" defaultValue={securityData.securitySettings.sessionTimeout.toString()}>
+                <Select
+                  name="sessionTimeout"
+                  defaultValue={securityData.securitySettings.sessionTimeout.toString()}
+                >
                   <SelectTrigger className="w-[200px]">
                     <SelectValue />
                   </SelectTrigger>
@@ -440,9 +464,9 @@ export default function SecuritySettings({ securityData }: SecuritySettingsProps
                 </Select>
               </div>
             </div>
-            
+
             <Button type="submit" disabled={isPendingSettings}>
-              {isPendingSettings ? 'Saving...' : 'Save Preferences'}
+              {isPendingSettings ? "Saving..." : "Save Preferences"}
             </Button>
           </form>
         </CardContent>
@@ -480,14 +504,18 @@ export default function SecuritySettings({ securityData }: SecuritySettingsProps
               </p>
             ) : (
               securityData.activeSessions.map((session) => (
-                <div key={session.id} className="flex items-center justify-between p-4 border rounded-lg">
+                <div
+                  key={session.id}
+                  className="flex items-center justify-between p-4 border rounded-lg"
+                >
                   <div className="flex items-center gap-4">
                     <div className="flex items-center justify-center w-10 h-10 bg-blue-100 rounded-full">
                       <Monitor className="h-5 w-5 text-blue-600" />
                     </div>
                     <div className="space-y-1">
                       <div className="font-medium">
-                        {session.deviceInfo?.browser || 'Unknown Browser'} on {session.deviceInfo?.os || 'Unknown OS'}
+                        {session.deviceInfo?.browser || "Unknown Browser"} on{" "}
+                        {session.deviceInfo?.os || "Unknown OS"}
                       </div>
                       <div className="text-sm text-muted-foreground flex items-center gap-4">
                         {session.ipAddress && (
@@ -496,9 +524,7 @@ export default function SecuritySettings({ securityData }: SecuritySettingsProps
                             {session.ipAddress}
                           </span>
                         )}
-                        {session.location && (
-                          <span>{session.location}</span>
-                        )}
+                        {session.location && <span>{session.location}</span>}
                       </div>
                       <div className="text-xs text-muted-foreground flex items-center gap-1">
                         <Clock className="h-3 w-3" />
@@ -506,9 +532,12 @@ export default function SecuritySettings({ securityData }: SecuritySettingsProps
                       </div>
                     </div>
                   </div>
-                  
+
                   <div className="flex items-center gap-2">
-                    <Badge variant="outline" className="bg-green-100 text-green-800">
+                    <Badge
+                      variant="outline"
+                      className="bg-green-100 text-green-800"
+                    >
                       Active
                     </Badge>
                     <DropdownMenu>
@@ -557,18 +586,25 @@ export default function SecuritySettings({ securityData }: SecuritySettingsProps
               </p>
             ) : (
               securityData.recentEvents.map((event) => (
-                <div key={event.id} className="flex items-center gap-3 p-3 border rounded-lg">
+                <div
+                  key={event.id}
+                  className="flex items-center gap-3 p-3 border rounded-lg"
+                >
                   <div className="flex items-center justify-center w-8 h-8 bg-gray-100 rounded-full">
                     {getEventIcon(event.eventType)}
                   </div>
                   <div className="flex-1">
                     <div className="flex items-center gap-2">
                       <span className="font-medium capitalize">
-                        {event.eventType.replace('_', ' ')}
+                        {event.eventType.replace("_", " ")}
                       </span>
-                      <Badge 
-                        variant="outline" 
-                        className={RISK_COLORS[event.riskLevel as keyof typeof RISK_COLORS]}
+                      <Badge
+                        variant="outline"
+                        className={
+                          RISK_COLORS[
+                            event.riskLevel as keyof typeof RISK_COLORS
+                          ]
+                        }
                       >
                         {event.riskLevel} risk
                       </Badge>
@@ -597,16 +633,21 @@ export default function SecuritySettings({ securityData }: SecuritySettingsProps
           <DialogHeader>
             <DialogTitle>Setup Two-Factor Authentication</DialogTitle>
             <DialogDescription>
-              Scan the QR code with your authenticator app and enter the code to verify.
+              Scan the QR code with your authenticator app and enter the code to
+              verify.
             </DialogDescription>
           </DialogHeader>
-          
+
           {twoFAData && (
             <div className="space-y-4">
               <div className="flex justify-center">
-                <img src={twoFAData.qrCode} alt="2FA QR Code" className="border rounded" />
+                <img
+                  src={twoFAData.qrCode}
+                  alt="2FA QR Code"
+                  className="border rounded"
+                />
               </div>
-              
+
               <div className="space-y-2">
                 <Label>Manual Entry Key</Label>
                 <div className="flex items-center gap-2">
@@ -646,7 +687,7 @@ export default function SecuritySettings({ securityData }: SecuritySettingsProps
                       Cancel
                     </Button>
                     <Button type="submit" disabled={isPending2FA}>
-                      {isPending2FA ? 'Verifying...' : 'Verify & Enable'}
+                      {isPending2FA ? "Verifying..." : "Verify & Enable"}
                     </Button>
                   </DialogFooter>
                 </div>
@@ -662,19 +703,15 @@ export default function SecuritySettings({ securityData }: SecuritySettingsProps
           <DialogHeader>
             <DialogTitle>Disable Two-Factor Authentication</DialogTitle>
             <DialogDescription>
-              Enter your password to disable 2FA. This will make your account less secure.
+              Enter your password to disable 2FA. This will make your account
+              less secure.
             </DialogDescription>
           </DialogHeader>
           <form action={handleDisable2FA}>
             <div className="space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="password">Password</Label>
-                <Input
-                  id="password"
-                  name="password"
-                  type="password"
-                  required
-                />
+                <Input id="password" name="password" type="password" required />
               </div>
               <DialogFooter>
                 <Button
@@ -684,12 +721,12 @@ export default function SecuritySettings({ securityData }: SecuritySettingsProps
                 >
                   Cancel
                 </Button>
-                <Button 
-                  type="submit" 
+                <Button
+                  type="submit"
                   variant="destructive"
                   disabled={isPending2FA}
                 >
-                  {isPending2FA ? 'Disabling...' : 'Disable 2FA'}
+                  {isPending2FA ? "Disabling..." : "Disable 2FA"}
                 </Button>
               </DialogFooter>
             </div>
@@ -703,7 +740,8 @@ export default function SecuritySettings({ securityData }: SecuritySettingsProps
           <DialogHeader>
             <DialogTitle>Recovery Codes</DialogTitle>
             <DialogDescription>
-              Save these recovery codes in a safe place. They can be used to access your account if you lose your authenticator device.
+              Save these recovery codes in a safe place. They can be used to
+              access your account if you lose your authenticator device.
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4">
@@ -722,12 +760,12 @@ export default function SecuritySettings({ securityData }: SecuritySettingsProps
           <DialogFooter>
             <Button
               onClick={() => {
-                const codesText = recoveryCodes.join('\n');
-                const blob = new Blob([codesText], { type: 'text/plain' });
+                const codesText = recoveryCodes.join("\n");
+                const blob = new Blob([codesText], { type: "text/plain" });
                 const url = URL.createObjectURL(blob);
-                const a = document.createElement('a');
+                const a = document.createElement("a");
                 a.href = url;
-                a.download = 'recovery-codes.txt';
+                a.download = "recovery-codes.txt";
                 a.click();
                 URL.revokeObjectURL(url);
               }}
@@ -748,7 +786,8 @@ export default function SecuritySettings({ securityData }: SecuritySettingsProps
           <DialogHeader>
             <DialogTitle>Revoke Session</DialogTitle>
             <DialogDescription>
-              Are you sure you want to revoke this session? The user will be signed out immediately.
+              Are you sure you want to revoke this session? The user will be
+              signed out immediately.
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
@@ -770,7 +809,7 @@ export default function SecuritySettings({ securityData }: SecuritySettingsProps
               }}
               disabled={isPendingSession}
             >
-              {isPendingSession ? 'Revoking...' : 'Revoke Session'}
+              {isPendingSession ? "Revoking..." : "Revoke Session"}
             </Button>
           </DialogFooter>
         </DialogContent>

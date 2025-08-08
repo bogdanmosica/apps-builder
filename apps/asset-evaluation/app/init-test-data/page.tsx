@@ -1,9 +1,15 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { Button } from '@workspace/ui/components/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@workspace/ui/components/card';
-import { Loader2, CheckCircle, XCircle } from 'lucide-react';
+import { Button } from "@workspace/ui/components/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@workspace/ui/components/card";
+import { CheckCircle, Loader2, XCircle } from "lucide-react";
+import { useState } from "react";
 
 export default function InitTestDataPage() {
   const [loading, setLoading] = useState(false);
@@ -16,10 +22,10 @@ export default function InitTestDataPage() {
     setResult(null);
 
     try {
-      const response = await fetch('/api/init-test-data', {
-        method: 'POST',
+      const response = await fetch("/api/init-test-data", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
       });
 
@@ -28,10 +34,10 @@ export default function InitTestDataPage() {
       if (response.ok) {
         setResult(data);
       } else {
-        setError(data.error || 'Failed to initialize test data');
+        setError(data.error || "Failed to initialize test data");
       }
     } catch (err) {
-      setError('Network error occurred');
+      setError("Network error occurred");
     } finally {
       setLoading(false);
     }
@@ -47,8 +53,8 @@ export default function InitTestDataPage() {
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
-          <Button 
-            onClick={initializeTestData} 
+          <Button
+            onClick={initializeTestData}
             disabled={loading}
             className="w-full"
           >
@@ -58,7 +64,7 @@ export default function InitTestDataPage() {
                 Initializing...
               </>
             ) : (
-              'Initialize Test Data'
+              "Initialize Test Data"
             )}
           </Button>
 
@@ -71,8 +77,12 @@ export default function InitTestDataPage() {
               <p className="text-sm text-green-700 mb-2">{result.message}</p>
               {result.user && (
                 <div className="text-sm text-green-700">
-                  <p><strong>Email:</strong> {result.user.email}</p>
-                  <p><strong>Password:</strong> {result.user.password}</p>
+                  <p>
+                    <strong>Email:</strong> {result.user.email}
+                  </p>
+                  <p>
+                    <strong>Password:</strong> {result.user.password}
+                  </p>
                 </div>
               )}
             </div>
@@ -90,8 +100,10 @@ export default function InitTestDataPage() {
 
           <div className="pt-4 border-t">
             <p className="text-xs text-gray-500 text-center">
-              This will create a test user with sample analytics data.<br />
-              Use the credentials above to sign in and test the analytics dashboard.
+              This will create a test user with sample analytics data.
+              <br />
+              Use the credentials above to sign in and test the analytics
+              dashboard.
             </p>
           </div>
         </CardContent>

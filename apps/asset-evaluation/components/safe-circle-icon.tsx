@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import { useEffect, useState } from 'react';
-import { CircleIcon } from 'lucide-react';
+import { CircleIcon } from "lucide-react";
+import { useEffect, useState } from "react";
 
 interface SafeCircleIconProps {
   className?: string;
@@ -20,9 +20,9 @@ export function SafeCircleIcon({ className }: SafeCircleIconProps) {
       <div
         className={className}
         style={{
-          borderRadius: '50%',
-          border: '2px solid currentColor',
-          display: 'inline-block',
+          borderRadius: "50%",
+          border: "2px solid currentColor",
+          display: "inline-block",
         }}
       />
     );

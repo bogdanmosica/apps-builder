@@ -1,35 +1,43 @@
-'use client';
+"use client";
 
-import { useState, useEffect, useRef } from 'react';
-import { useTranslation } from 'react-i18next';
-import { Button } from '@workspace/ui/components/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@workspace/ui/components/card';
-import { Badge } from '@workspace/ui/components/badge';
-import { Progress } from '@workspace/ui/components/progress';
-import { RadioGroup, RadioGroupItem } from '@workspace/ui/components/radio-group';
-import { Label } from '@workspace/ui/components/label';
-import { toast } from 'sonner';
+import { Badge } from "@workspace/ui/components/badge";
+import { Button } from "@workspace/ui/components/button";
 import {
-  CheckCircle2,
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "@workspace/ui/components/card";
+import { Label } from "@workspace/ui/components/label";
+import { Progress } from "@workspace/ui/components/progress";
+import {
+  RadioGroup,
+  RadioGroupItem,
+} from "@workspace/ui/components/radio-group";
+import {
   AlertTriangle,
-  XCircle,
-  Star,
   ArrowLeft,
   ArrowRight,
   Award,
-  Zap,
+  CheckCircle2,
   Home,
-} from 'lucide-react';
-import Link from 'next/link';
+  Star,
+  XCircle,
+  Zap,
+} from "lucide-react";
+import Link from "next/link";
+import { useEffect, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
+import { toast } from "sonner";
 import {
-  QuestionWithAnswers,
-  CategoryWithQuestions,
-  UserAnswer,
-  trackEvaluationEvent,
+  type CategoryWithQuestions,
+  getAnswerText,
   getCategoryName,
   getQuestionText,
-  getAnswerText,
-} from '@/lib/evaluation-utils';
+  type QuestionWithAnswers,
+  trackEvaluationEvent,
+  type UserAnswer,
+} from "@/lib/evaluation-utils";
 
 interface QuestionCardProps {
   question: QuestionWithAnswers;
@@ -65,9 +73,9 @@ export default function QuestionCard({
   isLastQuestion = false,
 }: QuestionCardProps) {
   const { i18n } = useTranslation();
-  const currentLanguage = i18n.language as 'ro' | 'en';
+  const currentLanguage = i18n.language as "ro" | "en";
   const [selectedAnswerId, setSelectedAnswerId] = useState<number | null>(
-    userAnswer?.answerId || null
+    userAnswer?.answerId || null,
   );
   const [showFeedback, setShowFeedback] = useState(false);
   const [justAnswered, setJustAnswered] = useState(false);
@@ -103,7 +111,7 @@ export default function QuestionCard({
   }, [isLastQuestion, canGoNext]);
 
   useEffect(() => {
-    trackEvaluationEvent('question_viewed', {
+    trackEvaluationEvent("question_viewed", {
       questionId: question.id,
       categoryId: category.id,
       categoryName: getCategoryName(category, currentLanguage),
@@ -111,12 +119,20 @@ export default function QuestionCard({
       totalQuestions,
       progress: Math.round(progress),
     });
-  }, [question.id, category.id, getCategoryName(category, currentLanguage), currentQuestionIndex, totalQuestions, progress, currentLanguage]);
+  }, [
+    question.id,
+    category.id,
+    getCategoryName(category, currentLanguage),
+    currentQuestionIndex,
+    totalQuestions,
+    progress,
+    currentLanguage,
+  ]);
 
   const handleAnswerSelect = (answerId: string) => {
     const answerIdNum = parseInt(answerId);
-    const selectedAnswer = question.answers.find(a => a.id === answerIdNum);
-    
+    const selectedAnswer = question.answers.find((a) => a.id === answerIdNum);
+
     if (!selectedAnswer) return;
 
     setSelectedAnswerId(answerIdNum);
@@ -132,14 +148,15 @@ export default function QuestionCard({
 
     // Calculate points earned
     const pointsEarned = selectedAnswer.weight * question.weight;
-    const maxPoints = Math.max(...question.answers.map(a => a.weight)) * question.weight;
+    const maxPoints =
+      Math.max(...question.answers.map((a) => a.weight)) * question.weight;
     const pointsPercentage = (pointsEarned / maxPoints) * 100;
 
     // Show instant feedback
     showAnswerFeedback(selectedAnswer, pointsEarned, pointsPercentage);
 
     // Track the answer
-    trackEvaluationEvent('question_answered', {
+    trackEvaluationEvent("question_answered", {
       questionId: question.id,
       answerId: answerIdNum,
       answerWeight: selectedAnswer.weight,
@@ -153,61 +170,66 @@ export default function QuestionCard({
     onAnswer(userAnswerData);
 
     // Auto-advance after feedback (or immediately if last question)
-    if (canGoNext) {
-      const delay = isLastQuestion ? 500 : 800;
-      
-      setTimeout(() => {
-        setIsTransitioning(true);
-      }, delay - 200); // Start loading animation 200ms before transition
-      
-      setTimeout(() => {
-        onNext();
-      }, delay);
-    }
+    const delay = isLastQuestion ? 500 : 800;
+
+    setTimeout(() => {
+      setIsTransitioning(true);
+    }, delay - 200); // Start loading animation 200ms before transition
+
+    setTimeout(() => {
+      onNext();
+    }, delay);
   };
 
-  const showAnswerFeedback = (answer: any, points: number, percentage: number) => {
-    let message = '';
-    let icon = <CheckCircle2 className="w-5 h-5" />;
-    
+  const showAnswerFeedback = (
+    answer: any,
+    points: number,
+    percentage: number,
+  ) => {
+    let message = "";
+    const icon = <CheckCircle2 className="w-5 h-5" />;
+
     if (percentage >= 80) {
       message = `🎉 Excellent! +${points.toFixed(1)} points`;
-      toast.success(message, { 
+      toast.success(message, {
         icon: icon,
-        description: 'Great choice for property value!',
+        description: "Great choice for property value!",
         duration: 1500,
       });
     } else if (percentage >= 50) {
       message = `👍 Good choice! +${points.toFixed(1)} points`;
       toast.info(message, {
         icon: <Star className="w-5 h-5" />,
-        description: 'Solid answer, room for improvement.',
+        description: "Solid answer, room for improvement.",
         duration: 1500,
       });
     } else {
       message = `⚠️ Could be better. +${points.toFixed(1)} points`;
       toast.warning(message, {
         icon: <AlertTriangle className="w-5 h-5" />,
-        description: 'Consider this for future properties.',
+        description: "Consider this for future properties.",
         duration: 1500,
       });
     }
   };
 
   const getAnswerFeedbackColor = (answerWeight: number) => {
-    const maxWeight = Math.max(...question.answers.map(a => a.weight));
+    const maxWeight = Math.max(...question.answers.map((a) => a.weight));
     const percentage = (answerWeight / maxWeight) * 100;
-    
-    if (percentage >= 80) return 'border-green-500 bg-green-50 dark:bg-green-950';
-    if (percentage >= 50) return 'border-yellow-500 bg-yellow-50 dark:bg-yellow-950';
-    return 'border-red-500 bg-red-50 dark:bg-red-950';
+
+    if (percentage >= 80)
+      return "border-green-500 bg-green-50 dark:bg-green-950";
+    if (percentage >= 50)
+      return "border-yellow-500 bg-yellow-50 dark:bg-yellow-950";
+    return "border-red-500 bg-red-50 dark:bg-red-950";
   };
 
   const getAnswerIcon = (answerWeight: number) => {
-    const maxWeight = Math.max(...question.answers.map(a => a.weight));
+    const maxWeight = Math.max(...question.answers.map((a) => a.weight));
     const percentage = (answerWeight / maxWeight) * 100;
-    
-    if (percentage >= 80) return <CheckCircle2 className="w-4 h-4 text-green-600" />;
+
+    if (percentage >= 80)
+      return <CheckCircle2 className="w-4 h-4 text-green-600" />;
     if (percentage >= 50) return <Star className="w-4 h-4 text-yellow-600" />;
     return <XCircle className="w-4 h-4 text-red-600" />;
   };
@@ -247,17 +269,19 @@ export default function QuestionCard({
               </p>
             </div>
           </div>
-          
+
           <div className="flex items-center gap-4">
             <div className="text-right">
-              <p className="text-sm font-medium">Score: {currentScore.toFixed(1)}</p>
+              <p className="text-sm font-medium">
+                Score: {currentScore.toFixed(1)}
+              </p>
               <Badge variant="secondary" className="text-xs">
                 {currentLevel.label} {currentLevel.icon}
               </Badge>
             </div>
           </div>
         </div>
-        
+
         <Progress value={progress} className="h-2" />
         <p className="text-xs text-muted-foreground mt-2 text-center">
           {Math.round(progress)}% Complete
@@ -271,7 +295,9 @@ export default function QuestionCard({
             <div className="absolute inset-0 bg-background/80 backdrop-blur-sm z-10 flex items-center justify-center rounded-lg">
               <div className="flex items-center gap-3 text-foreground">
                 <div className="animate-spin rounded-full h-6 w-6 border-2 border-primary border-t-transparent"></div>
-                <span className="text-sm font-medium">Loading next question...</span>
+                <span className="text-sm font-medium">
+                  Loading next question...
+                </span>
               </div>
             </div>
           )}
@@ -292,11 +318,14 @@ export default function QuestionCard({
               <div className="text-right">
                 <p className="text-xs text-muted-foreground">Max Points</p>
                 <p className="text-sm font-bold">
-                  {(Math.max(...question.answers.map(a => a.weight)) * question.weight).toFixed(1)}
+                  {(
+                    Math.max(...question.answers.map((a) => a.weight)) *
+                    question.weight
+                  ).toFixed(1)}
                 </p>
               </div>
             </div>
-            
+
             <CardTitle className="text-xl md:text-2xl leading-relaxed text-foreground">
               {getQuestionText(question, currentLanguage)}
             </CardTitle>
@@ -304,15 +333,15 @@ export default function QuestionCard({
 
           <CardContent className="space-y-6">
             {/* Answer Options */}
-            <RadioGroup 
-              value={selectedAnswerId?.toString() || ''} 
+            <RadioGroup
+              value={selectedAnswerId?.toString() || ""}
               onValueChange={handleAnswerSelect}
               className="space-y-4"
             >
               {question.answers.map((answer, index) => {
                 const isSelected = selectedAnswerId === answer.id;
                 const showAnswerFeedback = showFeedback && isSelected;
-                
+
                 return (
                   <div key={answer.id} className="space-y-2">
                     <Label
@@ -320,22 +349,22 @@ export default function QuestionCard({
                       className={`
                         flex items-center space-x-4 p-4 rounded-xl border-2 cursor-pointer
                         transition-all duration-200 hover:border-primary/50 hover:bg-accent/50
-                        ${isSelected ? 'border-primary bg-primary/5' : 'border-border'}
-                        ${showAnswerFeedback ? getAnswerFeedbackColor(answer.weight) : ''}
+                        ${isSelected ? "border-primary bg-primary/5" : "border-border"}
+                        ${showAnswerFeedback ? getAnswerFeedbackColor(answer.weight) : ""}
                       `}
                     >
-                      <RadioGroupItem 
-                        value={answer.id.toString()} 
+                      <RadioGroupItem
+                        value={answer.id.toString()}
                         id={`answer-${answer.id}`}
                         className="flex-shrink-0"
                       />
-                      
+
                       <div className="flex-1">
                         <div className="flex items-center justify-between">
                           <span className="text-base font-medium text-foreground">
                             {getAnswerText(answer, currentLanguage)}
                           </span>
-                          
+
                           <div className="flex items-center gap-2">
                             {showAnswerFeedback && getAnswerIcon(answer.weight)}
                             <Badge variant="secondary" className="text-xs">
@@ -343,11 +372,17 @@ export default function QuestionCard({
                             </Badge>
                           </div>
                         </div>
-                        
+
                         {showAnswerFeedback && (
                           <div className="mt-2">
                             <p className="text-sm text-muted-foreground">
-                              Points earned: {(answer.weight * question.weight).toFixed(1)} / {(Math.max(...question.answers.map(a => a.weight)) * question.weight).toFixed(1)}
+                              Points earned:{" "}
+                              {(answer.weight * question.weight).toFixed(1)} /{" "}
+                              {(
+                                Math.max(
+                                  ...question.answers.map((a) => a.weight),
+                                ) * question.weight
+                              ).toFixed(1)}
                             </p>
                           </div>
                         )}
@@ -377,18 +412,18 @@ export default function QuestionCard({
                   <ArrowLeft className="w-4 h-4" />
                   Start Over
                 </Button>
-                
+
                 <Button
                   ref={nextButtonRef}
                   onClick={onNext}
                   disabled={!canGoNext}
                   className={`flex items-center gap-2 ${
                     isLastQuestion
-                      ? 'bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white font-semibold shadow-lg hover:shadow-xl transition-all duration-200 ring-2 ring-green-500/20 hover:ring-green-500/40'
-                      : 'bg-primary hover:bg-primary/90'
+                      ? "bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white font-semibold shadow-lg hover:shadow-xl transition-all duration-200 ring-2 ring-green-500/20 hover:ring-green-500/40"
+                      : "bg-primary hover:bg-primary/90"
                   }`}
                 >
-                  {isLastQuestion ? 'Finish' : 'Next'}
+                  {isLastQuestion ? "Finish" : "Next"}
                   <ArrowRight className="w-4 h-4" />
                 </Button>
               </div>
@@ -405,7 +440,9 @@ export default function QuestionCard({
               <Award className="w-6 h-6" />
               <div>
                 <p className="font-bold">Level Up!</p>
-                <p className="text-sm opacity-90">You're now a {currentLevel.label}!</p>
+                <p className="text-sm opacity-90">
+                  You're now a {currentLevel.label}!
+                </p>
               </div>
             </CardContent>
           </Card>
@@ -418,14 +455,34 @@ export default function QuestionCard({
 // Helper function to determine current level
 function getCurrentLevel(currentScore: number, maxScore: number) {
   const percentage = maxScore > 0 ? (currentScore / maxScore) * 100 : 0;
-  
+
   if (percentage >= 90) {
-    return { label: 'Property Master', icon: '👑', color: 'bg-yellow-500', isNewLevel: false };
+    return {
+      label: "Property Master",
+      icon: "👑",
+      color: "bg-yellow-500",
+      isNewLevel: false,
+    };
   } else if (percentage >= 60) {
-    return { label: 'Property Expert', icon: '🏆', color: 'bg-green-500', isNewLevel: false };
+    return {
+      label: "Property Expert",
+      icon: "🏆",
+      color: "bg-green-500",
+      isNewLevel: false,
+    };
   } else if (percentage >= 30) {
-    return { label: 'Property Learner', icon: '⭐', color: 'bg-blue-500', isNewLevel: false };
+    return {
+      label: "Property Learner",
+      icon: "⭐",
+      color: "bg-blue-500",
+      isNewLevel: false,
+    };
   }
-  
-  return { label: 'Beginner', icon: '🏠', color: 'bg-gray-500', isNewLevel: false };
+
+  return {
+    label: "Beginner",
+    icon: "🏠",
+    color: "bg-gray-500",
+    isNewLevel: false,
+  };
 }

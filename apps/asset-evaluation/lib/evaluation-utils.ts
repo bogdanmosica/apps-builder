@@ -37,6 +37,25 @@ export interface Answer {
   updatedAt: Date;
 }
 
+export interface CustomField {
+  id: number;
+  propertyTypeId: number;
+  label_ro: string;
+  label_en: string | null;
+  fieldType: "text" | "number" | "select" | "textarea" | "date" | "boolean";
+  isRequired: boolean;
+  placeholder_ro: string | null;
+  placeholder_en: string | null;
+  helpText_ro: string | null;
+  helpText_en: string | null;
+  selectOptions: any[];
+  validation: Record<string, any>;
+  sortOrder: number;
+  isActive: boolean;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
 export interface QuestionWithAnswers extends Question {
   answers: Answer[];
 }
@@ -71,36 +90,48 @@ export interface EvaluationResult {
   maxPossibleScore: number;
   percentage: number;
   categoryScores: CategoryScore[];
-  level: 'Novice' | 'Good' | 'Expert';
+  level: "Novice" | "Good" | "Expert";
   badge: string;
   completionRate: number;
 }
 
 // Utility functions to get localized text
 export function getLocalizedText(
-  textRo: string, 
-  textEn: string | null, 
-  language: 'ro' | 'en' = 'ro'
+  textRo: string,
+  textEn: string | null,
+  language: "ro" | "en" = "ro",
 ): string {
-  if (language === 'en' && textEn) {
+  if (language === "en" && textEn) {
     return textEn;
   }
   return textRo;
 }
 
-export function getPropertyTypeName(propertyType: PropertyType, language: 'ro' | 'en' = 'ro'): string {
+export function getPropertyTypeName(
+  propertyType: PropertyType,
+  language: "ro" | "en" = "ro",
+): string {
   return getLocalizedText(propertyType.name_ro, propertyType.name_en, language);
 }
 
-export function getCategoryName(category: QuestionCategory, language: 'ro' | 'en' = 'ro'): string {
+export function getCategoryName(
+  category: QuestionCategory,
+  language: "ro" | "en" = "ro",
+): string {
   return getLocalizedText(category.name_ro, category.name_en, language);
 }
 
-export function getQuestionText(question: Question, language: 'ro' | 'en' = 'ro'): string {
+export function getQuestionText(
+  question: Question,
+  language: "ro" | "en" = "ro",
+): string {
   return getLocalizedText(question.text_ro, question.text_en, language);
 }
 
-export function getAnswerText(answer: Answer, language: 'ro' | 'en' = 'ro'): string {
+export function getAnswerText(
+  answer: Answer,
+  language: "ro" | "en" = "ro",
+): string {
   return getLocalizedText(answer.text_ro, answer.text_en, language);
 }
 
@@ -108,7 +139,7 @@ export function getAnswerText(answer: Answer, language: 'ro' | 'en' = 'ro'): str
 export function calculateEvaluationResult(
   userAnswers: UserAnswer[],
   propertyData: PropertyTypeWithCategories,
-  language: 'ro' | 'en' = 'ro'
+  language: "ro" | "en" = "ro",
 ): EvaluationResult {
   const categoryScores: CategoryScore[] = [];
   let totalScore = 0;
@@ -123,10 +154,14 @@ export function calculateEvaluationResult(
 
     for (const question of category.questions) {
       totalQuestions++;
-      const maxAnswerWeight = Math.max(...question.answers.map(a => a.weight));
+      const maxAnswerWeight = Math.max(
+        ...question.answers.map((a) => a.weight),
+      );
       categoryMaxScore += maxAnswerWeight * question.weight;
 
-      const userAnswer = userAnswers.find(ua => ua.questionId === question.id);
+      const userAnswer = userAnswers.find(
+        (ua) => ua.questionId === question.id,
+      );
       if (userAnswer) {
         totalQuestionsAnswered++;
         questionsAnswered++;
@@ -134,7 +169,8 @@ export function calculateEvaluationResult(
       }
     }
 
-    const categoryPercentage = categoryMaxScore > 0 ? (categoryScore / categoryMaxScore) * 100 : 0;
+    const categoryPercentage =
+      categoryMaxScore > 0 ? (categoryScore / categoryMaxScore) * 100 : 0;
 
     categoryScores.push({
       categoryId: category.id,
@@ -150,22 +186,24 @@ export function calculateEvaluationResult(
     maxPossibleScore += categoryMaxScore;
   }
 
-  const overallPercentage = maxPossibleScore > 0 ? (totalScore / maxPossibleScore) * 100 : 0;
-  const completionRate = totalQuestions > 0 ? (totalQuestionsAnswered / totalQuestions) * 100 : 0;
+  const overallPercentage =
+    maxPossibleScore > 0 ? (totalScore / maxPossibleScore) * 100 : 0;
+  const completionRate =
+    totalQuestions > 0 ? (totalQuestionsAnswered / totalQuestions) * 100 : 0;
 
   // Determine level and badge
-  let level: 'Novice' | 'Good' | 'Expert' = 'Novice';
-  let badge = '🏠 Beginner';
+  let level: "Novice" | "Good" | "Expert" = "Novice";
+  let badge = "🏠 Beginner";
 
   if (overallPercentage >= 90) {
-    level = 'Expert';
-    badge = '🏆 Property Master';
+    level = "Expert";
+    badge = "🏆 Property Master";
   } else if (overallPercentage >= 60) {
-    level = 'Good';
-    badge = '⭐ Property Expert';
+    level = "Good";
+    badge = "⭐ Property Expert";
   } else if (overallPercentage >= 30) {
-    level = 'Good';
-    badge = '📈 Property Learner';
+    level = "Good";
+    badge = "📈 Property Learner";
   }
 
   return {
@@ -182,10 +220,10 @@ export function calculateEvaluationResult(
 // Get level thresholds for gamification
 export function getLevelThresholds() {
   return {
-    novice: { min: 0, max: 30, color: 'bg-gray-500', icon: '🏠' },
-    good: { min: 30, max: 60, color: 'bg-blue-500', icon: '⭐' },
-    expert: { min: 60, max: 90, color: 'bg-green-500', icon: '🏆' },
-    master: { min: 90, max: 100, color: 'bg-yellow-500', icon: '👑' },
+    novice: { min: 0, max: 30, color: "bg-gray-500", icon: "🏠" },
+    good: { min: 30, max: 60, color: "bg-blue-500", icon: "⭐" },
+    expert: { min: 60, max: 90, color: "bg-green-500", icon: "🏆" },
+    master: { min: 90, max: 100, color: "bg-yellow-500", icon: "👑" },
   };
 }
 

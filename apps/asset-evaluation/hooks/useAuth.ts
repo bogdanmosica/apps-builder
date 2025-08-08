@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from "react";
 
 interface User {
   id: string;
@@ -25,9 +25,9 @@ export function useAuth(): AuthState {
 
   const checkAuthStatus = async () => {
     try {
-      const response = await fetch('/api/user', {
-        method: 'GET',
-        credentials: 'include',
+      const response = await fetch("/api/user", {
+        method: "GET",
+        credentials: "include",
       });
 
       if (response.ok) {
@@ -53,7 +53,7 @@ export function useAuth(): AuthState {
         });
       }
     } catch (error) {
-      console.log('Auth check failed:', error);
+      console.log("Auth check failed:", error);
       setAuthState({
         isLoggedIn: false,
         user: null,
@@ -71,13 +71,13 @@ export function useAuth(): AuthState {
     };
 
     // Custom event listener for auth changes
-    window.addEventListener('auth-changed', handleAuthChange);
-    
+    window.addEventListener("auth-changed", handleAuthChange);
+
     // Check auth status periodically
     const interval = setInterval(checkAuthStatus, 30000); // Check every 30 seconds
 
     return () => {
-      window.removeEventListener('auth-changed', handleAuthChange);
+      window.removeEventListener("auth-changed", handleAuthChange);
       clearInterval(interval);
     };
   }, []);
@@ -87,5 +87,5 @@ export function useAuth(): AuthState {
 
 // Helper function to trigger auth state refresh
 export function triggerAuthRefresh() {
-  window.dispatchEvent(new CustomEvent('auth-changed'));
+  window.dispatchEvent(new CustomEvent("auth-changed"));
 }

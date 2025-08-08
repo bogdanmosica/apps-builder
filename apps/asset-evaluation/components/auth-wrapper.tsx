@@ -1,62 +1,65 @@
-'use client';
+"use client";
 
-import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 
 interface AuthWrapperProps {
   isLoggedIn: boolean;
   children: React.ReactNode;
 }
 
-export default function AuthWrapper({ isLoggedIn, children }: AuthWrapperProps) {
+export default function AuthWrapper({
+  isLoggedIn,
+  children,
+}: AuthWrapperProps) {
   const router = useRouter();
   const [isClient, setIsClient] = useState(false);
   const [authChecked, setAuthChecked] = useState(false);
 
   useEffect(() => {
     setIsClient(true);
-    
+
     // Always check authentication on client side for mobile devices
     const checkClientAuth = async () => {
       try {
-        const response = await fetch('/api/user', {
-          method: 'GET',
-          credentials: 'include',
+        const response = await fetch("/api/user", {
+          method: "GET",
+          credentials: "include",
           headers: {
-            'Cache-Control': 'no-cache',
-            'Pragma': 'no-cache',
+            "Cache-Control": "no-cache",
+            Pragma: "no-cache",
           },
         });
-        
+
         const isAuthenticated = response.ok;
-        
+
         // Debug logging for mobile
         const isMobile = /Mobi|Android/i.test(navigator.userAgent);
         if (isMobile) {
-          console.log('Mobile auth check:', {
+          console.log("Mobile auth check:", {
             serverIsLoggedIn: isLoggedIn,
             clientIsAuthenticated: isAuthenticated,
             responseStatus: response.status,
-            mismatch: isLoggedIn !== isAuthenticated
+            mismatch: isLoggedIn !== isAuthenticated,
           });
         }
-        
+
         // If there's a mismatch between server and client auth state, handle it
         if (isLoggedIn !== isAuthenticated) {
           if (isAuthenticated && !isLoggedIn) {
             // Client shows user is authenticated but server doesn't - force refresh
-            console.log('Client authenticated but server not - refreshing');
+            console.log("Client authenticated but server not - refreshing");
             window.location.reload();
           } else if (!isAuthenticated && isLoggedIn) {
             // Server shows user is authenticated but client doesn't - force refresh
-            console.log('Server authenticated but client not - refreshing');
+            console.log("Server authenticated but client not - refreshing");
             window.location.reload();
           }
         }
-        
+
         setAuthChecked(true);
       } catch (error) {
-        console.error('Client auth check failed:', error);
+        console.error("Client auth check failed:", error);
         setAuthChecked(true);
       }
     };

@@ -1,14 +1,14 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { db } from '@/lib/db/drizzle';
-import { 
-  activityLogs, 
-  users, 
-  teamMembers, 
-  payments, 
-  subscriptions 
-} from '@/lib/db/schema';
-import { getUser } from '@/lib/db/queries';
-import { eq, and, desc, sql } from 'drizzle-orm';
+import { and, desc, eq, sql } from "drizzle-orm";
+import { type NextRequest, NextResponse } from "next/server";
+import { db } from "@/lib/db/drizzle";
+import { getUser } from "@/lib/db/queries";
+import {
+  activityLogs,
+  payments,
+  subscriptions,
+  teamMembers,
+  users,
+} from "@/lib/db/schema";
 
 // Type for activity log with user info
 type ActivityLogWithUser = {
@@ -45,7 +45,7 @@ export async function GET(request: NextRequest) {
   try {
     const user = await getUser();
     if (!user) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     // Get user's team
@@ -56,7 +56,7 @@ export async function GET(request: NextRequest) {
       .limit(1);
 
     if (userWithTeam.length === 0) {
-      return NextResponse.json({ error: 'Team not found' }, { status: 404 });
+      return NextResponse.json({ error: "Team not found" }, { status: 404 });
     }
 
     const teamId = userWithTeam[0].teamId;
@@ -89,10 +89,7 @@ export async function GET(request: NextRequest) {
       })
       .from(payments)
       .innerJoin(users, eq(payments.userId, users.id))
-      .where(and(
-        eq(payments.teamId, teamId),
-        eq(payments.status, 'completed')
-      ))
+      .where(and(eq(payments.teamId, teamId), eq(payments.status, "completed")))
       .orderBy(desc(payments.createdAt))
       .limit(5);
 
@@ -116,23 +113,28 @@ export async function GET(request: NextRequest) {
     // Helper function to format time ago
     const getTimeAgo = (date: Date): string => {
       const now = new Date();
-      const diffInMinutes = Math.floor((now.getTime() - date.getTime()) / (1000 * 60));
-      
+      const diffInMinutes = Math.floor(
+        (now.getTime() - date.getTime()) / (1000 * 60),
+      );
+
       if (diffInMinutes < 60) {
-        return `${diffInMinutes} minute${diffInMinutes !== 1 ? 's' : ''} ago`;
+        return `${diffInMinutes} minute${diffInMinutes !== 1 ? "s" : ""} ago`;
       }
-      
+
       const diffInHours = Math.floor(diffInMinutes / 60);
       if (diffInHours < 24) {
-        return `${diffInHours} hour${diffInHours !== 1 ? 's' : ''} ago`;
+        return `${diffInHours} hour${diffInHours !== 1 ? "s" : ""} ago`;
       }
-      
+
       const diffInDays = Math.floor(diffInHours / 24);
-      return `${diffInDays} day${diffInDays !== 1 ? 's' : ''} ago`;
+      return `${diffInDays} day${diffInDays !== 1 ? "s" : ""} ago`;
     };
 
     // Helper function to format currency
-    const formatCurrency = (cents: number, currency: string = 'usd'): string => {
+    const formatCurrency = (
+      cents: number,
+      currency: string = "usd",
+    ): string => {
       return `$${(cents / 100).toFixed(2)}`;
     };
 
@@ -153,11 +155,14 @@ export async function GET(request: NextRequest) {
     recentActivityLogs.forEach((log: ActivityLogWithUser) => {
       activities.push({
         id: `activity-${log.id}`,
-        type: 'activity',
-        user: log.userName || log.userEmail || 'Unknown User',
-        action: log.action.replace(/_/g, ' ').toLowerCase().replace(/\b\w/g, (l: string) => l.toUpperCase()),
+        type: "activity",
+        user: log.userName || log.userEmail || "Unknown User",
+        action: log.action
+          .replace(/_/g, " ")
+          .toLowerCase()
+          .replace(/\b\w/g, (l: string) => l.toUpperCase()),
         time: getTimeAgo(log.timestamp),
-        value: '',
+        value: "",
         timestamp: log.timestamp,
       });
     });
@@ -166,9 +171,9 @@ export async function GET(request: NextRequest) {
     recentPayments.forEach((payment: PaymentWithUser) => {
       activities.push({
         id: `payment-${payment.id}`,
-        type: 'payment',
-        user: payment.userName || payment.userEmail || 'Unknown User',
-        action: 'Payment received',
+        type: "payment",
+        user: payment.userName || payment.userEmail || "Unknown User",
+        action: "Payment received",
         time: getTimeAgo(payment.createdAt),
         value: formatCurrency(payment.amount, payment.currency),
         timestamp: payment.createdAt,
@@ -179,9 +184,12 @@ export async function GET(request: NextRequest) {
     recentSubscriptions.forEach((subscription: SubscriptionWithUser) => {
       activities.push({
         id: `subscription-${subscription.id}`,
-        type: 'subscription',
-        user: subscription.userName || subscription.userEmail || 'Unknown User',
-        action: subscription.status === 'active' ? `Upgraded to ${subscription.planName}` : `Subscription ${subscription.status}`,
+        type: "subscription",
+        user: subscription.userName || subscription.userEmail || "Unknown User",
+        action:
+          subscription.status === "active"
+            ? `Upgraded to ${subscription.planName}`
+            : `Subscription ${subscription.status}`,
         time: getTimeAgo(subscription.createdAt),
         value: formatCurrency(subscription.amount),
         timestamp: subscription.createdAt,
@@ -189,15 +197,18 @@ export async function GET(request: NextRequest) {
     });
 
     // Sort by timestamp and take the most recent 10
-    activities.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
+    activities.sort(
+      (a, b) =>
+        new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime(),
+    );
     const recentActivity = activities.slice(0, 10);
 
     return NextResponse.json({ recentActivity });
   } catch (error) {
-    console.error('Error fetching recent activity:', error);
+    console.error("Error fetching recent activity:", error);
     return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
+      { error: "Internal server error" },
+      { status: 500 },
     );
   }
 }

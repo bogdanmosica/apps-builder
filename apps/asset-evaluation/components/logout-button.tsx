@@ -1,11 +1,11 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { toast } from 'sonner';
-import { DropdownMenuItem } from '@workspace/ui/components/dropdown-menu';
-import { LogOut, Loader2 } from 'lucide-react';
-import { triggerAuthRefresh } from '@/hooks/useAuth';
+import { DropdownMenuItem } from "@workspace/ui/components/dropdown-menu";
+import { Loader2, LogOut } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { toast } from "sonner";
+import { triggerAuthRefresh } from "@/hooks/useAuth";
 
 export function LogoutButton() {
   const router = useRouter();
@@ -13,49 +13,51 @@ export function LogoutButton() {
 
   const handleLogout = async () => {
     if (isLoggingOut) return; // Prevent multiple clicks
-    
+
     setIsLoggingOut(true);
-    toast.loading('Logging you out...', { id: 'logout' });
+    toast.loading("Logging you out...", { id: "logout" });
 
     try {
-      const response = await fetch('/api/auth/logout', {
-        method: 'POST',
+      const response = await fetch("/api/auth/logout", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
       });
 
       if (response.ok) {
         // Trigger auth refresh to update navigation
         triggerAuthRefresh();
-        
-        toast.success('Successfully logged out!', { id: 'logout' });
-        router.push('/');
+
+        toast.success("Successfully logged out!", { id: "logout" });
+        router.push("/");
         router.refresh();
       } else {
-        console.error('Logout failed');
-        toast.error('Failed to logout. Please try again.', { id: 'logout' });
+        console.error("Logout failed");
+        toast.error("Failed to logout. Please try again.", { id: "logout" });
         setIsLoggingOut(false);
       }
     } catch (error) {
-      console.error('Logout error:', error);
-      toast.error('An error occurred during logout. Please try again.', { id: 'logout' });
+      console.error("Logout error:", error);
+      toast.error("An error occurred during logout. Please try again.", {
+        id: "logout",
+      });
       setIsLoggingOut(false);
     }
   };
 
   return (
-    <DropdownMenuItem 
-      onClick={handleLogout} 
-      className='cursor-pointer'
+    <DropdownMenuItem
+      onClick={handleLogout}
+      className="cursor-pointer"
       disabled={isLoggingOut}
     >
       {isLoggingOut ? (
-        <Loader2 className='mr-2 h-4 w-4 animate-spin' />
+        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
       ) : (
-        <LogOut className='mr-2 h-4 w-4' />
+        <LogOut className="mr-2 h-4 w-4" />
       )}
-      {isLoggingOut ? 'Logging out...' : 'Logout'}
+      {isLoggingOut ? "Logging out..." : "Logout"}
     </DropdownMenuItem>
   );
 }

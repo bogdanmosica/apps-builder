@@ -1,27 +1,26 @@
-import { NextRequest, NextResponse } from 'next/server';
-import db from '@workspace/prisma';
-import { auth } from '@/auth'; // Import your NextAuth v5 authentication
-import { CrawlDataResponseDto, SelectorRequestDto } from 'types/crawl-dto';
-import { getCrawlWebsite } from '@/actions/crawl-website';
-import { getUserCrawls } from '@/actions/crawls/get-user-crawls';
+import { type NextRequest, NextResponse } from "next/server";
+import type { CrawlDataResponseDto, SelectorRequestDto } from "types/crawl-dto";
+import { getCrawlWebsite } from "@/actions/crawl-website";
+import { getUserCrawls } from "@/actions/crawls/get-user-crawls";
+import { auth } from "@/auth"; // Import your NextAuth v5 authentication
 
 export const GET = auth(async (req) => {
   const session = req.auth;
 
   if (!session) {
-    return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
+    return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
   }
 
   const userId = session?.user?.id;
 
   try {
-    const crawls = await getUserCrawls(userId ?? '');
+    const crawls = await getUserCrawls(userId ?? "");
 
     return NextResponse.json(crawls, { status: 200 });
   } catch (error) {
     return NextResponse.json(
-      { message: 'Error fetching crawls', error },
-      { status: 500 }
+      { message: "Error fetching crawls", error },
+      { status: 500 },
     );
   }
 });
@@ -35,14 +34,14 @@ type RequestBody = {
 // Define the POST method handler
 export async function POST(
   req: NextRequest,
-  res: NextResponse<CrawlDataResponseDto>
+  res: NextResponse<CrawlDataResponseDto>,
 ) {
   try {
     // Get the user session from NextAuth v5
     const session = await auth(); // Call the auth function without arguments
 
     if (!session || !session.user) {
-      return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
+      return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
     }
 
     const userId = session.user.id as string; // Get the user ID from the session
@@ -57,8 +56,8 @@ export async function POST(
 
     if (!url || !selectors || selectors.length === 0) {
       return NextResponse.json(
-        { message: 'URL and selectors are required' },
-        { status: 400 }
+        { message: "URL and selectors are required" },
+        { status: 400 },
       );
     }
 
@@ -100,10 +99,10 @@ export async function POST(
       return NextResponse.json(newCrawl, { status: 200 });
     }
   } catch (error) {
-    console.error('Error during crawling:', error);
+    console.error("Error during crawling:", error);
     return NextResponse.json(
-      { message: 'Something went wrong' },
-      { status: 500 }
+      { message: "Something went wrong" },
+      { status: 500 },
     );
   }
 }

@@ -1,21 +1,21 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { db } from '@/lib/db/drizzle';
-import { 
-  integrations, 
-  apiRequests, 
-  webhooks, 
-  webhookDeliveries, 
-  apiKeys, 
-  teamMembers 
-} from '@/lib/db/schema';
-import { getUser } from '@/lib/db/queries';
-import { eq, and, gte, sql, desc, count, avg, sum } from 'drizzle-orm';
+import { and, avg, count, desc, eq, gte, sql, sum } from "drizzle-orm";
+import { type NextRequest, NextResponse } from "next/server";
+import { db } from "@/lib/db/drizzle";
+import { getUser } from "@/lib/db/queries";
+import {
+  apiKeys,
+  apiRequests,
+  integrations,
+  teamMembers,
+  webhookDeliveries,
+  webhooks,
+} from "@/lib/db/schema";
 
 export async function GET(request: NextRequest) {
   try {
     const user = await getUser();
     if (!user) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     // Get user's team
@@ -26,7 +26,7 @@ export async function GET(request: NextRequest) {
       .limit(1);
 
     if (userWithTeam.length === 0) {
-      return NextResponse.json({ error: 'Team not found' }, { status: 404 });
+      return NextResponse.json({ error: "Team not found" }, { status: 404 });
     }
 
     const teamId = userWithTeam[0].teamId;
@@ -49,11 +49,12 @@ export async function GET(request: NextRequest) {
       .where(
         and(
           eq(integrations.teamId, teamId),
-          eq(integrations.status, 'connected')
-        )
+          eq(integrations.status, "connected"),
+        ),
       );
 
-    const activeIntegrationsCount = safeNumber(activeIntegrationsResult[0]?.count) || 0;
+    const activeIntegrationsCount =
+      safeNumber(activeIntegrationsResult[0]?.count) || 0;
 
     // 2. TOTAL API REQUESTS (last 24 hours)
     const totalApiRequestsResult = await db
@@ -62,8 +63,8 @@ export async function GET(request: NextRequest) {
       .where(
         and(
           eq(apiRequests.teamId, teamId),
-          gte(apiRequests.timestamp, last24Hours)
-        )
+          gte(apiRequests.timestamp, last24Hours),
+        ),
       );
 
     const totalApiRequests = safeNumber(totalApiRequestsResult[0]?.count) || 0;
@@ -77,8 +78,8 @@ export async function GET(request: NextRequest) {
           and(
             eq(apiRequests.teamId, teamId),
             eq(apiRequests.isSuccess, true),
-            gte(apiRequests.timestamp, last24Hours)
-          )
+            gte(apiRequests.timestamp, last24Hours),
+          ),
         ),
       db
         .select({ count: count() })
@@ -86,29 +87,34 @@ export async function GET(request: NextRequest) {
         .where(
           and(
             eq(apiRequests.teamId, teamId),
-            gte(apiRequests.timestamp, last24Hours)
-          )
-        )
+            gte(apiRequests.timestamp, last24Hours),
+          ),
+        ),
     ]);
 
     const successfulCount = safeNumber(successfulRequests[0]?.count) || 0;
     const totalCount = safeNumber(totalRequests[0]?.count) || 0;
-    const successRate = totalCount > 0 ? Math.round((successfulCount / totalCount) * 100 * 10) / 10 : 100;
+    const successRate =
+      totalCount > 0
+        ? Math.round((successfulCount / totalCount) * 100 * 10) / 10
+        : 100;
 
     // 4. AVERAGE RESPONSE TIME (last 24 hours)
     const avgResponseTimeResult = await db
-      .select({ 
-        avgTime: sql<number>`COALESCE(AVG(${apiRequests.responseTime}), 0)` 
+      .select({
+        avgTime: sql<number>`COALESCE(AVG(${apiRequests.responseTime}), 0)`,
       })
       .from(apiRequests)
       .where(
         and(
           eq(apiRequests.teamId, teamId),
-          gte(apiRequests.timestamp, last24Hours)
-        )
+          gte(apiRequests.timestamp, last24Hours),
+        ),
       );
 
-    const avgResponseTime = Math.round(safeNumber(avgResponseTimeResult[0]?.avgTime) || 0);
+    const avgResponseTime = Math.round(
+      safeNumber(avgResponseTimeResult[0]?.avgTime) || 0,
+    );
 
     // 5. GET ACTIVE INTEGRATIONS WITH DETAILS
     const activeIntegrationsData = await db
@@ -138,8 +144,8 @@ export async function GET(request: NextRequest) {
             and(
               eq(apiRequests.teamId, teamId),
               eq(apiRequests.integrationId, integration.id),
-              gte(apiRequests.timestamp, last24Hours)
-            )
+              gte(apiRequests.timestamp, last24Hours),
+            ),
           );
 
         // Get error rate for this integration
@@ -152,8 +158,8 @@ export async function GET(request: NextRequest) {
                 eq(apiRequests.teamId, teamId),
                 eq(apiRequests.integrationId, integration.id),
                 eq(apiRequests.isSuccess, false),
-                gte(apiRequests.timestamp, last24Hours)
-              )
+                gte(apiRequests.timestamp, last24Hours),
+              ),
             ),
           db
             .select({ count: count() })
@@ -162,21 +168,24 @@ export async function GET(request: NextRequest) {
               and(
                 eq(apiRequests.teamId, teamId),
                 eq(apiRequests.integrationId, integration.id),
-                gte(apiRequests.timestamp, last24Hours)
-              )
-            )
+                gte(apiRequests.timestamp, last24Hours),
+              ),
+            ),
         ]);
 
         const errorCount = safeNumber(errors[0]?.count) || 0;
         const totalCount = safeNumber(total[0]?.count) || 0;
-        const errorRate = totalCount > 0 ? Math.round((errorCount / totalCount) * 100 * 10) / 10 : 0;
+        const errorRate =
+          totalCount > 0
+            ? Math.round((errorCount / totalCount) * 100 * 10) / 10
+            : 0;
 
         return {
           ...integration,
           events: safeNumber(eventsResult[0]?.count) || 0,
           errorRate,
         };
-      })
+      }),
     );
 
     // 7. GET WEBHOOKS DATA
@@ -206,8 +215,8 @@ export async function GET(request: NextRequest) {
               and(
                 eq(webhookDeliveries.webhookId, webhook.id),
                 eq(webhookDeliveries.isSuccess, true),
-                gte(webhookDeliveries.timestamp, last30Days)
-              )
+                gte(webhookDeliveries.timestamp, last30Days),
+              ),
             ),
           db
             .select({ count: count() })
@@ -215,20 +224,23 @@ export async function GET(request: NextRequest) {
             .where(
               and(
                 eq(webhookDeliveries.webhookId, webhook.id),
-                gte(webhookDeliveries.timestamp, last30Days)
-              )
-            )
+                gte(webhookDeliveries.timestamp, last30Days),
+              ),
+            ),
         ]);
 
         const successfulCount = safeNumber(successful[0]?.count) || 0;
         const totalCount = safeNumber(total[0]?.count) || 0;
-        const successRate = totalCount > 0 ? Math.round((successfulCount / totalCount) * 100 * 10) / 10 : 100;
+        const successRate =
+          totalCount > 0
+            ? Math.round((successfulCount / totalCount) * 100 * 10) / 10
+            : 100;
 
         return {
           ...webhook,
           successRate,
         };
-      })
+      }),
     );
 
     // 8. GET API KEYS DATA
@@ -248,7 +260,7 @@ export async function GET(request: NextRequest) {
       .orderBy(desc(apiKeys.lastUsed));
 
     // Calculate usage for each API key (simplified - you'd track this in api_requests table)
-    const apiKeysWithUsage = apiKeysData.map(apiKey => ({
+    const apiKeysWithUsage = apiKeysData.map((apiKey) => ({
       ...apiKey,
       usage: Math.floor(Math.random() * (apiKey.rateLimit || 1000)), // Mock usage for now
     }));
@@ -264,14 +276,14 @@ export async function GET(request: NextRequest) {
       .where(
         and(
           eq(apiRequests.teamId, teamId),
-          gte(apiRequests.timestamp, last24Hours)
-        )
+          gte(apiRequests.timestamp, last24Hours),
+        ),
       )
       .groupBy(apiRequests.endpoint)
       .orderBy(desc(count(apiRequests.id)))
       .limit(5);
 
-    const topEndpoints = topEndpointsResult.map(endpoint => ({
+    const topEndpoints = topEndpointsResult.map((endpoint) => ({
       endpoint: endpoint.endpoint,
       requests: safeNumber(endpoint.requests),
       avgTime: Math.round(safeNumber(endpoint.avgTime)),
@@ -290,54 +302,54 @@ export async function GET(request: NextRequest) {
       },
       webhooks: webhooksWithMetrics,
       apiKeys: apiKeysWithUsage,
-      
+
       // Available integrations (static for now)
       availableIntegrations: [
         {
-          id: 'zapier',
-          name: 'Zapier',
-          description: 'Automate workflows between apps',
-          category: 'Automation',
-          popularity: 'high',
-          pricing: 'freemium',
-          setupDifficulty: 'easy',
+          id: "zapier",
+          name: "Zapier",
+          description: "Automate workflows between apps",
+          category: "Automation",
+          popularity: "high",
+          pricing: "freemium",
+          setupDifficulty: "easy",
         },
         {
-          id: 'google_analytics',
-          name: 'Google Analytics',
-          description: 'Web analytics and user behavior tracking',
-          category: 'Analytics',
-          popularity: 'high',
-          pricing: 'free',
-          setupDifficulty: 'medium',
+          id: "google_analytics",
+          name: "Google Analytics",
+          description: "Web analytics and user behavior tracking",
+          category: "Analytics",
+          popularity: "high",
+          pricing: "free",
+          setupDifficulty: "medium",
         },
         {
-          id: 'hubspot',
-          name: 'HubSpot',
-          description: 'CRM and marketing automation platform',
-          category: 'CRM',
-          popularity: 'medium',
-          pricing: 'freemium',
-          setupDifficulty: 'medium',
+          id: "hubspot",
+          name: "HubSpot",
+          description: "CRM and marketing automation platform",
+          category: "CRM",
+          popularity: "medium",
+          pricing: "freemium",
+          setupDifficulty: "medium",
         },
         {
-          id: 'notion',
-          name: 'Notion',
-          description: 'Collaborative workspace and documentation',
-          category: 'Productivity',
-          popularity: 'medium',
-          pricing: 'freemium',
-          setupDifficulty: 'easy',
+          id: "notion",
+          name: "Notion",
+          description: "Collaborative workspace and documentation",
+          category: "Productivity",
+          popularity: "medium",
+          pricing: "freemium",
+          setupDifficulty: "easy",
         },
       ],
     };
 
     return NextResponse.json(responseData);
   } catch (error) {
-    console.error('Error fetching integrations data:', error);
+    console.error("Error fetching integrations data:", error);
     return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
+      { error: "Internal server error" },
+      { status: 500 },
     );
   }
 }
@@ -346,7 +358,7 @@ export async function POST(request: NextRequest) {
   try {
     const user = await getUser();
     if (!user) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     // Get user's team
@@ -357,11 +369,11 @@ export async function POST(request: NextRequest) {
       .limit(1);
 
     if (userWithTeam.length === 0) {
-      return NextResponse.json({ error: 'Team not found' }, { status: 404 });
+      return NextResponse.json({ error: "Team not found" }, { status: 404 });
     }
 
     const teamId = userWithTeam[0].teamId;
-    
+
     // Parse request body
     const body = await request.json();
     const { name, description, category, dataFlow, config = {} } = body;
@@ -369,8 +381,8 @@ export async function POST(request: NextRequest) {
     // Validate required fields
     if (!name || !category || !dataFlow) {
       return NextResponse.json(
-        { error: 'Missing required fields: name, category, dataFlow' },
-        { status: 400 }
+        { error: "Missing required fields: name, category, dataFlow" },
+        { status: 400 },
       );
     }
 
@@ -380,10 +392,10 @@ export async function POST(request: NextRequest) {
       .values({
         teamId,
         name,
-        description: description || '',
+        description: description || "",
         category,
-        status: 'disconnected', // New integrations start as disconnected
-        health: 'unknown',
+        status: "disconnected", // New integrations start as disconnected
+        health: "unknown",
         dataFlow,
         config,
         lastSync: null,
@@ -392,10 +404,10 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json(newIntegration, { status: 201 });
   } catch (error) {
-    console.error('Error creating integration:', error);
+    console.error("Error creating integration:", error);
     return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
+      { error: "Internal server error" },
+      { status: 500 },
     );
   }
 }

@@ -1,4 +1,4 @@
-import { SiteConfig } from "@workspace/types";
+import type { SiteConfig } from "@workspace/types";
 
 export const siteConfig: SiteConfig = {
   name: "Swipe",

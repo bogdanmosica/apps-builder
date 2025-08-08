@@ -19,7 +19,6 @@
     "@types/react-dom": "19.1.5",
     "@vercel/postgres": "^0.10.0",
     "@workspace/next-auth": "workspace:*",
-    "@workspace/prisma": "workspace:*",
     "@workspace/types": "workspace:*",
     "@workspace/ui": "workspace:*",
     "@workspace/utils": "workspace:*",
@@ -55,10 +54,8 @@
     "zod": "^3.24.4"
   },
   "devDependencies": {
-    "@eslint/js": "^9.32.0",
     "@types/crypto-js": "^4.2.2",
     "@types/speakeasy": "^2.0.10",
-    "@workspace/eslint-config": "workspace:^",
     "@workspace/typescript-config": "workspace:*"
   },
   "name": "sass-starter"

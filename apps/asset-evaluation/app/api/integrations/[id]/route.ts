@@ -1,14 +1,14 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { db } from '@/lib/db/drizzle';
-import { 
-  integrations, 
-  apiRequests, 
-  webhooks, 
-  webhookDeliveries, 
-  teamMembers 
-} from '@/lib/db/schema';
-import { getUser } from '@/lib/db/queries';
-import { eq, and } from 'drizzle-orm';
+import { and, eq } from "drizzle-orm";
+import { type NextRequest, NextResponse } from "next/server";
+import { db } from "@/lib/db/drizzle";
+import { getUser } from "@/lib/db/queries";
+import {
+  apiRequests,
+  integrations,
+  teamMembers,
+  webhookDeliveries,
+  webhooks,
+} from "@/lib/db/schema";
 
 // Type for webhook ID query result
 type WebhookIdData = {
@@ -17,13 +17,13 @@ type WebhookIdData = {
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     const { id } = await params;
     const user = await getUser();
     if (!user) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     // Get user's team
@@ -34,7 +34,7 @@ export async function DELETE(
       .limit(1);
 
     if (userWithTeam.length === 0) {
-      return NextResponse.json({ error: 'Team not found' }, { status: 404 });
+      return NextResponse.json({ error: "Team not found" }, { status: 404 });
     }
 
     const teamId = userWithTeam[0].teamId;
@@ -42,8 +42,8 @@ export async function DELETE(
 
     if (isNaN(integrationId)) {
       return NextResponse.json(
-        { error: 'Invalid integration ID' },
-        { status: 400 }
+        { error: "Invalid integration ID" },
+        { status: 400 },
       );
     }
 
@@ -54,15 +54,15 @@ export async function DELETE(
       .where(
         and(
           eq(integrations.id, integrationId),
-          eq(integrations.teamId, teamId)
-        )
+          eq(integrations.teamId, teamId),
+        ),
       )
       .limit(1);
 
     if (existingIntegration.length === 0) {
       return NextResponse.json(
-        { error: 'Integration not found' },
-        { status: 404 }
+        { error: "Integration not found" },
+        { status: 404 },
       );
     }
 
@@ -72,23 +72,19 @@ export async function DELETE(
       .select({ id: webhooks.id })
       .from(webhooks)
       .where(eq(webhooks.integrationId, integrationId));
-    
+
     if (integrationWebhooks.length > 0) {
       const webhookIds = integrationWebhooks.map((w: WebhookIdData) => w.id);
-      await db
-        .delete(webhookDeliveries)
-        .where(
-          and(
-            eq(webhookDeliveries.teamId, teamId),
-            // Use IN operator for multiple webhook IDs (simplified approach)
-          )
-        );
+      await db.delete(webhookDeliveries).where(
+        and(
+          eq(webhookDeliveries.teamId, teamId),
+          // Use IN operator for multiple webhook IDs (simplified approach)
+        ),
+      );
     }
 
     // Delete webhooks related to this integration
-    await db
-      .delete(webhooks)
-      .where(eq(webhooks.integrationId, integrationId));
+    await db.delete(webhooks).where(eq(webhooks.integrationId, integrationId));
 
     // Delete API requests related to this integration
     await db
@@ -101,32 +97,32 @@ export async function DELETE(
       .where(
         and(
           eq(integrations.id, integrationId),
-          eq(integrations.teamId, teamId)
-        )
+          eq(integrations.teamId, teamId),
+        ),
       );
 
     return NextResponse.json(
-      { message: 'Integration deleted successfully' },
-      { status: 200 }
+      { message: "Integration deleted successfully" },
+      { status: 200 },
     );
   } catch (error) {
-    console.error('Error deleting integration:', error);
+    console.error("Error deleting integration:", error);
     return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
+      { error: "Internal server error" },
+      { status: 500 },
     );
   }
 }
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     const { id } = await params;
     const user = await getUser();
     if (!user) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     // Get user's team
@@ -137,7 +133,7 @@ export async function GET(
       .limit(1);
 
     if (userWithTeam.length === 0) {
-      return NextResponse.json({ error: 'Team not found' }, { status: 404 });
+      return NextResponse.json({ error: "Team not found" }, { status: 404 });
     }
 
     const teamId = userWithTeam[0].teamId;
@@ -145,8 +141,8 @@ export async function GET(
 
     if (isNaN(integrationId)) {
       return NextResponse.json(
-        { error: 'Invalid integration ID' },
-        { status: 400 }
+        { error: "Invalid integration ID" },
+        { status: 400 },
       );
     }
 
@@ -157,37 +153,37 @@ export async function GET(
       .where(
         and(
           eq(integrations.id, integrationId),
-          eq(integrations.teamId, teamId)
-        )
+          eq(integrations.teamId, teamId),
+        ),
       )
       .limit(1);
 
     if (integration.length === 0) {
       return NextResponse.json(
-        { error: 'Integration not found' },
-        { status: 404 }
+        { error: "Integration not found" },
+        { status: 404 },
       );
     }
 
     return NextResponse.json(integration[0]);
   } catch (error) {
-    console.error('Error fetching integration:', error);
+    console.error("Error fetching integration:", error);
     return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
+      { error: "Internal server error" },
+      { status: 500 },
     );
   }
 }
 
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     const { id } = await params;
     const user = await getUser();
     if (!user) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     // Get user's team
@@ -198,7 +194,7 @@ export async function PATCH(
       .limit(1);
 
     if (userWithTeam.length === 0) {
-      return NextResponse.json({ error: 'Team not found' }, { status: 404 });
+      return NextResponse.json({ error: "Team not found" }, { status: 404 });
     }
 
     const teamId = userWithTeam[0].teamId;
@@ -206,14 +202,15 @@ export async function PATCH(
 
     if (isNaN(integrationId)) {
       return NextResponse.json(
-        { error: 'Invalid integration ID' },
-        { status: 400 }
+        { error: "Invalid integration ID" },
+        { status: 400 },
       );
     }
 
     // Parse request body
     const body = await request.json();
-    const { name, description, category, dataFlow, status, health, config } = body;
+    const { name, description, category, dataFlow, status, health, config } =
+      body;
 
     // Check if integration exists and belongs to the user's team
     const existingIntegration = await db
@@ -222,15 +219,15 @@ export async function PATCH(
       .where(
         and(
           eq(integrations.id, integrationId),
-          eq(integrations.teamId, teamId)
-        )
+          eq(integrations.teamId, teamId),
+        ),
       )
       .limit(1);
 
     if (existingIntegration.length === 0) {
       return NextResponse.json(
-        { error: 'Integration not found' },
-        { status: 404 }
+        { error: "Integration not found" },
+        { status: 404 },
       );
     }
 
@@ -253,17 +250,17 @@ export async function PATCH(
       .where(
         and(
           eq(integrations.id, integrationId),
-          eq(integrations.teamId, teamId)
-        )
+          eq(integrations.teamId, teamId),
+        ),
       )
       .returning();
 
     return NextResponse.json(updatedIntegration);
   } catch (error) {
-    console.error('Error updating integration:', error);
+    console.error("Error updating integration:", error);
     return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
+      { error: "Internal server error" },
+      { status: 500 },
     );
   }
 }

@@ -1,9 +1,6 @@
-'use client';
+"use client";
 
-import type { FormEvent, HTMLAttributes, JSX } from 'react';
-import { useState } from 'react';
-import { buttonVariants } from '@workspace/ui/components/button';
-import { Icons } from '@workspace/ui/components/icons';
+import { buttonVariants } from "@workspace/ui/components/button";
 import {
   Card,
   CardContent,
@@ -11,11 +8,13 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from '@workspace/ui/components/card';
-import { toast } from 'sonner';
-import { cn } from '@workspace/ui/lib/utils';
-
-import { formatDate } from '@workspace/utils/formatDate';
+} from "@workspace/ui/components/card";
+import { Icons } from "@workspace/ui/components/icons";
+import { cn } from "@workspace/ui/lib/utils";
+import { formatDate } from "@workspace/utils/formatDate";
+import type { FormEvent, HTMLAttributes, JSX } from "react";
+import { useState } from "react";
+import { toast } from "sonner";
 
 interface BillingFormProps extends HTMLAttributes<HTMLFormElement> {
   subscriptionPlan: unknown & {
@@ -39,10 +38,10 @@ export function BillingForm({
     setIsLoading(!isLoading);
 
     // Get a Stripe session URL.
-    fetch('/api/users/stripe')
+    fetch("/api/users/stripe")
       .then((response: Response) => {
         if (!response.ok) {
-          toast('Please refresh the page and try again.');
+          toast("Please refresh the page and try again.");
           return;
         }
 
@@ -67,27 +66,27 @@ export function BillingForm({
         <CardHeader>
           <CardTitle>Subscription Plan</CardTitle>
           <CardDescription>
-            You are currently on the <strong>{subscriptionPlan.name}</strong>{' '}
+            You are currently on the <strong>{subscriptionPlan.name}</strong>{" "}
             plan.
           </CardDescription>
         </CardHeader>
         <CardContent>{subscriptionPlan.description}</CardContent>
-        <CardFooter className='flex flex-col items-start py-2 md:flex-row md:justify-between md:px-0'>
+        <CardFooter className="flex flex-col items-start py-2 md:flex-row md:justify-between md:px-0">
           <button
             className={cn(buttonVariants())}
             disabled={isLoading}
-            type='submit'
+            type="submit"
           >
             {isLoading ? (
-              <Icons.Spinner className='mr-2 h-4 w-4 animate-spin' />
+              <Icons.Spinner className="mr-2 h-4 w-4 animate-spin" />
             ) : null}
-            {subscriptionPlan.isPro ? 'Manage Subscription' : 'Upgrade to PRO'}
+            {subscriptionPlan.isPro ? "Manage Subscription" : "Upgrade to PRO"}
           </button>
           {subscriptionPlan.isPro ? (
-            <p className='rounded-full text-xs font-medium'>
+            <p className="rounded-full text-xs font-medium">
               {subscriptionPlan.isCanceled
-                ? 'Your plan will be canceled on '
-                : 'Your plan renews on '}
+                ? "Your plan will be canceled on "
+                : "Your plan renews on "}
               {formatDate(subscriptionPlan.stripeCurrentPeriodEnd)}.
             </p>
           ) : null}

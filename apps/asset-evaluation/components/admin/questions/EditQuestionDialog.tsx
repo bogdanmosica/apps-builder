@@ -1,19 +1,25 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { Button } from '@workspace/ui/components/button';
-import { 
-  Dialog, 
-  DialogContent, 
-  DialogDescription, 
-  DialogFooter, 
-  DialogHeader, 
-  DialogTitle 
-} from '@workspace/ui/components/dialog';
-import { Input } from '@workspace/ui/components/input';
-import { Label } from '@workspace/ui/components/label';
-import { Textarea } from '@workspace/ui/components/textarea';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@workspace/ui/components/select';
+import { Button } from "@workspace/ui/components/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@workspace/ui/components/dialog";
+import { Input } from "@workspace/ui/components/input";
+import { Label } from "@workspace/ui/components/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@workspace/ui/components/select";
+import { Textarea } from "@workspace/ui/components/textarea";
+import { useEffect, useState } from "react";
 
 interface Question {
   id: number;
@@ -29,13 +35,26 @@ interface EditQuestionDialogProps {
   open: boolean;
   question: Question | null;
   onOpenChange: (open: boolean) => void;
-  onSubmit: (id: number, data: { text_ro: string; text_en: string | null; weight: number; categoryId: number }) => void;
+  onSubmit: (
+    id: number,
+    data: {
+      text_ro: string;
+      text_en: string | null;
+      weight: number;
+      categoryId: number;
+    },
+  ) => void;
 }
 
-export default function EditQuestionDialog({ open, question, onOpenChange, onSubmit }: EditQuestionDialogProps) {
+export default function EditQuestionDialog({
+  open,
+  question,
+  onOpenChange,
+  onSubmit,
+}: EditQuestionDialogProps) {
   const [formData, setFormData] = useState({
-    text_ro: '',
-    text_en: '',
+    text_ro: "",
+    text_en: "",
     weight: 1,
     categoryId: 1,
   });
@@ -45,7 +64,7 @@ export default function EditQuestionDialog({ open, question, onOpenChange, onSub
     if (question) {
       setFormData({
         text_ro: question.text_ro,
-        text_en: question.text_en || '',
+        text_en: question.text_en || "",
         weight: question.weight,
         categoryId: question.categoryId,
       });
@@ -54,13 +73,13 @@ export default function EditQuestionDialog({ open, question, onOpenChange, onSub
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!question || !formData.text_ro.trim()) {
       return;
     }
 
     setIsSubmitting(true);
-    
+
     try {
       await onSubmit(question.id, {
         text_ro: formData.text_ro.trim(),
@@ -79,7 +98,8 @@ export default function EditQuestionDialog({ open, question, onOpenChange, onSub
         <DialogHeader>
           <DialogTitle>Edit Question</DialogTitle>
           <DialogDescription>
-            Update the question details. Make sure to provide accurate information.
+            Update the question details. Make sure to provide accurate
+            information.
           </DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit}>
@@ -90,7 +110,9 @@ export default function EditQuestionDialog({ open, question, onOpenChange, onSub
                 id="text_ro"
                 placeholder="Enter question in Romanian..."
                 value={formData.text_ro}
-                onChange={(e) => setFormData(prev => ({ ...prev, text_ro: e.target.value }))}
+                onChange={(e) =>
+                  setFormData((prev) => ({ ...prev, text_ro: e.target.value }))
+                }
                 required
                 rows={3}
               />
@@ -101,7 +123,9 @@ export default function EditQuestionDialog({ open, question, onOpenChange, onSub
                 id="text_en"
                 placeholder="Enter question in English (optional)..."
                 value={formData.text_en}
-                onChange={(e) => setFormData(prev => ({ ...prev, text_en: e.target.value }))}
+                onChange={(e) =>
+                  setFormData((prev) => ({ ...prev, text_en: e.target.value }))
+                }
                 rows={3}
               />
             </div>
@@ -114,15 +138,25 @@ export default function EditQuestionDialog({ open, question, onOpenChange, onSub
                   min="1"
                   max="10"
                   value={formData.weight}
-                  onChange={(e) => setFormData(prev => ({ ...prev, weight: parseInt(e.target.value) || 1 }))}
+                  onChange={(e) =>
+                    setFormData((prev) => ({
+                      ...prev,
+                      weight: parseInt(e.target.value) || 1,
+                    }))
+                  }
                   required
                 />
               </div>
               <div className="grid gap-2">
                 <Label htmlFor="categoryId">Category ID</Label>
-                <Select 
-                  value={formData.categoryId.toString()} 
-                  onValueChange={(value) => setFormData(prev => ({ ...prev, categoryId: parseInt(value) }))}
+                <Select
+                  value={formData.categoryId.toString()}
+                  onValueChange={(value) =>
+                    setFormData((prev) => ({
+                      ...prev,
+                      categoryId: parseInt(value),
+                    }))
+                  }
                 >
                   <SelectTrigger>
                     <SelectValue placeholder="Select category" />
@@ -137,16 +171,19 @@ export default function EditQuestionDialog({ open, question, onOpenChange, onSub
             </div>
           </div>
           <DialogFooter>
-            <Button 
-              type="button" 
-              variant="outline" 
+            <Button
+              type="button"
+              variant="outline"
               onClick={() => onOpenChange(false)}
               disabled={isSubmitting}
             >
               Cancel
             </Button>
-            <Button type="submit" disabled={isSubmitting || !formData.text_ro.trim()}>
-              {isSubmitting ? 'Updating...' : 'Update Question'}
+            <Button
+              type="submit"
+              disabled={isSubmitting || !formData.text_ro.trim()}
+            >
+              {isSubmitting ? "Updating..." : "Update Question"}
             </Button>
           </DialogFooter>
         </form>

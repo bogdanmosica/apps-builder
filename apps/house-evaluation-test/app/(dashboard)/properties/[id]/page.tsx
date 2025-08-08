@@ -1,8 +1,8 @@
-import { notFound } from 'next/navigation';
-import { db } from '@/lib/db/drizzle';
-import { properties } from '@/lib/db/schema';
-import { eq, and } from 'drizzle-orm';
-import { PropertyDetailClient } from '@/components/property-detail-client';
+import { and, eq } from "drizzle-orm";
+import { notFound } from "next/navigation";
+import { PropertyDetailClient } from "@/components/property-detail-client";
+import { db } from "@/lib/db/drizzle";
+import { properties } from "@/lib/db/schema";
 
 interface PropertyPageProps {
   params: {
@@ -20,7 +20,7 @@ export default async function PropertyPage({ params }: PropertyPageProps) {
   const property = await db
     .select()
     .from(properties)
-    .where(and(eq(properties.id, propertyId), eq(properties.status, 'active')))
+    .where(and(eq(properties.id, propertyId), eq(properties.status, "active")))
     .limit(1);
 
   if (property.length === 0) {

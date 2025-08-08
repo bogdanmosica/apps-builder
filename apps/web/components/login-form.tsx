@@ -1,9 +1,9 @@
-'use client';
+"use client";
 
-import { authenticateUser } from '@/actions/authenticate-user';
-import { Suspense } from 'react';
-import { UserAuthForm } from '@workspace/ui/components/forms/user-auth-form';
-import { UserAuthFormFallback } from '@workspace/ui/components/fallbacks/user-auth-form-fallback';
+import { UserAuthFormFallback } from "@workspace/ui/components/fallbacks/user-auth-form-fallback";
+import { UserAuthForm } from "@workspace/ui/components/forms/user-auth-form";
+import { Suspense } from "react";
+import { authenticateUser } from "@/actions/authenticate-user";
 
 export const LoginForm = async () => {
   return (

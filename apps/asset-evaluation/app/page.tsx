@@ -1,8 +1,12 @@
-import { getUser, getUserEvaluations, getUserEvaluationStats } from '@/lib/db/queries';
-import ClientAuthPage from '@/components/client-auth-page';
+import ClientAuthPage from "@/components/client-auth-page";
+import {
+  getUser,
+  getUserEvaluationStats,
+  getUserEvaluations,
+} from "@/lib/db/queries";
 
 // Force dynamic rendering for pages that check user authentication
-export const dynamic = 'force-dynamic';
+export const dynamic = "force-dynamic";
 
 export default async function RootPage() {
   let user = null;
@@ -20,14 +24,14 @@ export default async function RootPage() {
     user = await getUser();
     isLoggedIn = !!user;
     userRole = user?.role || null;
-    
+
     // If user is logged in, fetch their evaluations
     if (isLoggedIn) {
       const [userEvaluations, userStats] = await Promise.all([
         getUserEvaluations(),
         getUserEvaluationStats(),
       ]);
-      
+
       evaluations = userEvaluations || [];
       stats = userStats || {
         totalEvaluations: 0,
@@ -38,7 +42,10 @@ export default async function RootPage() {
     }
   } catch (error) {
     // Handle database connection errors gracefully
-    console.error('Database connection error, showing landing page for non-authenticated users:', error);
+    console.error(
+      "Database connection error, showing landing page for non-authenticated users:",
+      error,
+    );
     isLoggedIn = false;
     userRole = null;
     evaluations = [];

@@ -1,6 +1,6 @@
 "use server";
 
-import { SignInOptions } from "next-auth/react";
+import type { SignInOptions } from "next-auth/react";
 
 import { signIn } from "@/auth";
 

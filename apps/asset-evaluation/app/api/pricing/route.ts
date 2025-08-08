@@ -1,7 +1,7 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { db } from '@/lib/db/drizzle';
-import { pricingPlans } from '@/lib/db/schema';
-import { eq, asc } from 'drizzle-orm';
+import { asc, eq } from "drizzle-orm";
+import { type NextRequest, NextResponse } from "next/server";
+import { db } from "@/lib/db/drizzle";
+import { pricingPlans } from "@/lib/db/schema";
 
 // Define the pricing plan type
 type PricingPlan = {
@@ -27,7 +27,7 @@ export async function GET() {
     const plans = await db
       .select()
       .from(pricingPlans)
-      .where(eq(pricingPlans.isActive, 'true'))
+      .where(eq(pricingPlans.isActive, "true"))
       .orderBy(asc(pricingPlans.sortOrder), asc(pricingPlans.price));
 
     // Parse features JSON for each plan
@@ -35,15 +35,15 @@ export async function GET() {
       ...plan,
       features: JSON.parse(plan.features),
       price: plan.price / 100, // Convert cents to dollars
-      isPopular: plan.isPopular === 'true'
+      isPopular: plan.isPopular === "true",
     }));
 
     return NextResponse.json(formattedPlans);
   } catch (error) {
-    console.error('Error fetching pricing plans:', error);
+    console.error("Error fetching pricing plans:", error);
     return NextResponse.json(
-      { error: 'Failed to fetch pricing plans' },
-      { status: 500 }
+      { error: "Failed to fetch pricing plans" },
+      { status: 500 },
     );
   }
 }
@@ -56,20 +56,20 @@ export async function POST(request: NextRequest) {
       name,
       description,
       price,
-      currency = 'usd',
-      billingPeriod = 'monthly',
+      currency = "usd",
+      billingPeriod = "monthly",
       features,
       isPopular = false,
       stripePriceId,
       stripeProductId,
-      sortOrder = 0
+      sortOrder = 0,
     } = body;
 
     // Validate required fields
     if (!name || !description || price === undefined || !features) {
       return NextResponse.json(
-        { error: 'Missing required fields' },
-        { status: 400 }
+        { error: "Missing required fields" },
+        { status: 400 },
       );
     }
 
@@ -85,10 +85,10 @@ export async function POST(request: NextRequest) {
         currency,
         billingPeriod,
         features: featuresJson,
-        isPopular: isPopular ? 'true' : 'false',
+        isPopular: isPopular ? "true" : "false",
         stripePriceId,
         stripeProductId,
-        sortOrder
+        sortOrder,
       })
       .returning();
 
@@ -96,15 +96,15 @@ export async function POST(request: NextRequest) {
       ...newPlan[0],
       features: JSON.parse(newPlan[0].features),
       price: newPlan[0].price / 100,
-      isPopular: newPlan[0].isPopular === 'true'
+      isPopular: newPlan[0].isPopular === "true",
     };
 
     return NextResponse.json(formattedPlan, { status: 201 });
   } catch (error) {
-    console.error('Error creating pricing plan:', error);
+    console.error("Error creating pricing plan:", error);
     return NextResponse.json(
-      { error: 'Failed to create pricing plan' },
-      { status: 500 }
+      { error: "Failed to create pricing plan" },
+      { status: 500 },
     );
   }
 }

@@ -1,16 +1,11 @@
-import { providers } from './providers';
-import { TGetAuthConfig } from './index';
-import { PrismaAdapter } from '@auth/prisma-adapter';
-import type { NextAuthConfig } from 'next-auth';
+import type { NextAuthConfig } from "next-auth";
+import type { TGetAuthConfig } from "./index";
+import { providers } from "./providers";
 
-export const initAuthConfig = ({ productName, config, db }: TGetAuthConfig) =>
+export const initAuthConfig = ({ productName, config }: TGetAuthConfig) =>
   ({
-    // huh any! I know.
-    // This is a temporary fix for prisma client.
-    // @see https://github.com/prisma/prisma/issues/16117
-    adapter: PrismaAdapter(db as any),
     session: {
-      strategy: 'jwt',
+      strategy: "jwt",
     },
     // pages: {
     //   signIn: '/login',
@@ -29,27 +24,20 @@ export const initAuthConfig = ({ productName, config, db }: TGetAuthConfig) =>
       },
       async jwt({ token, user }: any) {
         // console.log({ user, token });
-        const dbUser = await db.user.findFirst({
-          where: {
-            email: token.email,
-          },
-        });
-
-        if (!dbUser) {
-          if (user) {
-            token.id = user?.id;
+        if (!user) {
+          if (token) {
+            return token;
           }
-          return token;
         }
-        
+
         return {
-          id: dbUser.id,
-          name: dbUser.name,
-          email: dbUser.email,
-          picture: dbUser.image,
+          id: user?.id || token?.id,
+          name: user?.name || token?.name,
+          email: user?.email || token?.email,
+          picture: user?.image || token?.picture,
         };
       },
     },
-    debug: process.env.NODE_ENV === 'development',
+    debug: process.env.NODE_ENV === "development",
     ...config,
-  } as NextAuthConfig);
+  }) as NextAuthConfig;

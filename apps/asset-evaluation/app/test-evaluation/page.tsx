@@ -1,15 +1,13 @@
-import Link from 'next/link';
-import { Button } from '@workspace/ui/components/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@workspace/ui/components/card';
-import { Badge } from '@workspace/ui/components/badge';
+import { Badge } from "@workspace/ui/components/badge";
+import { Button } from "@workspace/ui/components/button";
 import {
-  Home,
-  Play,
-  Eye,
-  Star,
-  Trophy,
-  CheckCircle2,
-} from 'lucide-react';
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "@workspace/ui/components/card";
+import { CheckCircle2, Eye, Home, Play, Star, Trophy } from "lucide-react";
+import Link from "next/link";
 
 export default function EvaluationTestPage() {
   return (
@@ -24,7 +22,8 @@ export default function EvaluationTestPage() {
             Property Evaluation System
           </h1>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            Experience our interactive property evaluation with gamification elements, instant feedback, and comprehensive scoring.
+            Experience our interactive property evaluation with gamification
+            elements, instant feedback, and comprehensive scoring.
           </p>
         </div>
 
@@ -35,9 +34,12 @@ export default function EvaluationTestPage() {
               <div className="w-12 h-12 bg-green-100 dark:bg-green-900 rounded-full flex items-center justify-center mx-auto">
                 <CheckCircle2 className="w-6 h-6 text-green-600" />
               </div>
-              <h3 className="font-semibold text-foreground">Interactive Questions</h3>
+              <h3 className="font-semibold text-foreground">
+                Interactive Questions
+              </h3>
               <p className="text-sm text-muted-foreground">
-                15 expert-designed questions across 7 categories with instant feedback and scoring
+                15 expert-designed questions across 7 categories with instant
+                feedback and scoring
               </p>
             </CardContent>
           </Card>
@@ -49,7 +51,8 @@ export default function EvaluationTestPage() {
               </div>
               <h3 className="font-semibold text-foreground">Gamification</h3>
               <p className="text-sm text-muted-foreground">
-                Earn points, unlock achievements, and level up from Beginner to Property Master
+                Earn points, unlock achievements, and level up from Beginner to
+                Property Master
               </p>
             </CardContent>
           </Card>
@@ -59,9 +62,12 @@ export default function EvaluationTestPage() {
               <div className="w-12 h-12 bg-yellow-100 dark:bg-yellow-900 rounded-full flex items-center justify-center mx-auto">
                 <Trophy className="w-6 h-6 text-yellow-600" />
               </div>
-              <h3 className="font-semibold text-foreground">Detailed Results</h3>
+              <h3 className="font-semibold text-foreground">
+                Detailed Results
+              </h3>
               <p className="text-sm text-muted-foreground">
-                Comprehensive scoring breakdown with improvement suggestions and downloadable reports
+                Comprehensive scoring breakdown with improvement suggestions and
+                downloadable reports
               </p>
             </CardContent>
           </Card>
@@ -78,7 +84,9 @@ export default function EvaluationTestPage() {
             </CardHeader>
             <CardContent className="space-y-4">
               <p className="text-muted-foreground">
-                Complete the interactive property evaluation with real questions from our database. Experience the full gamified journey with instant feedback and detailed results.
+                Complete the interactive property evaluation with real questions
+                from our database. Experience the full gamified journey with
+                instant feedback and detailed results.
               </p>
               <div className="flex flex-wrap gap-2">
                 <Badge variant="secondary">15 Questions</Badge>
@@ -104,7 +112,9 @@ export default function EvaluationTestPage() {
             </CardHeader>
             <CardContent className="space-y-4">
               <p className="text-muted-foreground">
-                Explore a pre-populated demo showing how the evaluation results look. Perfect for understanding the output format and scoring system.
+                Explore a pre-populated demo showing how the evaluation results
+                look. Perfect for understanding the output format and scoring
+                system.
               </p>
               <div className="flex flex-wrap gap-2">
                 <Badge variant="outline">Pre-filled Data</Badge>
@@ -125,10 +135,14 @@ export default function EvaluationTestPage() {
         {/* Technical Info */}
         <Card className="shadow-lg bg-muted/20">
           <CardContent className="p-6">
-            <h3 className="font-semibold text-foreground mb-4">🛠️ Technical Implementation</h3>
+            <h3 className="font-semibold text-foreground mb-4">
+              🛠️ Technical Implementation
+            </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
               <div>
-                <h4 className="font-medium text-foreground mb-2">Frontend Features</h4>
+                <h4 className="font-medium text-foreground mb-2">
+                  Frontend Features
+                </h4>
                 <ul className="space-y-1 text-muted-foreground">
                   <li>• shadcn/ui components with Tailwind CSS</li>
                   <li>• CSS animations and transitions</li>
@@ -138,7 +152,9 @@ export default function EvaluationTestPage() {
                 </ul>
               </div>
               <div>
-                <h4 className="font-medium text-foreground mb-2">Backend & Data</h4>
+                <h4 className="font-medium text-foreground mb-2">
+                  Backend & Data
+                </h4>
                 <ul className="space-y-1 text-muted-foreground">
                   <li>• Drizzle ORM with PostgreSQL</li>
                   <li>• Seeded with Romanian property questions</li>

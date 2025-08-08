@@ -1,13 +1,13 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { z } from 'zod';
-import { db } from '@/lib/db/drizzle';
-import { users } from '@/lib/db/schema';
-import { comparePasswords, setSession } from '@/lib/auth/session';
-import { eq } from 'drizzle-orm';
+import { eq } from "drizzle-orm";
+import { type NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
+import { comparePasswords, setSession } from "@/lib/auth/session";
+import { db } from "@/lib/db/drizzle";
+import { users } from "@/lib/db/schema";
 
 const signInSchema = z.object({
-  email: z.string().email('Invalid email address'),
-  password: z.string().min(1, 'Password is required'),
+  email: z.string().email("Invalid email address"),
+  password: z.string().min(1, "Password is required"),
 });
 
 export async function POST(request: NextRequest) {
@@ -24,17 +24,20 @@ export async function POST(request: NextRequest) {
 
     if (!user) {
       return NextResponse.json(
-        { error: 'Invalid email or password' },
-        { status: 401 }
+        { error: "Invalid email or password" },
+        { status: 401 },
       );
     }
 
     // Verify password
-    const isValidPassword = await comparePasswords(password, user.passwordHash!);
+    const isValidPassword = await comparePasswords(
+      password,
+      user.passwordHash!,
+    );
     if (!isValidPassword) {
       return NextResponse.json(
-        { error: 'Invalid email or password' },
-        { status: 401 }
+        { error: "Invalid email or password" },
+        { status: 401 },
       );
     }
 
@@ -42,7 +45,7 @@ export async function POST(request: NextRequest) {
     await setSession(user);
 
     return NextResponse.json({
-      message: 'Sign in successful',
+      message: "Sign in successful",
       user: {
         id: user.id,
         email: user.email,
@@ -53,15 +56,15 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(
-        { error: 'Invalid input', details: error.errors },
-        { status: 400 }
+        { error: "Invalid input", details: error.errors },
+        { status: 400 },
       );
     }
 
-    console.error('Sign in error:', error);
+    console.error("Sign in error:", error);
     return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
+      { error: "Internal server error" },
+      { status: 500 },
     );
   }
 }

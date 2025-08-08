@@ -1,15 +1,34 @@
-import { notFound } from 'next/navigation';
-import { getUser } from '@/lib/db/queries';
-import { db } from '@/lib/db/drizzle';
-import { evaluationSessions, userEvaluationAnswers, questions, answers, questionCategories } from '@/lib/db/schema';
-import { eq, and } from 'drizzle-orm';
-import { Card, CardContent, CardHeader, CardTitle } from '@workspace/ui/components/card';
-import { Badge } from '@workspace/ui/components/badge';
-import { Button } from '@workspace/ui/components/button';
-import { Star, ArrowLeft, Home, Building, MapPin, Calendar, BarChart3 } from 'lucide-react';
-import Link from 'next/link';
+import { Badge } from "@workspace/ui/components/badge";
+import { Button } from "@workspace/ui/components/button";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "@workspace/ui/components/card";
+import { and, eq } from "drizzle-orm";
+import {
+  ArrowLeft,
+  BarChart3,
+  Building,
+  Calendar,
+  Home,
+  MapPin,
+  Star,
+} from "lucide-react";
+import Link from "next/link";
+import { notFound } from "next/navigation";
+import { db } from "@/lib/db/drizzle";
+import { getUser } from "@/lib/db/queries";
+import {
+  answers,
+  evaluationSessions,
+  questionCategories,
+  questions,
+  userEvaluationAnswers,
+} from "@/lib/db/schema";
 
-export const dynamic = 'force-dynamic';
+export const dynamic = "force-dynamic";
 
 interface EvaluationDetailsPageProps {
   params: Promise<{
@@ -17,7 +36,9 @@ interface EvaluationDetailsPageProps {
   }>;
 }
 
-export default async function EvaluationDetailsPage({ params }: EvaluationDetailsPageProps) {
+export default async function EvaluationDetailsPage({
+  params,
+}: EvaluationDetailsPageProps) {
   const user = await getUser();
   if (!user) {
     return notFound();
@@ -33,7 +54,7 @@ export default async function EvaluationDetailsPage({ params }: EvaluationDetail
   const evaluation = await db.query.evaluationSessions.findFirst({
     where: and(
       eq(evaluationSessions.id, evaluationId),
-      eq(evaluationSessions.userId, user.id)
+      eq(evaluationSessions.userId, user.id),
     ),
     with: {
       propertyType: true,
@@ -56,11 +77,11 @@ export default async function EvaluationDetailsPage({ params }: EvaluationDetail
 
   const getPropertyIcon = (propertyType: string) => {
     switch (propertyType.toLowerCase()) {
-      case 'house':
-      case 'casa':
+      case "house":
+      case "casa":
         return <Home className="w-6 h-6" />;
-      case 'apartment':
-      case 'apartament':
+      case "apartment":
+      case "apartament":
         return <Building className="w-6 h-6" />;
       default:
         return <MapPin className="w-6 h-6" />;
@@ -73,7 +94,7 @@ export default async function EvaluationDetailsPage({ params }: EvaluationDetail
       <Star
         key={i}
         className={`w-5 h-5 ${
-          i < stars ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300'
+          i < stars ? "fill-yellow-400 text-yellow-400" : "text-gray-300"
         }`}
       />
     ));
@@ -81,26 +102,29 @@ export default async function EvaluationDetailsPage({ params }: EvaluationDetail
 
   const getBadgeColor = (level: string) => {
     switch (level.toLowerCase()) {
-      case 'expert':
-        return 'bg-green-100 text-green-800 border-green-200';
-      case 'good':
-        return 'bg-blue-100 text-blue-800 border-blue-200';
-      case 'novice':
-        return 'bg-orange-100 text-orange-800 border-orange-200';
+      case "expert":
+        return "bg-green-100 text-green-800 border-green-200";
+      case "good":
+        return "bg-blue-100 text-blue-800 border-blue-200";
+      case "novice":
+        return "bg-orange-100 text-orange-800 border-orange-200";
       default:
-        return 'bg-gray-100 text-gray-800 border-gray-200';
+        return "bg-gray-100 text-gray-800 border-gray-200";
     }
   };
 
   // Group answers by category
-  const answersByCategory = evaluation.userAnswers.reduce((acc: Record<string, typeof evaluation.userAnswers>, userAnswer: any) => {
-    const categoryName = userAnswer.question.category.name;
-    if (!acc[categoryName]) {
-      acc[categoryName] = [];
-    }
-    acc[categoryName].push(userAnswer);
-    return acc;
-  }, {} as Record<string, typeof evaluation.userAnswers>);
+  const answersByCategory = evaluation.userAnswers.reduce(
+    (acc: Record<string, typeof evaluation.userAnswers>, userAnswer: any) => {
+      const categoryName = userAnswer.question.category.name;
+      if (!acc[categoryName]) {
+        acc[categoryName] = [];
+      }
+      acc[categoryName].push(userAnswer);
+      return acc;
+    },
+    {} as Record<string, typeof evaluation.userAnswers>,
+  );
 
   return (
     <div className="min-h-screen bg-bg-shell">
@@ -114,7 +138,7 @@ export default async function EvaluationDetailsPage({ params }: EvaluationDetail
                 Back to Overview
               </Button>
             </Link>
-            
+
             <div className="flex items-center gap-3">
               <div className="p-2 bg-bg-base rounded-lg text-primary">
                 {getPropertyIcon(evaluation.propertyType.name)}
@@ -124,7 +148,8 @@ export default async function EvaluationDetailsPage({ params }: EvaluationDetail
                   {evaluation.propertyType.name} Evaluation #{evaluation.id}
                 </h1>
                 <p className="text-text-muted">
-                  Completed on {new Date(evaluation.completedAt).toLocaleDateString()}
+                  Completed on{" "}
+                  {new Date(evaluation.completedAt).toLocaleDateString()}
                 </p>
               </div>
             </div>
@@ -143,21 +168,29 @@ export default async function EvaluationDetailsPage({ params }: EvaluationDetail
               <div className="flex justify-center gap-1 mb-4">
                 {getStarRating(evaluation.percentage)}
               </div>
-              <Badge className={`${getBadgeColor(evaluation.level)} text-lg px-4 py-2 font-semibold`}>
+              <Badge
+                className={`${getBadgeColor(evaluation.level)} text-lg px-4 py-2 font-semibold`}
+              >
                 {evaluation.level} Level
               </Badge>
-              
+
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8 pt-8 border-t">
                 <div className="text-center">
-                  <div className="text-2xl font-bold text-text-base">{evaluation.totalScore}</div>
+                  <div className="text-2xl font-bold text-text-base">
+                    {evaluation.totalScore}
+                  </div>
                   <div className="text-sm text-text-muted">Total Score</div>
                 </div>
                 <div className="text-center">
-                  <div className="text-2xl font-bold text-text-base">{evaluation.maxPossibleScore}</div>
+                  <div className="text-2xl font-bold text-text-base">
+                    {evaluation.maxPossibleScore}
+                  </div>
                   <div className="text-sm text-text-muted">Maximum Score</div>
                 </div>
                 <div className="text-center">
-                  <div className="text-2xl font-bold text-text-base">{evaluation.completionRate}%</div>
+                  <div className="text-2xl font-bold text-text-base">
+                    {evaluation.completionRate}%
+                  </div>
                   <div className="text-sm text-text-muted">Completion Rate</div>
                 </div>
               </div>
@@ -167,35 +200,50 @@ export default async function EvaluationDetailsPage({ params }: EvaluationDetail
 
         {/* Detailed Results by Category */}
         <div className="space-y-6">
-          <h2 className="text-xl font-semibold text-text-base">Detailed Results</h2>
-          
-          {Object.entries(answersByCategory).map(([categoryName, categoryAnswers]) => (
-            <Card key={categoryName}>
-              <CardHeader>
-                <CardTitle className="text-lg">{categoryName}</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  {(categoryAnswers as any[]).map((userAnswer: any) => (
-                    <div key={userAnswer.id} className="border-l-4 border-primary/20 pl-4">
-                      <div className="font-medium text-text-base mb-2">
-                        {userAnswer.question.text}
-                      </div>
-                      <div className="flex items-center justify-between">
-                        <div className="text-text-muted">
-                          Your answer: <span className="font-medium text-text-base">{userAnswer.answer.text}</span>
+          <h2 className="text-xl font-semibold text-text-base">
+            Detailed Results
+          </h2>
+
+          {Object.entries(answersByCategory).map(
+            ([categoryName, categoryAnswers]) => (
+              <Card key={categoryName}>
+                <CardHeader>
+                  <CardTitle className="text-lg">{categoryName}</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-4">
+                    {(categoryAnswers as any[]).map((userAnswer: any) => (
+                      <div
+                        key={userAnswer.id}
+                        className="border-l-4 border-primary/20 pl-4"
+                      >
+                        <div className="font-medium text-text-base mb-2">
+                          {userAnswer.question.text}
                         </div>
-                        <div className="text-sm">
-                          <span className="font-medium text-primary">{userAnswer.pointsEarned}</span>
-                          <span className="text-text-muted"> / {userAnswer.questionWeight * 5} points</span>
+                        <div className="flex items-center justify-between">
+                          <div className="text-text-muted">
+                            Your answer:{" "}
+                            <span className="font-medium text-text-base">
+                              {userAnswer.answer.text}
+                            </span>
+                          </div>
+                          <div className="text-sm">
+                            <span className="font-medium text-primary">
+                              {userAnswer.pointsEarned}
+                            </span>
+                            <span className="text-text-muted">
+                              {" "}
+                              / {userAnswer.questionWeight * 5} points
+                            </span>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-          ))}
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            ),
+          )}
         </div>
 
         {/* Actions */}

@@ -1,19 +1,19 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { getUser } from '@/lib/db/queries';
-import { db } from '@/lib/db/drizzle';
-import { answers } from '@/lib/db/schema';
-import { eq } from 'drizzle-orm';
-import { z } from 'zod';
+import { eq } from "drizzle-orm";
+import { type NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
+import { db } from "@/lib/db/drizzle";
+import { getUser } from "@/lib/db/queries";
+import { answers } from "@/lib/db/schema";
 
 const createAnswerSchema = z.object({
-  text_ro: z.string().min(1, 'Romanian text is required'),
+  text_ro: z.string().min(1, "Romanian text is required"),
   text_en: z.string().nullable(),
   weight: z.number().int().min(1).max(10),
-  questionId: z.number().int().positive('Question ID is required'),
+  questionId: z.number().int().positive("Question ID is required"),
 });
 
 const updateAnswerSchema = z.object({
-  text_ro: z.string().min(1, 'Romanian text is required'),
+  text_ro: z.string().min(1, "Romanian text is required"),
   text_en: z.string().nullable(),
   weight: z.number().int().min(1).max(10),
 });
@@ -22,11 +22,11 @@ const updateAnswerSchema = z.object({
 export async function GET() {
   try {
     const user = await getUser();
-    
-    if (!user || !['admin', 'owner'].includes(user.role)) {
+
+    if (!user || !["admin", "owner"].includes(user.role)) {
       return NextResponse.json(
-        { success: false, error: 'Unauthorized' },
-        { status: 403 }
+        { success: false, error: "Unauthorized" },
+        { status: 403 },
       );
     }
 
@@ -37,10 +37,10 @@ export async function GET() {
       data: allAnswers,
     });
   } catch (error) {
-    console.error('Error fetching answers:', error);
+    console.error("Error fetching answers:", error);
     return NextResponse.json(
-      { success: false, error: 'Internal server error' },
-      { status: 500 }
+      { success: false, error: "Internal server error" },
+      { status: 500 },
     );
   }
 }
@@ -49,11 +49,11 @@ export async function GET() {
 export async function POST(request: NextRequest) {
   try {
     const user = await getUser();
-    
-    if (!user || !['admin', 'owner'].includes(user.role)) {
+
+    if (!user || !["admin", "owner"].includes(user.role)) {
       return NextResponse.json(
-        { success: false, error: 'Unauthorized' },
-        { status: 403 }
+        { success: false, error: "Unauthorized" },
+        { status: 403 },
       );
     }
 
@@ -62,8 +62,12 @@ export async function POST(request: NextRequest) {
 
     if (!validation.success) {
       return NextResponse.json(
-        { success: false, error: 'Invalid input', details: validation.error.issues },
-        { status: 400 }
+        {
+          success: false,
+          error: "Invalid input",
+          details: validation.error.issues,
+        },
+        { status: 400 },
       );
     }
 
@@ -86,10 +90,10 @@ export async function POST(request: NextRequest) {
       data: newAnswer,
     });
   } catch (error) {
-    console.error('Error creating answer:', error);
+    console.error("Error creating answer:", error);
     return NextResponse.json(
-      { success: false, error: 'Internal server error' },
-      { status: 500 }
+      { success: false, error: "Internal server error" },
+      { status: 500 },
     );
   }
 }

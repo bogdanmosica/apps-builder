@@ -1,6 +1,5 @@
 {
   "dependencies": {
-    "@workspace/eslint-config": "workspace:*",
     "@workspace/typescript-config": "workspace:*"
   },
   "exports": {
@@ -11,7 +10,6 @@
   "scripts": {
     "build": "echo 'Add build script here'",
     "dev": "echo 'Add dev script here'",
-    "lint": "echo 'Add lint script here'",
     "test": "echo 'Add test script here'"
   },
   "version": "0.0.0"

@@ -1,12 +1,12 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { getUser } from '@/lib/db/queries';
-import { db } from '@/lib/db/drizzle';
-import { answers, userEvaluationAnswers } from '@/lib/db/schema';
-import { eq } from 'drizzle-orm';
-import { z } from 'zod';
+import { eq } from "drizzle-orm";
+import { type NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
+import { db } from "@/lib/db/drizzle";
+import { getUser } from "@/lib/db/queries";
+import { answers, userEvaluationAnswers } from "@/lib/db/schema";
 
 const updateAnswerSchema = z.object({
-  text_ro: z.string().min(1, 'Romanian text is required'),
+  text_ro: z.string().min(1, "Romanian text is required"),
   text_en: z.string().nullable(),
   weight: z.number().int().min(1).max(10),
 });
@@ -14,15 +14,15 @@ const updateAnswerSchema = z.object({
 // PATCH /api/admin/answers/[id]
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     const user = await getUser();
-    
-    if (!user || !['admin', 'owner'].includes(user.role)) {
+
+    if (!user || !["admin", "owner"].includes(user.role)) {
       return NextResponse.json(
-        { success: false, error: 'Unauthorized' },
-        { status: 403 }
+        { success: false, error: "Unauthorized" },
+        { status: 403 },
       );
     }
 
@@ -30,8 +30,8 @@ export async function PATCH(
     const id = parseInt(idParam);
     if (isNaN(id)) {
       return NextResponse.json(
-        { success: false, error: 'Invalid answer ID' },
-        { status: 400 }
+        { success: false, error: "Invalid answer ID" },
+        { status: 400 },
       );
     }
 
@@ -40,8 +40,12 @@ export async function PATCH(
 
     if (!validation.success) {
       return NextResponse.json(
-        { success: false, error: 'Invalid input', details: validation.error.issues },
-        { status: 400 }
+        {
+          success: false,
+          error: "Invalid input",
+          details: validation.error.issues,
+        },
+        { status: 400 },
       );
     }
 
@@ -54,8 +58,8 @@ export async function PATCH(
 
     if (!existing) {
       return NextResponse.json(
-        { success: false, error: 'Answer not found' },
-        { status: 404 }
+        { success: false, error: "Answer not found" },
+        { status: 404 },
       );
     }
 
@@ -75,10 +79,10 @@ export async function PATCH(
       data: updatedAnswer,
     });
   } catch (error) {
-    console.error('Error updating answer:', error);
+    console.error("Error updating answer:", error);
     return NextResponse.json(
-      { success: false, error: 'Internal server error' },
-      { status: 500 }
+      { success: false, error: "Internal server error" },
+      { status: 500 },
     );
   }
 }
@@ -86,15 +90,15 @@ export async function PATCH(
 // DELETE /api/admin/answers/[id]
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     const user = await getUser();
-    
-    if (!user || !['admin', 'owner'].includes(user.role)) {
+
+    if (!user || !["admin", "owner"].includes(user.role)) {
       return NextResponse.json(
-        { success: false, error: 'Unauthorized' },
-        { status: 403 }
+        { success: false, error: "Unauthorized" },
+        { status: 403 },
       );
     }
 
@@ -102,8 +106,8 @@ export async function DELETE(
     const id = parseInt(idParam);
     if (isNaN(id)) {
       return NextResponse.json(
-        { success: false, error: 'Invalid answer ID' },
-        { status: 400 }
+        { success: false, error: "Invalid answer ID" },
+        { status: 400 },
       );
     }
 
@@ -114,8 +118,8 @@ export async function DELETE(
 
     if (!existing) {
       return NextResponse.json(
-        { success: false, error: 'Answer not found' },
-        { status: 404 }
+        { success: false, error: "Answer not found" },
+        { status: 404 },
       );
     }
 
@@ -126,26 +130,31 @@ export async function DELETE(
 
     if (questionAnswers.length <= 2) {
       return NextResponse.json(
-        { success: false, error: 'Cannot delete answer. Questions must have at least 2 answers.' },
-        { status: 409 }
+        {
+          success: false,
+          error:
+            "Cannot delete answer. Questions must have at least 2 answers.",
+        },
+        { status: 409 },
       );
     }
 
     // Delete any user evaluation answers that reference this answer first
-    await db.delete(userEvaluationAnswers)
+    await db
+      .delete(userEvaluationAnswers)
       .where(eq(userEvaluationAnswers.answerId, id));
 
     await db.delete(answers).where(eq(answers.id, id));
 
     return NextResponse.json({
       success: true,
-      message: 'Answer deleted successfully',
+      message: "Answer deleted successfully",
     });
   } catch (error) {
-    console.error('Error deleting answer:', error);
+    console.error("Error deleting answer:", error);
     return NextResponse.json(
-      { success: false, error: 'Internal server error' },
-      { status: 500 }
+      { success: false, error: "Internal server error" },
+      { status: 500 },
     );
   }
 }

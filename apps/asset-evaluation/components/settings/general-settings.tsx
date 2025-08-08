@@ -1,28 +1,31 @@
-'use client';
+"use client";
 
-import { useState, useTransition } from 'react';
-import { Badge } from '@workspace/ui/components/badge';
-import { Button } from '@workspace/ui/components/button';
+import { Badge } from "@workspace/ui/components/badge";
+import { Button } from "@workspace/ui/components/button";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from '@workspace/ui/components/card';
-import { Input } from '@workspace/ui/components/input';
-import { Label } from '@workspace/ui/components/label';
-import { Textarea } from '@workspace/ui/components/textarea';
+} from "@workspace/ui/components/card";
+import { Input } from "@workspace/ui/components/input";
+import { Label } from "@workspace/ui/components/label";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@workspace/ui/components/select';
-import { User, Save, Loader2, CheckCircle, AlertCircle } from 'lucide-react';
-import { updateProfileAction, updateCompanyAction } from '@/lib/actions/user-settings';
-import { toast } from 'sonner';
+} from "@workspace/ui/components/select";
+import { Textarea } from "@workspace/ui/components/textarea";
+import { AlertCircle, CheckCircle, Loader2, Save, User } from "lucide-react";
+import { useState, useTransition } from "react";
+import { toast } from "sonner";
+import {
+  updateCompanyAction,
+  updateProfileAction,
+} from "@/lib/actions/user-settings";
 
 interface UserData {
   user: {
@@ -50,34 +53,34 @@ interface GeneralSettingsProps {
 }
 
 const TIMEZONES = [
-  { value: 'UTC', label: 'UTC (Coordinated Universal Time)' },
-  { value: 'America/New_York', label: 'Eastern Time (ET)' },
-  { value: 'America/Chicago', label: 'Central Time (CT)' },
-  { value: 'America/Denver', label: 'Mountain Time (MT)' },
-  { value: 'America/Los_Angeles', label: 'Pacific Time (PT)' },
-  { value: 'Europe/London', label: 'London (GMT/BST)' },
-  { value: 'Europe/Paris', label: 'Paris (CET/CEST)' },
-  { value: 'Europe/Berlin', label: 'Berlin (CET/CEST)' },
-  { value: 'Asia/Tokyo', label: 'Tokyo (JST)' },
-  { value: 'Asia/Shanghai', label: 'Shanghai (CST)' },
-  { value: 'Australia/Sydney', label: 'Sydney (AEST/AEDT)' },
+  { value: "UTC", label: "UTC (Coordinated Universal Time)" },
+  { value: "America/New_York", label: "Eastern Time (ET)" },
+  { value: "America/Chicago", label: "Central Time (CT)" },
+  { value: "America/Denver", label: "Mountain Time (MT)" },
+  { value: "America/Los_Angeles", label: "Pacific Time (PT)" },
+  { value: "Europe/London", label: "London (GMT/BST)" },
+  { value: "Europe/Paris", label: "Paris (CET/CEST)" },
+  { value: "Europe/Berlin", label: "Berlin (CET/CEST)" },
+  { value: "Asia/Tokyo", label: "Tokyo (JST)" },
+  { value: "Asia/Shanghai", label: "Shanghai (CST)" },
+  { value: "Australia/Sydney", label: "Sydney (AEST/AEDT)" },
 ];
 
 const LANGUAGES = [
-  { value: 'en', label: 'English' },
-  { value: 'es', label: 'Spanish' },
-  { value: 'fr', label: 'French' },
-  { value: 'de', label: 'German' },
-  { value: 'it', label: 'Italian' },
-  { value: 'pt', label: 'Portuguese' },
-  { value: 'zh', label: 'Chinese' },
-  { value: 'ja', label: 'Japanese' },
+  { value: "en", label: "English" },
+  { value: "es", label: "Spanish" },
+  { value: "fr", label: "French" },
+  { value: "de", label: "German" },
+  { value: "it", label: "Italian" },
+  { value: "pt", label: "Portuguese" },
+  { value: "zh", label: "Chinese" },
+  { value: "ja", label: "Japanese" },
 ];
 
 export default function GeneralSettings({ userData }: GeneralSettingsProps) {
   const [isPendingProfile, startTransitionProfile] = useTransition();
   const [isPendingCompany, startTransitionCompany] = useTransition();
-  
+
   if (!userData) {
     return (
       <Card>
@@ -92,9 +95,10 @@ export default function GeneralSettings({ userData }: GeneralSettingsProps) {
   }
 
   // Parse name into first and last name
-  const nameParts = userData.user.name?.split(' ') || [];
-  const firstName = userData.profile?.firstName || nameParts[0] || '';
-  const lastName = userData.profile?.lastName || nameParts.slice(1).join(' ') || '';
+  const nameParts = userData.user.name?.split(" ") || [];
+  const firstName = userData.profile?.firstName || nameParts[0] || "";
+  const lastName =
+    userData.profile?.lastName || nameParts.slice(1).join(" ") || "";
 
   const handleProfileSubmit = async (formData: FormData) => {
     startTransitionProfile(async () => {
@@ -155,7 +159,7 @@ export default function GeneralSettings({ userData }: GeneralSettingsProps) {
                 />
               </div>
             </div>
-            
+
             <div className="space-y-2">
               <Label htmlFor="email">Email</Label>
               <Input
@@ -167,34 +171,37 @@ export default function GeneralSettings({ userData }: GeneralSettingsProps) {
                 required
               />
             </div>
-            
+
             <div className="space-y-2">
               <Label htmlFor="phone">Phone Number</Label>
               <Input
                 id="phone"
                 name="phone"
                 type="tel"
-                defaultValue={userData.profile?.phone || ''}
+                defaultValue={userData.profile?.phone || ""}
                 placeholder="+1 (555) 123-4567"
               />
             </div>
-            
+
             <div className="space-y-2">
               <Label htmlFor="bio">Bio</Label>
               <Textarea
                 id="bio"
                 name="bio"
-                defaultValue={userData.profile?.bio || ''}
+                defaultValue={userData.profile?.bio || ""}
                 placeholder="Tell us about yourself..."
                 className="min-h-[100px]"
                 maxLength={500}
               />
             </div>
-            
+
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="timezone">Timezone</Label>
-                <Select name="timezone" defaultValue={userData.profile?.timezone || 'UTC'}>
+                <Select
+                  name="timezone"
+                  defaultValue={userData.profile?.timezone || "UTC"}
+                >
                   <SelectTrigger>
                     <SelectValue placeholder="Select timezone" />
                   </SelectTrigger>
@@ -207,10 +214,13 @@ export default function GeneralSettings({ userData }: GeneralSettingsProps) {
                   </SelectContent>
                 </Select>
               </div>
-              
+
               <div className="space-y-2">
                 <Label htmlFor="language">Language</Label>
-                <Select name="language" defaultValue={userData.profile?.language || 'en'}>
+                <Select
+                  name="language"
+                  defaultValue={userData.profile?.language || "en"}
+                >
                   <SelectTrigger>
                     <SelectValue placeholder="Select language" />
                   </SelectTrigger>
@@ -224,7 +234,7 @@ export default function GeneralSettings({ userData }: GeneralSettingsProps) {
                 </Select>
               </div>
             </div>
-            
+
             <div className="flex items-center gap-2 pt-4">
               <Button type="submit" disabled={isPendingProfile}>
                 {isPendingProfile ? (
@@ -241,7 +251,8 @@ export default function GeneralSettings({ userData }: GeneralSettingsProps) {
               </Button>
               <div className="flex items-center gap-2">
                 <Badge variant="outline" className="text-xs">
-                  {userData.user.role.charAt(0).toUpperCase() + userData.user.role.slice(1)}
+                  {userData.user.role.charAt(0).toUpperCase() +
+                    userData.user.role.slice(1)}
                 </Badge>
               </div>
             </div>
@@ -264,32 +275,32 @@ export default function GeneralSettings({ userData }: GeneralSettingsProps) {
               <Input
                 id="companyName"
                 name="companyName"
-                defaultValue={userData.profile?.companyName || ''}
+                defaultValue={userData.profile?.companyName || ""}
                 placeholder="Acme Inc."
               />
             </div>
-            
+
             <div className="space-y-2">
               <Label htmlFor="companyWebsite">Website</Label>
               <Input
                 id="companyWebsite"
                 name="companyWebsite"
                 type="url"
-                defaultValue={userData.profile?.companyWebsite || ''}
+                defaultValue={userData.profile?.companyWebsite || ""}
                 placeholder="https://acme.com"
               />
             </div>
-            
+
             <div className="space-y-2">
               <Label htmlFor="jobTitle">Job Title</Label>
               <Input
                 id="jobTitle"
                 name="jobTitle"
-                defaultValue={userData.profile?.jobTitle || ''}
+                defaultValue={userData.profile?.jobTitle || ""}
                 placeholder="Software Engineer"
               />
             </div>
-            
+
             <Button type="submit" disabled={isPendingCompany}>
               {isPendingCompany ? (
                 <>
@@ -297,7 +308,7 @@ export default function GeneralSettings({ userData }: GeneralSettingsProps) {
                   Updating...
                 </>
               ) : (
-                'Update Company'
+                "Update Company"
               )}
             </Button>
           </form>

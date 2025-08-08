@@ -1,36 +1,45 @@
-'use server';
+"use server";
 
-import { revalidatePath } from 'next/cache';
-import { redirect } from 'next/navigation';
-import { z } from 'zod';
-import { eq, and, desc } from 'drizzle-orm';
-import { db } from '@/lib/db/drizzle';
-import { getUser } from '@/lib/db/queries';
-import { 
-  users,
-  userSecuritySettings,
-  userLoginSessions,
+import CryptoJS from "crypto-js";
+import { and, desc, eq } from "drizzle-orm";
+import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
+import QRCode from "qrcode";
+import speakeasy from "speakeasy";
+import { z } from "zod";
+import { comparePasswords, hashPassword } from "@/lib/auth/session";
+import { db } from "@/lib/db/drizzle";
+import { getUser } from "@/lib/db/queries";
+import {
+  activityLogs,
   securityEvents,
-  activityLogs
-} from '@/lib/db/schema';
-import { hashPassword, comparePasswords } from '@/lib/auth/session';
-import speakeasy from 'speakeasy';
-import QRCode from 'qrcode';
-import CryptoJS from 'crypto-js';
+  userLoginSessions,
+  userSecuritySettings,
+  users,
+} from "@/lib/db/schema";
 
 // Password change schema
-const passwordChangeSchema = z.object({
-  currentPassword: z.string().min(1, 'Current password is required'),
-  newPassword: z.string()
-    .min(8, 'Password must be at least 8 characters long')
-    .regex(/^(?=.*[a-z])/, 'Password must contain at least one lowercase letter')
-    .regex(/^(?=.*[A-Z])/, 'Password must contain at least one uppercase letter')
-    .regex(/^(?=.*\d)/, 'Password must contain at least one number'),
-  confirmPassword: z.string(),
-}).refine((data) => data.newPassword === data.confirmPassword, {
-  message: "New password and confirmation password don't match",
-  path: ["confirmPassword"],
-});
+const passwordChangeSchema = z
+  .object({
+    currentPassword: z.string().min(1, "Current password is required"),
+    newPassword: z
+      .string()
+      .min(8, "Password must be at least 8 characters long")
+      .regex(
+        /^(?=.*[a-z])/,
+        "Password must contain at least one lowercase letter",
+      )
+      .regex(
+        /^(?=.*[A-Z])/,
+        "Password must contain at least one uppercase letter",
+      )
+      .regex(/^(?=.*\d)/, "Password must contain at least one number"),
+    confirmPassword: z.string(),
+  })
+  .refine((data) => data.newPassword === data.confirmPassword, {
+    message: "New password and confirmation password don't match",
+    path: ["confirmPassword"],
+  });
 
 // Security settings schema
 const securitySettingsSchema = z.object({
@@ -39,7 +48,8 @@ const securitySettingsSchema = z.object({
   sessionTimeout: z.number().min(1).max(168), // 1 hour to 1 week
 });
 
-const ENCRYPTION_KEY = process.env.ENCRYPTION_KEY || 'your-secret-encryption-key-change-this';
+const ENCRYPTION_KEY =
+  process.env.ENCRYPTION_KEY || "your-secret-encryption-key-change-this";
 
 function encryptData(data: string): string {
   return CryptoJS.AES.encrypt(data, ENCRYPTION_KEY).toString();
@@ -66,7 +76,7 @@ export async function getSecurityData() {
     const activeSessions = await db.query.userLoginSessions.findMany({
       where: and(
         eq(userLoginSessions.userId, user.id),
-        eq(userLoginSessions.isActive, true)
+        eq(userLoginSessions.isActive, true),
       ),
       orderBy: [desc(userLoginSessions.lastActivity)],
       limit: 10,
@@ -96,7 +106,7 @@ export async function getSecurityData() {
       recentEvents,
     };
   } catch (error) {
-    console.error('Error fetching security data:', error);
+    console.error("Error fetching security data:", error);
     return null;
   }
 }
@@ -105,13 +115,13 @@ export async function changePassword(formData: FormData) {
   try {
     const user = await getUser();
     if (!user) {
-      redirect('/login');
+      redirect("/login");
     }
 
     const passwordData = {
-      currentPassword: formData.get('currentPassword') as string,
-      newPassword: formData.get('newPassword') as string,
-      confirmPassword: formData.get('confirmPassword') as string,
+      currentPassword: formData.get("currentPassword") as string,
+      newPassword: formData.get("newPassword") as string,
+      confirmPassword: formData.get("confirmPassword") as string,
     };
 
     // Validate input data
@@ -121,22 +131,22 @@ export async function changePassword(formData: FormData) {
     } catch (error) {
       if (error instanceof z.ZodError) {
         const firstError = error.issues[0];
-        return { 
-          success: false, 
-          message: firstError.message 
+        return {
+          success: false,
+          message: firstError.message,
         };
       }
-      return { success: false, message: 'Invalid input data' };
+      return { success: false, message: "Invalid input data" };
     }
 
     // Verify current password
     const isCurrentPasswordValid = await comparePasswords(
       validatedData.currentPassword,
-      user.passwordHash
+      user.passwordHash,
     );
 
     if (!isCurrentPasswordValid) {
-      return { success: false, message: 'Current password is incorrect' };
+      return { success: false, message: "Current password is incorrect" };
     }
 
     // Hash new password
@@ -169,23 +179,23 @@ export async function changePassword(formData: FormData) {
     // Log security event
     await db.insert(securityEvents).values({
       userId: user.id,
-      eventType: 'password_change',
-      eventDetails: { source: 'settings' },
-      riskLevel: 'low',
+      eventType: "password_change",
+      eventDetails: { source: "settings" },
+      riskLevel: "low",
     });
 
     // Log activity
     await db.insert(activityLogs).values({
       teamId: 1, // Default team - you might want to get actual team
       userId: user.id,
-      action: 'UPDATE_PASSWORD',
+      action: "UPDATE_PASSWORD",
     });
 
-    revalidatePath('/dashboard/settings');
-    return { success: true, message: 'Password changed successfully' };
+    revalidatePath("/dashboard/settings");
+    return { success: true, message: "Password changed successfully" };
   } catch (error) {
-    console.error('Error changing password:', error);
-    return { success: false, message: 'Failed to change password' };
+    console.error("Error changing password:", error);
+    return { success: false, message: "Failed to change password" };
   }
 }
 
@@ -193,13 +203,13 @@ export async function enable2FA() {
   try {
     const user = await getUser();
     if (!user) {
-      redirect('/login');
+      redirect("/login");
     }
 
     // Generate secret
     const secret = speakeasy.generateSecret({
-      name: `${process.env.NEXT_PUBLIC_APP_NAME || 'SaaS App'} (${user.email})`,
-      issuer: process.env.NEXT_PUBLIC_APP_NAME || 'SaaS App',
+      name: `${process.env.NEXT_PUBLIC_APP_NAME || "SaaS App"} (${user.email})`,
+      issuer: process.env.NEXT_PUBLIC_APP_NAME || "SaaS App",
     });
 
     // Generate QR code
@@ -215,8 +225,8 @@ export async function enable2FA() {
       manualEntryKey: secret.base32,
     };
   } catch (error) {
-    console.error('Error enabling 2FA:', error);
-    return { success: false, message: 'Failed to setup 2FA' };
+    console.error("Error enabling 2FA:", error);
+    return { success: false, message: "Failed to setup 2FA" };
   }
 }
 
@@ -224,34 +234,34 @@ export async function verify2FA(formData: FormData) {
   try {
     const user = await getUser();
     if (!user) {
-      redirect('/login');
+      redirect("/login");
     }
 
-    const secret = formData.get('secret') as string;
-    const token = formData.get('token') as string;
+    const secret = formData.get("secret") as string;
+    const token = formData.get("token") as string;
 
     if (!secret || !token) {
-      return { success: false, message: 'Secret and token are required' };
+      return { success: false, message: "Secret and token are required" };
     }
 
     // Verify token
     const verified = speakeasy.totp.verify({
       secret: secret,
-      encoding: 'base32',
+      encoding: "base32",
       token: token,
       window: 1, // Allow 1 step before/after for clock skew
     });
 
     if (!verified) {
-      return { success: false, message: 'Invalid verification code' };
+      return { success: false, message: "Invalid verification code" };
     }
 
     // Generate recovery codes
-    const recoveryCodes = Array.from({ length: 8 }, () => 
-      Math.random().toString(36).substring(2, 10).toUpperCase()
+    const recoveryCodes = Array.from({ length: 8 }, () =>
+      Math.random().toString(36).substring(2, 10).toUpperCase(),
     );
 
-    const recoveryCodesHash = await hashPassword(recoveryCodes.join(','));
+    const recoveryCodesHash = await hashPassword(recoveryCodes.join(","));
     const encryptedSecret = encryptData(secret);
 
     // Save 2FA settings
@@ -276,20 +286,20 @@ export async function verify2FA(formData: FormData) {
     // Log security event
     await db.insert(securityEvents).values({
       userId: user.id,
-      eventType: '2fa_enabled',
-      eventDetails: { method: 'totp' },
-      riskLevel: 'low',
+      eventType: "2fa_enabled",
+      eventDetails: { method: "totp" },
+      riskLevel: "low",
     });
 
-    revalidatePath('/dashboard/settings');
-    return { 
-      success: true, 
-      message: '2FA enabled successfully',
-      recoveryCodes 
+    revalidatePath("/dashboard/settings");
+    return {
+      success: true,
+      message: "2FA enabled successfully",
+      recoveryCodes,
     };
   } catch (error) {
-    console.error('Error verifying 2FA:', error);
-    return { success: false, message: 'Failed to verify 2FA' };
+    console.error("Error verifying 2FA:", error);
+    return { success: false, message: "Failed to verify 2FA" };
   }
 }
 
@@ -297,19 +307,19 @@ export async function disable2FA(formData: FormData) {
   try {
     const user = await getUser();
     if (!user) {
-      redirect('/login');
+      redirect("/login");
     }
 
-    const password = formData.get('password') as string;
+    const password = formData.get("password") as string;
 
     if (!password) {
-      return { success: false, message: 'Password is required to disable 2FA' };
+      return { success: false, message: "Password is required to disable 2FA" };
     }
 
     // Verify password
     const isPasswordValid = await comparePasswords(password, user.passwordHash);
     if (!isPasswordValid) {
-      return { success: false, message: 'Incorrect password' };
+      return { success: false, message: "Incorrect password" };
     }
 
     // Disable 2FA
@@ -326,16 +336,16 @@ export async function disable2FA(formData: FormData) {
     // Log security event
     await db.insert(securityEvents).values({
       userId: user.id,
-      eventType: '2fa_disabled',
-      eventDetails: { method: 'password' },
-      riskLevel: 'medium',
+      eventType: "2fa_disabled",
+      eventDetails: { method: "password" },
+      riskLevel: "medium",
     });
 
-    revalidatePath('/dashboard/settings');
-    return { success: true, message: '2FA disabled successfully' };
+    revalidatePath("/dashboard/settings");
+    return { success: true, message: "2FA disabled successfully" };
   } catch (error) {
-    console.error('Error disabling 2FA:', error);
-    return { success: false, message: 'Failed to disable 2FA' };
+    console.error("Error disabling 2FA:", error);
+    return { success: false, message: "Failed to disable 2FA" };
   }
 }
 
@@ -343,13 +353,13 @@ export async function updateSecuritySettings(formData: FormData) {
   try {
     const user = await getUser();
     if (!user) {
-      redirect('/login');
+      redirect("/login");
     }
 
     const settingsData = {
-      loginNotifications: formData.get('loginNotifications') === 'true',
-      securityAlerts: formData.get('securityAlerts') === 'true',
-      sessionTimeout: parseInt(formData.get('sessionTimeout') as string),
+      loginNotifications: formData.get("loginNotifications") === "true",
+      securityAlerts: formData.get("securityAlerts") === "true",
+      sessionTimeout: parseInt(formData.get("sessionTimeout") as string),
     };
 
     // Validate input data
@@ -359,12 +369,12 @@ export async function updateSecuritySettings(formData: FormData) {
     } catch (error) {
       if (error instanceof z.ZodError) {
         const firstError = error.issues[0];
-        return { 
-          success: false, 
-          message: firstError.message 
+        return {
+          success: false,
+          message: firstError.message,
         };
       }
-      return { success: false, message: 'Invalid input data' };
+      return { success: false, message: "Invalid input data" };
     }
 
     // Update security settings
@@ -382,11 +392,11 @@ export async function updateSecuritySettings(formData: FormData) {
         },
       });
 
-    revalidatePath('/dashboard/settings');
-    return { success: true, message: 'Security settings updated successfully' };
+    revalidatePath("/dashboard/settings");
+    return { success: true, message: "Security settings updated successfully" };
   } catch (error) {
-    console.error('Error updating security settings:', error);
-    return { success: false, message: 'Failed to update security settings' };
+    console.error("Error updating security settings:", error);
+    return { success: false, message: "Failed to update security settings" };
   }
 }
 
@@ -394,10 +404,10 @@ export async function revokeSession(formData: FormData) {
   try {
     const user = await getUser();
     if (!user) {
-      redirect('/login');
+      redirect("/login");
     }
 
-    const sessionId = parseInt(formData.get('sessionId') as string);
+    const sessionId = parseInt(formData.get("sessionId") as string);
 
     // Revoke session
     await db
@@ -405,24 +415,26 @@ export async function revokeSession(formData: FormData) {
       .set({
         isActive: false,
       })
-      .where(and(
-        eq(userLoginSessions.id, sessionId),
-        eq(userLoginSessions.userId, user.id)
-      ));
+      .where(
+        and(
+          eq(userLoginSessions.id, sessionId),
+          eq(userLoginSessions.userId, user.id),
+        ),
+      );
 
     // Log security event
     await db.insert(securityEvents).values({
       userId: user.id,
-      eventType: 'session_revoked',
-      eventDetails: { sessionId, method: 'manual' },
-      riskLevel: 'low',
+      eventType: "session_revoked",
+      eventDetails: { sessionId, method: "manual" },
+      riskLevel: "low",
     });
 
-    revalidatePath('/dashboard/settings');
-    return { success: true, message: 'Session revoked successfully' };
+    revalidatePath("/dashboard/settings");
+    return { success: true, message: "Session revoked successfully" };
   } catch (error) {
-    console.error('Error revoking session:', error);
-    return { success: false, message: 'Failed to revoke session' };
+    console.error("Error revoking session:", error);
+    return { success: false, message: "Failed to revoke session" };
   }
 }
 
@@ -430,7 +442,7 @@ export async function revokeAllSessions() {
   try {
     const user = await getUser();
     if (!user) {
-      redirect('/login');
+      redirect("/login");
     }
 
     // Revoke all sessions except current one (simplified - in real app you'd exclude current session)
@@ -444,15 +456,15 @@ export async function revokeAllSessions() {
     // Log security event
     await db.insert(securityEvents).values({
       userId: user.id,
-      eventType: 'all_sessions_revoked',
-      eventDetails: { method: 'manual' },
-      riskLevel: 'medium',
+      eventType: "all_sessions_revoked",
+      eventDetails: { method: "manual" },
+      riskLevel: "medium",
     });
 
-    revalidatePath('/dashboard/settings');
-    return { success: true, message: 'All sessions revoked successfully' };
+    revalidatePath("/dashboard/settings");
+    return { success: true, message: "All sessions revoked successfully" };
   } catch (error) {
-    console.error('Error revoking all sessions:', error);
-    return { success: false, message: 'Failed to revoke all sessions' };
+    console.error("Error revoking all sessions:", error);
+    return { success: false, message: "Failed to revoke all sessions" };
   }
 }

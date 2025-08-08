@@ -1,19 +1,19 @@
-import { getCartFromCookiesAction } from '@/actions/cart-actions';
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from '@workspace/ui/components/tooltip';
-import { getLocale, getTranslations } from '@/i18n/server';
-import { formatMoney } from '@/lib/utils';
-import { calculateCartTotalNetWithoutShipping } from 'commerce-kit';
-import { ShoppingBagIcon } from 'lucide-react';
-import { Suspense } from 'react';
-import { CartLink } from './cart-link';
+} from "@workspace/ui/components/tooltip";
+import { calculateCartTotalNetWithoutShipping } from "commerce-kit";
+import { ShoppingBagIcon } from "lucide-react";
+import { Suspense } from "react";
+import { getCartFromCookiesAction } from "@/actions/cart-actions";
+import { getLocale, getTranslations } from "@/i18n/server";
+import { formatMoney } from "@/lib/utils";
+import { CartLink } from "./cart-link";
 
 const CartFallback = () => (
-  <div className='h-6 w-6 opacity-30'>
+  <div className="h-6 w-6 opacity-30">
     <ShoppingBagIcon />
   </div>
 );
@@ -37,7 +37,7 @@ const CartSummaryNavInner = async () => {
 
   const total = calculateCartTotalNetWithoutShipping(cart);
   const totalItems = cart.lines.reduce((acc, line) => acc + line.quantity, 0);
-  const t = await getTranslations('Global.nav.cartSummary');
+  const t = await getTranslations("Global.nav.cartSummary");
   const locale = await getLocale();
 
   return (
@@ -47,12 +47,12 @@ const CartSummaryNavInner = async () => {
           <div>
             <CartLink>
               <ShoppingBagIcon />
-              <span className='absolute bottom-0 right-0 inline-flex h-5 w-5 translate-x-1/2 translate-y-1/2 items-center justify-center rounded-full border-2 bg-white text-center text-xs'>
-                <span className='sr-only'>{t('itemsInCart')}: </span>
+              <span className="absolute bottom-0 right-0 inline-flex h-5 w-5 translate-x-1/2 translate-y-1/2 items-center justify-center rounded-full border-2 bg-white text-center text-xs">
+                <span className="sr-only">{t("itemsInCart")}: </span>
                 {totalItems}
               </span>
-              <span className='sr-only'>
-                {t('total')}:{' '}
+              <span className="sr-only">
+                {t("total")}:{" "}
                 {formatMoney({
                   amount: total,
                   currency: cart.cart.currency,
@@ -62,10 +62,10 @@ const CartSummaryNavInner = async () => {
             </CartLink>
           </div>
         </TooltipTrigger>
-        <TooltipContent side='left' sideOffset={25}>
-          <p>{t('totalItems', { count: totalItems })}</p>
+        <TooltipContent side="left" sideOffset={25}>
+          <p>{t("totalItems", { count: totalItems })}</p>
           <p>
-            {t('total')}:{' '}
+            {t("total")}:{" "}
             {formatMoney({
               amount: total,
               currency: cart.cart.currency,

@@ -1,27 +1,31 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { getUser } from '@/lib/db/queries';
-import { db } from '@/lib/db/drizzle';
-import { propertyTypes, questionCategories, evaluationSessions } from '@/lib/db/schema';
-import { eq, and, ne, or } from 'drizzle-orm';
-import { z } from 'zod';
+import { and, eq, ne, or } from "drizzle-orm";
+import { type NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
+import { db } from "@/lib/db/drizzle";
+import { getUser } from "@/lib/db/queries";
+import {
+  evaluationSessions,
+  propertyTypes,
+  questionCategories,
+} from "@/lib/db/schema";
 
 const updatePropertyTypeSchema = z.object({
-  name_ro: z.string().min(1, 'Romanian name is required'),
+  name_ro: z.string().min(1, "Romanian name is required"),
   name_en: z.string().nullable(),
 });
 
 // GET /api/admin/property-types/[id]
 export async function GET(
   request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     const user = await getUser();
-    
-    if (!user || !['admin', 'owner'].includes(user.role)) {
+
+    if (!user || !["admin", "owner"].includes(user.role)) {
       return NextResponse.json(
-        { success: false, error: 'Unauthorized' },
-        { status: 403 }
+        { success: false, error: "Unauthorized" },
+        { status: 403 },
       );
     }
 
@@ -29,20 +33,20 @@ export async function GET(
     const id = parseInt(idParam);
     if (isNaN(id)) {
       return NextResponse.json(
-        { success: false, error: 'Invalid property type ID' },
-        { status: 400 }
+        { success: false, error: "Invalid property type ID" },
+        { status: 400 },
       );
     }
 
     // Parse query parameters to determine what to include
     const url = new URL(request.url);
-    const includeParam = url.searchParams.get('include');
-    const includes = includeParam ? includeParam.split(',') : [];
+    const includeParam = url.searchParams.get("include");
+    const includes = includeParam ? includeParam.split(",") : [];
 
     // Build the query with optional includes
-    const shouldIncludeCategories = includes.includes('categories');
-    const shouldIncludeQuestions = includes.includes('questions');
-    const shouldIncludeAnswers = includes.includes('answers');
+    const shouldIncludeCategories = includes.includes("categories");
+    const shouldIncludeQuestions = includes.includes("questions");
+    const shouldIncludeAnswers = includes.includes("answers");
 
     let propertyType;
 
@@ -50,15 +54,19 @@ export async function GET(
       propertyType = await db.query.propertyTypes.findFirst({
         where: eq(propertyTypes.id, id),
         with: {
-          questionCategories: shouldIncludeQuestions ? {
-            with: {
-              questions: shouldIncludeAnswers ? {
+          questionCategories: shouldIncludeQuestions
+            ? {
                 with: {
-                  answers: true,
+                  questions: shouldIncludeAnswers
+                    ? {
+                        with: {
+                          answers: true,
+                        },
+                      }
+                    : true,
                 },
-              } : true,
-            },
-          } : true,
+              }
+            : true,
         },
       });
     } else {
@@ -69,8 +77,8 @@ export async function GET(
 
     if (!propertyType) {
       return NextResponse.json(
-        { success: false, error: 'Property type not found' },
-        { status: 404 }
+        { success: false, error: "Property type not found" },
+        { status: 404 },
       );
     }
 
@@ -79,10 +87,10 @@ export async function GET(
       data: propertyType,
     });
   } catch (error) {
-    console.error('Error fetching property type:', error);
+    console.error("Error fetching property type:", error);
     return NextResponse.json(
-      { success: false, error: 'Internal server error' },
-      { status: 500 }
+      { success: false, error: "Internal server error" },
+      { status: 500 },
     );
   }
 }
@@ -90,15 +98,15 @@ export async function GET(
 // PATCH /api/admin/property-types/[id]
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     const user = await getUser();
-    
-    if (!user || !['admin', 'owner'].includes(user.role)) {
+
+    if (!user || !["admin", "owner"].includes(user.role)) {
       return NextResponse.json(
-        { success: false, error: 'Unauthorized' },
-        { status: 403 }
+        { success: false, error: "Unauthorized" },
+        { status: 403 },
       );
     }
 
@@ -106,8 +114,8 @@ export async function PATCH(
     const id = parseInt(idParam);
     if (isNaN(id)) {
       return NextResponse.json(
-        { success: false, error: 'Invalid property type ID' },
-        { status: 400 }
+        { success: false, error: "Invalid property type ID" },
+        { status: 400 },
       );
     }
 
@@ -116,8 +124,12 @@ export async function PATCH(
 
     if (!validation.success) {
       return NextResponse.json(
-        { success: false, error: 'Invalid input', details: validation.error.issues },
-        { status: 400 }
+        {
+          success: false,
+          error: "Invalid input",
+          details: validation.error.issues,
+        },
+        { status: 400 },
       );
     }
 
@@ -130,8 +142,8 @@ export async function PATCH(
 
     if (!existing) {
       return NextResponse.json(
-        { success: false, error: 'Property type not found' },
-        { status: 404 }
+        { success: false, error: "Property type not found" },
+        { status: 404 },
       );
     }
 
@@ -150,10 +162,10 @@ export async function PATCH(
       data: updatedPropertyType,
     });
   } catch (error) {
-    console.error('Error updating property type:', error);
+    console.error("Error updating property type:", error);
     return NextResponse.json(
-      { success: false, error: 'Internal server error' },
-      { status: 500 }
+      { success: false, error: "Internal server error" },
+      { status: 500 },
     );
   }
 }
@@ -161,15 +173,15 @@ export async function PATCH(
 // DELETE /api/admin/property-types/[id]
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     const user = await getUser();
-    
-    if (!user || !['admin', 'owner'].includes(user.role)) {
+
+    if (!user || !["admin", "owner"].includes(user.role)) {
       return NextResponse.json(
-        { success: false, error: 'Unauthorized' },
-        { status: 403 }
+        { success: false, error: "Unauthorized" },
+        { status: 403 },
       );
     }
 
@@ -177,8 +189,8 @@ export async function DELETE(
     const id = parseInt(idParam);
     if (isNaN(id)) {
       return NextResponse.json(
-        { success: false, error: 'Invalid property type ID' },
-        { status: 400 }
+        { success: false, error: "Invalid property type ID" },
+        { status: 400 },
       );
     }
 
@@ -189,8 +201,8 @@ export async function DELETE(
 
     if (!existing) {
       return NextResponse.json(
-        { success: false, error: 'Property type not found' },
-        { status: 404 }
+        { success: false, error: "Property type not found" },
+        { status: 404 },
       );
     }
 
@@ -201,8 +213,12 @@ export async function DELETE(
 
     if (categoriesUsingType) {
       return NextResponse.json(
-        { success: false, error: 'Cannot delete property type. It is being used by question categories.' },
-        { status: 409 }
+        {
+          success: false,
+          error:
+            "Cannot delete property type. It is being used by question categories.",
+        },
+        { status: 409 },
       );
     }
 
@@ -213,8 +229,12 @@ export async function DELETE(
 
     if (evaluationsUsingType) {
       return NextResponse.json(
-        { success: false, error: 'Cannot delete property type. It has been used in evaluations.' },
-        { status: 409 }
+        {
+          success: false,
+          error:
+            "Cannot delete property type. It has been used in evaluations.",
+        },
+        { status: 409 },
       );
     }
 
@@ -222,13 +242,13 @@ export async function DELETE(
 
     return NextResponse.json({
       success: true,
-      message: 'Property type deleted successfully',
+      message: "Property type deleted successfully",
     });
   } catch (error) {
-    console.error('Error deleting property type:', error);
+    console.error("Error deleting property type:", error);
     return NextResponse.json(
-      { success: false, error: 'Internal server error' },
-      { status: 500 }
+      { success: false, error: "Internal server error" },
+      { status: 500 },
     );
   }
 }

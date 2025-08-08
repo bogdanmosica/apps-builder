@@ -1,14 +1,14 @@
-'use client';
+"use client";
 
-import { Badge } from '@workspace/ui/components/badge';
-import { Button } from '@workspace/ui/components/button';
+import { Badge } from "@workspace/ui/components/badge";
+import { Button } from "@workspace/ui/components/button";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from '@workspace/ui/components/card';
+} from "@workspace/ui/components/card";
 import {
   Dialog,
   DialogContent,
@@ -17,7 +17,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from '@workspace/ui/components/dialog';
+} from "@workspace/ui/components/dialog";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -25,16 +25,16 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@workspace/ui/components/dropdown-menu';
-import { Input } from '@workspace/ui/components/input';
-import { Label } from '@workspace/ui/components/label';
+} from "@workspace/ui/components/dropdown-menu";
+import { Input } from "@workspace/ui/components/input";
+import { Label } from "@workspace/ui/components/label";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@workspace/ui/components/select';
+} from "@workspace/ui/components/select";
 import {
   Table,
   TableBody,
@@ -42,41 +42,41 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@workspace/ui/components/table';
+} from "@workspace/ui/components/table";
 import {
   Tabs,
   TabsContent,
   TabsList,
   TabsTrigger,
-} from '@workspace/ui/components/tabs';
+} from "@workspace/ui/components/tabs";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from '@workspace/ui/components/tooltip';
+} from "@workspace/ui/components/tooltip";
 import {
-  Users,
+  Activity,
+  AlertTriangle,
+  Calendar,
+  Check,
+  Copy,
+  Crown,
+  Edit,
+  Loader2,
+  Mail,
+  MoreHorizontal,
   Plus,
   Send,
-  MoreHorizontal,
-  Crown,
-  Shield,
-  User,
-  Mail,
-  Calendar,
-  Activity,
   Settings,
+  Shield,
   Trash2,
-  Edit,
-  Copy,
-  Check,
+  User,
+  Users,
   X,
-  AlertTriangle,
-  Loader2,
-} from 'lucide-react';
-import { useState, useEffect } from 'react';
-import { toast } from 'sonner';
+} from "lucide-react";
+import { useEffect, useState } from "react";
+import { toast } from "sonner";
 
 // Types for team data
 interface TeamMember {
@@ -121,34 +121,34 @@ const roleIcons = {
 };
 
 const roleColors = {
-  owner: 'bg-yellow-100 text-yellow-800',
-  admin: 'bg-blue-100 text-blue-800',
-  member: 'bg-gray-100 text-gray-800',
+  owner: "bg-yellow-100 text-yellow-800",
+  admin: "bg-blue-100 text-blue-800",
+  member: "bg-gray-100 text-gray-800",
 };
 
 function InviteMemberDialog() {
   const [isOpen, setIsOpen] = useState(false);
-  const [email, setEmail] = useState('');
-  const [role, setRole] = useState('Member');
-  const [message, setMessage] = useState('');
+  const [email, setEmail] = useState("");
+  const [role, setRole] = useState("Member");
+  const [message, setMessage] = useState("");
 
   const handleInvite = () => {
     // Handle invitation logic here
-    console.log('Inviting:', { email, role, message });
+    console.log("Inviting:", { email, role, message });
     setIsOpen(false);
-    setEmail('');
-    setMessage('');
+    setEmail("");
+    setMessage("");
   };
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
         <Button>
-          <Plus className='h-4 w-4 mr-2' />
+          <Plus className="h-4 w-4 mr-2" />
           Invite Member
         </Button>
       </DialogTrigger>
-      <DialogContent className='sm:max-w-md'>
+      <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle>Invite Team Member</DialogTitle>
           <DialogDescription>
@@ -156,45 +156,45 @@ function InviteMemberDialog() {
             instructions.
           </DialogDescription>
         </DialogHeader>
-        <div className='space-y-4'>
-          <div className='space-y-2'>
-            <Label htmlFor='email'>Email Address</Label>
+        <div className="space-y-4">
+          <div className="space-y-2">
+            <Label htmlFor="email">Email Address</Label>
             <Input
-              id='email'
-              type='email'
-              placeholder='colleague@example.com'
+              id="email"
+              type="email"
+              placeholder="colleague@example.com"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
             />
           </div>
-          <div className='space-y-2'>
-            <Label htmlFor='role'>Role</Label>
+          <div className="space-y-2">
+            <Label htmlFor="role">Role</Label>
             <Select value={role} onValueChange={setRole}>
               <SelectTrigger>
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value='Member'>Member</SelectItem>
-                <SelectItem value='Admin'>Admin</SelectItem>
+                <SelectItem value="Member">Member</SelectItem>
+                <SelectItem value="Admin">Admin</SelectItem>
               </SelectContent>
             </Select>
           </div>
-          <div className='space-y-2'>
-            <Label htmlFor='message'>Personal Message (Optional)</Label>
+          <div className="space-y-2">
+            <Label htmlFor="message">Personal Message (Optional)</Label>
             <Input
-              id='message'
-              placeholder='Welcome to our team!'
+              id="message"
+              placeholder="Welcome to our team!"
               value={message}
               onChange={(e) => setMessage(e.target.value)}
             />
           </div>
         </div>
         <DialogFooter>
-          <Button variant='outline' onClick={() => setIsOpen(false)}>
+          <Button variant="outline" onClick={() => setIsOpen(false)}>
             Cancel
           </Button>
           <Button onClick={handleInvite} disabled={!email}>
-            <Send className='h-4 w-4 mr-2' />
+            <Send className="h-4 w-4 mr-2" />
             Send Invitation
           </Button>
         </DialogFooter>
@@ -204,7 +204,8 @@ function InviteMemberDialog() {
 }
 
 function MemberRow({ member }: { member: TeamMember }) {
-  const RoleIcon = roleIcons[member.role.toLowerCase() as keyof typeof roleIcons] || User;
+  const RoleIcon =
+    roleIcons[member.role.toLowerCase() as keyof typeof roleIcons] || User;
   const [copied, setCopied] = useState(false);
 
   const copyToClipboard = (text: string) => {
@@ -216,25 +217,25 @@ function MemberRow({ member }: { member: TeamMember }) {
   return (
     <TableRow>
       <TableCell>
-        <div className='flex items-center space-x-3'>
-          <div className='h-8 w-8 rounded-full bg-gray-200 flex items-center justify-center'>
-            <User className='h-4 w-4 text-gray-600' />
+        <div className="flex items-center space-x-3">
+          <div className="h-8 w-8 rounded-full bg-gray-200 flex items-center justify-center">
+            <User className="h-4 w-4 text-gray-600" />
           </div>
           <div>
-            <div className='font-medium'>{member.name}</div>
-            <div className='text-sm text-gray-500 flex items-center'>
-              <Mail className='h-3 w-3 mr-1' />
+            <div className="font-medium">{member.name}</div>
+            <div className="text-sm text-gray-500 flex items-center">
+              <Mail className="h-3 w-3 mr-1" />
               {member.email}
               <Button
-                variant='ghost'
-                size='sm'
-                className='h-4 w-4 p-0 ml-1'
+                variant="ghost"
+                size="sm"
+                className="h-4 w-4 p-0 ml-1"
                 onClick={() => copyToClipboard(member.email)}
               >
                 {copied ? (
-                  <Check className='h-3 w-3' />
+                  <Check className="h-3 w-3" />
                 ) : (
-                  <Copy className='h-3 w-3' />
+                  <Copy className="h-3 w-3" />
                 )}
               </Button>
             </div>
@@ -245,49 +246,49 @@ function MemberRow({ member }: { member: TeamMember }) {
         <Badge
           className={`${roleColors[member.role.toLowerCase() as keyof typeof roleColors] || roleColors.member} text-xs`}
         >
-          <RoleIcon className='h-3 w-3 mr-1' />
+          <RoleIcon className="h-3 w-3 mr-1" />
           {member.role.charAt(0).toUpperCase() + member.role.slice(1)}
         </Badge>
       </TableCell>
       <TableCell>
-        <Badge variant={member.status === 'Active' ? 'default' : 'secondary'}>
+        <Badge variant={member.status === "Active" ? "default" : "secondary"}>
           {member.status}
         </Badge>
       </TableCell>
-      <TableCell className='text-sm text-gray-500'>
-        <div className='flex items-center'>
-          <Activity className='h-3 w-3 mr-1' />
+      <TableCell className="text-sm text-gray-500">
+        <div className="flex items-center">
+          <Activity className="h-3 w-3 mr-1" />
           {member.lastActive}
         </div>
       </TableCell>
-      <TableCell className='text-sm text-gray-500'>
-        <div className='flex items-center'>
-          <Calendar className='h-3 w-3 mr-1' />
+      <TableCell className="text-sm text-gray-500">
+        <div className="flex items-center">
+          <Calendar className="h-3 w-3 mr-1" />
           {member.joinedAt}
         </div>
       </TableCell>
       <TableCell>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant='ghost' size='sm'>
-              <MoreHorizontal className='h-4 w-4' />
+            <Button variant="ghost" size="sm">
+              <MoreHorizontal className="h-4 w-4" />
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align='end'>
+          <DropdownMenuContent align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuItem>
-              <Edit className='h-4 w-4 mr-2' />
+              <Edit className="h-4 w-4 mr-2" />
               Edit Role
             </DropdownMenuItem>
             <DropdownMenuItem>
-              <Settings className='h-4 w-4 mr-2' />
+              <Settings className="h-4 w-4 mr-2" />
               Manage Permissions
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            {member.role.toLowerCase() !== 'owner' && (
-              <DropdownMenuItem className='text-red-600'>
-                <Trash2 className='h-4 w-4 mr-2' />
+            {member.role.toLowerCase() !== "owner" && (
+              <DropdownMenuItem className="text-red-600">
+                <Trash2 className="h-4 w-4 mr-2" />
                 Remove Member
               </DropdownMenuItem>
             )}
@@ -298,23 +299,20 @@ function MemberRow({ member }: { member: TeamMember }) {
   );
 }
 
-function InvitationRow({
-  invitation,
-}: {
-  invitation: TeamInvitation;
-}) {
-  const RoleIcon = roleIcons[invitation.role.toLowerCase() as keyof typeof roleIcons] || User;
+function InvitationRow({ invitation }: { invitation: TeamInvitation }) {
+  const RoleIcon =
+    roleIcons[invitation.role.toLowerCase() as keyof typeof roleIcons] || User;
 
   return (
     <TableRow>
       <TableCell>
-        <div className='flex items-center space-x-3'>
-          <div className='h-8 w-8 rounded-full bg-orange-100 flex items-center justify-center'>
-            <Mail className='h-4 w-4 text-orange-600' />
+        <div className="flex items-center space-x-3">
+          <div className="h-8 w-8 rounded-full bg-orange-100 flex items-center justify-center">
+            <Mail className="h-4 w-4 text-orange-600" />
           </div>
           <div>
-            <div className='font-medium'>{invitation.email}</div>
-            <div className='text-sm text-gray-500'>
+            <div className="font-medium">{invitation.email}</div>
+            <div className="text-sm text-gray-500">
               Invited by {invitation.invitedBy}
             </div>
           </div>
@@ -324,29 +322,29 @@ function InvitationRow({
         <Badge
           className={`${roleColors[invitation.role.toLowerCase() as keyof typeof roleColors] || roleColors.member} text-xs`}
         >
-          <RoleIcon className='h-3 w-3 mr-1' />
+          <RoleIcon className="h-3 w-3 mr-1" />
           {invitation.role.charAt(0).toUpperCase() + invitation.role.slice(1)}
         </Badge>
       </TableCell>
-      <TableCell className='text-sm text-gray-500'>
-        <div className='flex items-center'>
-          <Calendar className='h-3 w-3 mr-1' />
+      <TableCell className="text-sm text-gray-500">
+        <div className="flex items-center">
+          <Calendar className="h-3 w-3 mr-1" />
           {invitation.invitedAt}
         </div>
       </TableCell>
-      <TableCell className='text-sm text-gray-500'>
-        <div className='flex items-center'>
-          <AlertTriangle className='h-3 w-3 mr-1' />
+      <TableCell className="text-sm text-gray-500">
+        <div className="flex items-center">
+          <AlertTriangle className="h-3 w-3 mr-1" />
           {invitation.expiresAt}
         </div>
       </TableCell>
       <TableCell>
-        <div className='flex space-x-2'>
-          <Button variant='outline' size='sm'>
+        <div className="flex space-x-2">
+          <Button variant="outline" size="sm">
             Resend
           </Button>
-          <Button variant='outline' size='sm'>
-            <X className='h-4 w-4' />
+          <Button variant="outline" size="sm">
+            <X className="h-4 w-4" />
           </Button>
         </div>
       </TableCell>
@@ -364,20 +362,20 @@ export default function TeamManagement() {
     const fetchTeamData = async () => {
       try {
         setLoading(true);
-        const response = await fetch('/api/team', {
-          cache: 'no-store',
+        const response = await fetch("/api/team", {
+          cache: "no-store",
         });
 
         if (!response.ok) {
-          throw new Error('Failed to fetch team data');
+          throw new Error("Failed to fetch team data");
         }
 
         const data = await response.json();
         setTeamData(data);
       } catch (error) {
-        console.error('Error fetching team data:', error);
-        setError('Failed to load team data. Please try again.');
-        toast.error('Failed to load team data');
+        console.error("Error fetching team data:", error);
+        setError("Failed to load team data. Please try again.");
+        toast.error("Failed to load team data");
       } finally {
         setLoading(false);
       }
@@ -388,9 +386,9 @@ export default function TeamManagement() {
 
   if (loading) {
     return (
-      <div className='p-6 flex items-center justify-center min-h-96'>
-        <div className='flex items-center space-x-2'>
-          <Loader2 className='h-6 w-6 animate-spin' />
+      <div className="p-6 flex items-center justify-center min-h-96">
+        <div className="flex items-center space-x-2">
+          <Loader2 className="h-6 w-6 animate-spin" />
           <span>Loading team data...</span>
         </div>
       </div>
@@ -399,12 +397,12 @@ export default function TeamManagement() {
 
   if (error || !teamData) {
     return (
-      <div className='p-6 flex items-center justify-center min-h-96'>
-        <div className='text-center'>
-          <p className='text-red-600 mb-4'>{error || 'No team data available'}</p>
-          <Button onClick={() => window.location.reload()}>
-            Try Again
-          </Button>
+      <div className="p-6 flex items-center justify-center min-h-96">
+        <div className="text-center">
+          <p className="text-red-600 mb-4">
+            {error || "No team data available"}
+          </p>
+          <Button onClick={() => window.location.reload()}>Try Again</Button>
         </div>
       </div>
     );
@@ -413,75 +411,75 @@ export default function TeamManagement() {
   const { members, invitations, stats } = teamData;
 
   return (
-    <div className='p-6 space-y-6'>
-      <div className='flex items-center justify-between'>
+    <div className="p-6 space-y-6">
+      <div className="flex items-center justify-between">
         <div>
-          <h1 className='text-3xl font-bold text-gray-900'>Team Management</h1>
-          <p className='text-gray-600'>
+          <h1 className="text-3xl font-bold text-gray-900">Team Management</h1>
+          <p className="text-gray-600">
             Manage your team members and their permissions
           </p>
         </div>
         <InviteMemberDialog />
       </div>
 
-      <div className='grid grid-cols-1 md:grid-cols-3 gap-6'>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <Card>
-          <CardContent className='p-6'>
-            <div className='flex items-center justify-between'>
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
               <div>
-                <p className='text-sm font-medium text-gray-600'>
+                <p className="text-sm font-medium text-gray-600">
                   Total Members
                 </p>
-                <p className='text-2xl font-bold text-gray-900'>
+                <p className="text-2xl font-bold text-gray-900">
                   {stats.totalMembers}
                 </p>
               </div>
-              <Users className='h-8 w-8 text-blue-600' />
+              <Users className="h-8 w-8 text-blue-600" />
             </div>
           </CardContent>
         </Card>
 
         <Card>
-          <CardContent className='p-6'>
-            <div className='flex items-center justify-between'>
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
               <div>
-                <p className='text-sm font-medium text-gray-600'>
+                <p className="text-sm font-medium text-gray-600">
                   Active Members
                 </p>
-                <p className='text-2xl font-bold text-gray-900'>
+                <p className="text-2xl font-bold text-gray-900">
                   {stats.activeMembers}
                 </p>
               </div>
-              <Activity className='h-8 w-8 text-green-600' />
+              <Activity className="h-8 w-8 text-green-600" />
             </div>
           </CardContent>
         </Card>
 
         <Card>
-          <CardContent className='p-6'>
-            <div className='flex items-center justify-between'>
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
               <div>
-                <p className='text-sm font-medium text-gray-600'>
+                <p className="text-sm font-medium text-gray-600">
                   Pending Invites
                 </p>
-                <p className='text-2xl font-bold text-gray-900'>
+                <p className="text-2xl font-bold text-gray-900">
                   {stats.pendingInvites}
                 </p>
               </div>
-              <Mail className='h-8 w-8 text-orange-600' />
+              <Mail className="h-8 w-8 text-orange-600" />
             </div>
           </CardContent>
         </Card>
       </div>
 
-      <Tabs defaultValue='members' className='space-y-6'>
+      <Tabs defaultValue="members" className="space-y-6">
         <TabsList>
-          <TabsTrigger value='members'>Team Members</TabsTrigger>
-          <TabsTrigger value='invitations'>Pending Invitations</TabsTrigger>
-          <TabsTrigger value='permissions'>Roles & Permissions</TabsTrigger>
+          <TabsTrigger value="members">Team Members</TabsTrigger>
+          <TabsTrigger value="invitations">Pending Invitations</TabsTrigger>
+          <TabsTrigger value="permissions">Roles & Permissions</TabsTrigger>
         </TabsList>
 
-        <TabsContent value='members'>
+        <TabsContent value="members">
           <Card>
             <CardHeader>
               <CardTitle>Team Members</CardTitle>
@@ -508,7 +506,10 @@ export default function TeamManagement() {
                     ))
                   ) : (
                     <TableRow>
-                      <TableCell colSpan={6} className='text-center text-muted-foreground'>
+                      <TableCell
+                        colSpan={6}
+                        className="text-center text-muted-foreground"
+                      >
                         No team members found
                       </TableCell>
                     </TableRow>
@@ -519,7 +520,7 @@ export default function TeamManagement() {
           </Card>
         </TabsContent>
 
-        <TabsContent value='invitations'>
+        <TabsContent value="invitations">
           <Card>
             <CardHeader>
               <CardTitle>Pending Invitations</CardTitle>
@@ -548,7 +549,10 @@ export default function TeamManagement() {
                     ))
                   ) : (
                     <TableRow>
-                      <TableCell colSpan={5} className='text-center text-muted-foreground'>
+                      <TableCell
+                        colSpan={5}
+                        className="text-center text-muted-foreground"
+                      >
                         No pending invitations
                       </TableCell>
                     </TableRow>
@@ -559,17 +563,17 @@ export default function TeamManagement() {
           </Card>
         </TabsContent>
 
-        <TabsContent value='permissions'>
-          <div className='grid grid-cols-1 md:grid-cols-3 gap-6'>
+        <TabsContent value="permissions">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <Card>
-              <CardHeader className='pb-3'>
-                <div className='flex items-center space-x-2'>
-                  <Crown className='h-5 w-5 text-yellow-600' />
-                  <CardTitle className='text-lg'>Owner</CardTitle>
+              <CardHeader className="pb-3">
+                <div className="flex items-center space-x-2">
+                  <Crown className="h-5 w-5 text-yellow-600" />
+                  <CardTitle className="text-lg">Owner</CardTitle>
                 </div>
               </CardHeader>
-              <CardContent className='pt-0'>
-                <ul className='text-sm text-gray-600 space-y-1'>
+              <CardContent className="pt-0">
+                <ul className="text-sm text-gray-600 space-y-1">
                   <li>• Full access to all features</li>
                   <li>• Manage billing and subscription</li>
                   <li>• Add/remove team members</li>
@@ -580,14 +584,14 @@ export default function TeamManagement() {
             </Card>
 
             <Card>
-              <CardHeader className='pb-3'>
-                <div className='flex items-center space-x-2'>
-                  <Shield className='h-5 w-5 text-blue-600' />
-                  <CardTitle className='text-lg'>Admin</CardTitle>
+              <CardHeader className="pb-3">
+                <div className="flex items-center space-x-2">
+                  <Shield className="h-5 w-5 text-blue-600" />
+                  <CardTitle className="text-lg">Admin</CardTitle>
                 </div>
               </CardHeader>
-              <CardContent className='pt-0'>
-                <ul className='text-sm text-gray-600 space-y-1'>
+              <CardContent className="pt-0">
+                <ul className="text-sm text-gray-600 space-y-1">
                   <li>• Manage team members</li>
                   <li>• Access all team data</li>
                   <li>• Invite new members</li>
@@ -598,14 +602,14 @@ export default function TeamManagement() {
             </Card>
 
             <Card>
-              <CardHeader className='pb-3'>
-                <div className='flex items-center space-x-2'>
-                  <User className='h-5 w-5 text-gray-600' />
-                  <CardTitle className='text-lg'>Member</CardTitle>
+              <CardHeader className="pb-3">
+                <div className="flex items-center space-x-2">
+                  <User className="h-5 w-5 text-gray-600" />
+                  <CardTitle className="text-lg">Member</CardTitle>
                 </div>
               </CardHeader>
-              <CardContent className='pt-0'>
-                <ul className='text-sm text-gray-600 space-y-1'>
+              <CardContent className="pt-0">
+                <ul className="text-sm text-gray-600 space-y-1">
                   <li>• Access team features</li>
                   <li>• View team data</li>
                   <li>• Collaborate with team</li>

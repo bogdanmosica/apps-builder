@@ -41,7 +41,8 @@
     "**/*.mjs",
     "**/*.ts",
     "**/*.tsx",
-    ".next/types/**/*.ts"
-, "src/middleware.ts.doc"  ],
+    ".next/types/**/*.ts",
+    "src/middleware.ts.doc"
+  ],
   "exclude": ["node_modules", "src/script/**/*.ts"]
 }

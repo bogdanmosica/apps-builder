@@ -1,5 +1,12 @@
-import { Skeleton } from '@workspace/ui/components/skeleton';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@workspace/ui/components/table';
+import { Skeleton } from "@workspace/ui/components/skeleton";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@workspace/ui/components/table";
 
 export default function PropertyTypesTableSkeleton() {
   return (
@@ -8,7 +15,7 @@ export default function PropertyTypesTableSkeleton() {
         <Skeleton className="h-10 w-[300px]" />
         <Skeleton className="h-10 w-[150px]" />
       </div>
-      
+
       <div className="border rounded-md">
         <Table>
           <TableHeader>

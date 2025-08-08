@@ -1,11 +1,7 @@
-'use client';
+"use client";
 
-import type { UserSubscriptionPlan } from '@workspace/types';
-import { Toaster } from '@workspace/ui/components/sonner';
-import { toast } from 'sonner';
-import { cn } from '@workspace/ui/lib/utils';
-import type { FormEvent, HTMLAttributes, JSX } from 'react';
-import { useState } from 'react';
+import type { UserSubscriptionPlan } from "@workspace/types";
+import { buttonVariants } from "@workspace/ui/components/button";
 import {
   Card,
   CardContent,
@@ -13,9 +9,13 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from '@workspace/ui/components/card';
-import { Icons } from '@workspace/ui/components/icons';
-import { buttonVariants } from '@workspace/ui/components/button';
+} from "@workspace/ui/components/card";
+import { Icons } from "@workspace/ui/components/icons";
+import { Toaster } from "@workspace/ui/components/sonner";
+import { cn } from "@workspace/ui/lib/utils";
+import type { FormEvent, HTMLAttributes, JSX } from "react";
+import { useState } from "react";
+import { toast } from "sonner";
 
 interface BillingFormProps extends HTMLAttributes<HTMLFormElement> {
   subscriptionPlan: UserSubscriptionPlan & {
@@ -35,10 +35,10 @@ export function BillingForm({
     setIsLoading(!isLoading);
 
     // Get a Stripe session URL.
-    fetch('/api/users/stripe')
+    fetch("/api/users/stripe")
       .then((response) => {
         if (!response.ok) {
-          toast('Something went wrong. Please refresh the page and try again.');
+          toast("Something went wrong. Please refresh the page and try again.");
         } else {
           return response.json();
         }
@@ -61,30 +61,30 @@ export function BillingForm({
           <CardHeader>
             <CardTitle>Subscription Plan</CardTitle>
             <CardDescription>
-              You are currently on the <strong>{subscriptionPlan.name}</strong>{' '}
+              You are currently on the <strong>{subscriptionPlan.name}</strong>{" "}
               plan.
             </CardDescription>
           </CardHeader>
           <CardContent>{subscriptionPlan.description}</CardContent>
-          <CardFooter className='flex flex-col items-start space-y-2 md:flex-row md:justify-between md:space-x-0'>
+          <CardFooter className="flex flex-col items-start space-y-2 md:flex-row md:justify-between md:space-x-0">
             <button
-              className={cn(buttonVariants({ variant: 'default' }))}
+              className={cn(buttonVariants({ variant: "default" }))}
               disabled={isLoading}
-              type='submit'
+              type="submit"
             >
               {isLoading ? (
-                <Icons.Spinner className='mr-2 h-4 w-4 animate-spin' />
+                <Icons.Spinner className="mr-2 h-4 w-4 animate-spin" />
               ) : null}
               {subscriptionPlan.isPro
-                ? 'Manage Subscription'
-                : 'Upgrade to PRO'}
+                ? "Manage Subscription"
+                : "Upgrade to PRO"}
             </button>
             {subscriptionPlan.isPro ? (
-              <p className='rounded-full text-xs font-medium'>
+              <p className="rounded-full text-xs font-medium">
                 {subscriptionPlan.isCanceled
-                  ? 'Your plan will be canceled on '
-                  : 'Your plan renews on '}
-                {subscriptionPlan.stripeCurrentPeriodEnd ?? ''}.
+                  ? "Your plan will be canceled on "
+                  : "Your plan renews on "}
+                {subscriptionPlan.stripeCurrentPeriodEnd ?? ""}.
               </p>
             ) : null}
           </CardFooter>

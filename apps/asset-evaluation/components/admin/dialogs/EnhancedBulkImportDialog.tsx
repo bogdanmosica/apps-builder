@@ -1,19 +1,56 @@
-'use client';
+"use client";
 
-import { useState, useRef } from 'react';
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@workspace/ui/components/dialog';
-import { Button } from '@workspace/ui/components/button';
-import { Alert, AlertDescription } from '@workspace/ui/components/alert';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@workspace/ui/components/table';
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@workspace/ui/components/accordion';
-import { Badge } from '@workspace/ui/components/badge';
-import { Checkbox } from '@workspace/ui/components/checkbox';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@workspace/ui/components/select';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@workspace/ui/components/dropdown-menu';
-
-import { Upload, AlertCircle, CheckCircle, Download, FileText, ChevronDown, FileSpreadsheet } from 'lucide-react';
-import { toast } from 'sonner';
-import * as XLSX from 'xlsx';
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@workspace/ui/components/accordion";
+import { Alert, AlertDescription } from "@workspace/ui/components/alert";
+import { Badge } from "@workspace/ui/components/badge";
+import { Button } from "@workspace/ui/components/button";
+import { Checkbox } from "@workspace/ui/components/checkbox";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@workspace/ui/components/dialog";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@workspace/ui/components/dropdown-menu";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@workspace/ui/components/select";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@workspace/ui/components/table";
+import {
+  AlertCircle,
+  CheckCircle,
+  ChevronDown,
+  Download,
+  FileSpreadsheet,
+  FileText,
+  Upload,
+} from "lucide-react";
+import { useRef, useState } from "react";
+import { toast } from "sonner";
+import * as XLSX from "xlsx";
 
 interface ParsedQuestion {
   property_type_id: number;
@@ -52,20 +89,29 @@ interface Props {
   onSuccess: () => void;
 }
 
-export default function EnhancedBulkImportDialog({ open, onOpenChange, propertyTypeId, propertyTypeName, onSuccess }: Props) {
+export default function EnhancedBulkImportDialog({
+  open,
+  onOpenChange,
+  propertyTypeId,
+  propertyTypeName,
+  onSuccess,
+}: Props) {
   const [file, setFile] = useState<File | null>(null);
-  const [validationResult, setValidationResult] = useState<ValidationResult | null>(null);
+  const [validationResult, setValidationResult] =
+    useState<ValidationResult | null>(null);
   const [importing, setImporting] = useState(false);
   const [dragActive, setDragActive] = useState(false);
   const [replaceMode, setReplaceMode] = useState(false);
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
-  const [templateFormat, setTemplateFormat] = useState<'excel' | 'markdown'>('excel');
+  const [templateFormat, setTemplateFormat] = useState<"excel" | "markdown">(
+    "excel",
+  );
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleDrop = (e: React.DragEvent) => {
     e.preventDefault();
     setDragActive(false);
-    
+
     const droppedFile = e.dataTransfer.files[0];
     if (droppedFile) {
       handleFileSelection(droppedFile);
@@ -80,11 +126,13 @@ export default function EnhancedBulkImportDialog({ open, onOpenChange, propertyT
   };
 
   const handleFileSelection = async (selectedFile: File) => {
-    const validExtensions = ['.xlsx', '.xls', '.csv'];
-    const fileExtension = selectedFile.name.toLowerCase().substring(selectedFile.name.lastIndexOf('.'));
-    
+    const validExtensions = [".xlsx", ".xls", ".csv"];
+    const fileExtension = selectedFile.name
+      .toLowerCase()
+      .substring(selectedFile.name.lastIndexOf("."));
+
     if (!validExtensions.includes(fileExtension)) {
-      toast.error('Please upload an Excel (.xlsx, .xls) or CSV file');
+      toast.error("Please upload an Excel (.xlsx, .xls) or CSV file");
       return;
     }
 
@@ -95,12 +143,12 @@ export default function EnhancedBulkImportDialog({ open, onOpenChange, propertyT
   const parseAndValidateFile = async (file: File) => {
     try {
       const arrayBuffer = await file.arrayBuffer();
-      const workbook = XLSX.read(arrayBuffer, { type: 'array' });
+      const workbook = XLSX.read(arrayBuffer, { type: "array" });
       const worksheet = workbook.Sheets[workbook.SheetNames[0]];
       const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
 
       if (jsonData.length < 2) {
-        toast.error('File must contain at least a header row and one data row');
+        toast.error("File must contain at least a header row and one data row");
         return;
       }
 
@@ -109,31 +157,48 @@ export default function EnhancedBulkImportDialog({ open, onOpenChange, propertyT
 
       // Validate headers
       const requiredHeaders = [
-        'property_type_id', 'category_id', 'category_name_ro', 'category_name_en',
-        'question_id', 'question_ro', 'question_en', 'question_weight',
-        'answer_id', 'answer_ro', 'answer_en', 'answer_weight'
+        "property_type_id",
+        "category_id",
+        "category_name_ro",
+        "category_name_en",
+        "question_id",
+        "question_ro",
+        "question_en",
+        "question_weight",
+        "answer_id",
+        "answer_ro",
+        "answer_en",
+        "answer_weight",
       ];
 
-      const missingHeaders = requiredHeaders.filter(header => 
-        !headers.some(h => h && h.toLowerCase().replace(/[_\s]/g, '') === header.toLowerCase().replace(/[_\s]/g, ''))
+      const missingHeaders = requiredHeaders.filter(
+        (header) =>
+          !headers.some(
+            (h) =>
+              h &&
+              h.toLowerCase().replace(/[_\s]/g, "") ===
+                header.toLowerCase().replace(/[_\s]/g, ""),
+          ),
       );
 
       if (missingHeaders.length > 0) {
-        toast.error(`Missing required columns: ${missingHeaders.join(', ')}`);
+        toast.error(`Missing required columns: ${missingHeaders.join(", ")}`);
         return;
       }
 
       // Parse and validate rows
       const validationResult = await validateRows(dataRows, headers);
       setValidationResult(validationResult);
-
     } catch (error) {
-      console.error('Error parsing file:', error);
-      toast.error('Failed to parse file. Please check the format.');
+      console.error("Error parsing file:", error);
+      toast.error("Failed to parse file. Please check the format.");
     }
   };
 
-  const validateRows = async (rows: any[], headers: string[]): Promise<ValidationResult> => {
+  const validateRows = async (
+    rows: any[],
+    headers: string[],
+  ): Promise<ValidationResult> => {
     const valid: ParsedQuestion[] = [];
     const invalid: ParsedQuestion[] = [];
     const categories = new Set<string>();
@@ -144,40 +209,40 @@ export default function EnhancedBulkImportDialog({ open, onOpenChange, propertyT
       }
 
       const parsedRow: ParsedQuestion = {
-        property_type_id: parseInt(row[0]) || (propertyTypeId || 0),
+        property_type_id: parseInt(row[0]) || propertyTypeId || 0,
         category_id: parseInt(row[1]) || 0,
-        category_name_ro: row[2]?.toString().trim() || '',
-        category_name_en: row[3]?.toString().trim() || '',
+        category_name_ro: row[2]?.toString().trim() || "",
+        category_name_en: row[3]?.toString().trim() || "",
         question_id: parseInt(row[4]) || 0,
-        question_ro: row[5]?.toString().trim() || '',
-        question_en: row[6]?.toString().trim() || '',
+        question_ro: row[5]?.toString().trim() || "",
+        question_en: row[6]?.toString().trim() || "",
         question_weight: parseInt(row[7]) || 0,
         answer_id: parseInt(row[8]) || 0,
-        answer_ro: row[9]?.toString().trim() || '',
-        answer_en: row[10]?.toString().trim() || '',
+        answer_ro: row[9]?.toString().trim() || "",
+        answer_en: row[10]?.toString().trim() || "",
         answer_weight: parseInt(row[11]) || 0,
         rowIndex: index + 2,
-        errors: []
+        errors: [],
       };
 
       // Validation
       if (!parsedRow.property_type_id) {
-        parsedRow.errors.push('Property type ID is required');
+        parsedRow.errors.push("Property type ID is required");
       }
       if (!parsedRow.category_name_ro) {
-        parsedRow.errors.push('Category name (Romanian) is required');
+        parsedRow.errors.push("Category name (Romanian) is required");
       }
       if (!parsedRow.question_ro) {
-        parsedRow.errors.push('Question text (Romanian) is required');
+        parsedRow.errors.push("Question text (Romanian) is required");
       }
       if (!parsedRow.answer_ro) {
-        parsedRow.errors.push('Answer text (Romanian) is required');
+        parsedRow.errors.push("Answer text (Romanian) is required");
       }
       if (parsedRow.question_weight < 1 || parsedRow.question_weight > 10) {
-        parsedRow.errors.push('Question weight must be between 1-10');
+        parsedRow.errors.push("Question weight must be between 1-10");
       }
       if (parsedRow.answer_weight < 1 || parsedRow.answer_weight > 10) {
-        parsedRow.errors.push('Answer weight must be between 1-10');
+        parsedRow.errors.push("Answer weight must be between 1-10");
       }
 
       if (parsedRow.errors.length === 0) {
@@ -190,7 +255,7 @@ export default function EnhancedBulkImportDialog({ open, onOpenChange, propertyT
       }
     });
 
-    const uniqueQuestions = new Set(valid.map(row => row.question_ro)).size;
+    const uniqueQuestions = new Set(valid.map((row) => row.question_ro)).size;
 
     return {
       valid,
@@ -200,8 +265,8 @@ export default function EnhancedBulkImportDialog({ open, onOpenChange, propertyT
         validRows: valid.length,
         invalidRows: invalid.length,
         uniqueQuestions,
-        categories
-      }
+        categories,
+      },
     };
   };
 
@@ -211,7 +276,7 @@ export default function EnhancedBulkImportDialog({ open, onOpenChange, propertyT
 
   const handleImport = async () => {
     if (!validationResult || validationResult.valid.length === 0) {
-      toast.error('No valid data to import');
+      toast.error("No valid data to import");
       return;
     }
 
@@ -219,68 +284,70 @@ export default function EnhancedBulkImportDialog({ open, onOpenChange, propertyT
     setShowConfirmDialog(false);
 
     try {
-      const response = await fetch('/api/questions/bulk-import', {
-        method: 'POST',
+      const response = await fetch("/api/questions/bulk-import", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           questions: validationResult.valid,
-          replaceExisting: replaceMode
+          replaceExisting: replaceMode,
         }),
       });
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.error || 'Failed to import questions');
+        throw new Error(errorData.error || "Failed to import questions");
       }
 
       const result = await response.json();
-      
+
       toast.success(
-        `Import completed! ${replaceMode ? 'Replaced' : 'Added'}: ${result.results.categoriesCreated} categories, ${result.results.questionsCreated} questions, ${result.results.answersCreated} answers`
+        `Import completed! ${replaceMode ? "Replaced" : "Added"}: ${result.results.categoriesCreated} categories, ${result.results.questionsCreated} questions, ${result.results.answersCreated} answers`,
       );
-      
+
       onSuccess();
       handleClose();
     } catch (error) {
-      console.error('Error importing questions:', error);
-      toast.error('Failed to import questions. Please try again.');
+      console.error("Error importing questions:", error);
+      toast.error("Failed to import questions. Please try again.");
     } finally {
       setImporting(false);
     }
   };
 
-  const downloadTemplate = async (format: 'excel' | 'markdown' = 'excel') => {
+  const downloadTemplate = async (format: "excel" | "markdown" = "excel") => {
     try {
       const params = new URLSearchParams({
-        type: 'template',
+        type: "template",
         format,
-        ...(propertyTypeId && { propertyTypeId: propertyTypeId.toString() })
+        ...(propertyTypeId && { propertyTypeId: propertyTypeId.toString() }),
       });
 
       const response = await fetch(`/api/admin/questions/template?${params}`);
-      
-      if (!response.ok) throw new Error('Failed to download template');
-      
+
+      if (!response.ok) throw new Error("Failed to download template");
+
       const blob = await response.blob();
       const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
+      const a = document.createElement("a");
       a.href = url;
-      
-      const extension = format === 'excel' ? 'xlsx' : 'md';
-      const filename = `questions-template-${propertyTypeName ? propertyTypeName.toLowerCase().replace(/\s+/g, '-') : 'all'}.${extension}`;
+
+      const extension = format === "excel" ? "xlsx" : "md";
+      const filename = `questions-template-${propertyTypeName ? propertyTypeName.toLowerCase().replace(/\s+/g, "-") : "all"}.${extension}`;
       a.download = filename;
-      
+
       document.body.appendChild(a);
       a.click();
       window.URL.revokeObjectURL(url);
       document.body.removeChild(a);
-      
-      toast.success(`Template downloaded successfully (${format.toUpperCase()})`);
+
+      toast.success(
+        `Template downloaded successfully (${format.toUpperCase()})`,
+      );
     } catch (error) {
-      console.error('Error downloading template:', error);
-      toast.error('Failed to download template');
+      console.error("Error downloading template:", error);
+      toast.error("Failed to download template");
     }
   };
 
@@ -301,17 +368,22 @@ export default function EnhancedBulkImportDialog({ open, onOpenChange, propertyT
             <DialogTitle className="flex items-center gap-2">
               <FileSpreadsheet className="h-5 w-5" />
               Bulk Import Questions
-              {propertyTypeName && <Badge variant="outline">{propertyTypeName}</Badge>}
+              {propertyTypeName && (
+                <Badge variant="outline">{propertyTypeName}</Badge>
+              )}
             </DialogTitle>
             <DialogDescription>
-              Import questions from Excel template. Download a template first, fill it out, then upload it back.
+              Import questions from Excel template. Download a template first,
+              fill it out, then upload it back.
             </DialogDescription>
           </DialogHeader>
 
           <div className="space-y-6">
             {/* Step 1: Download Template */}
             <div className="space-y-3">
-              <h3 className="text-lg font-semibold">Step 1: Download Template</h3>
+              <h3 className="text-lg font-semibold">
+                Step 1: Download Template
+              </h3>
               <div className="flex items-center gap-3">
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
@@ -322,29 +394,36 @@ export default function EnhancedBulkImportDialog({ open, onOpenChange, propertyT
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent>
-                    <DropdownMenuItem onClick={() => downloadTemplate('excel')}>
+                    <DropdownMenuItem onClick={() => downloadTemplate("excel")}>
                       <FileSpreadsheet className="h-4 w-4 mr-2" />
                       Excel Format (.xlsx)
                     </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => downloadTemplate('markdown')}>
+                    <DropdownMenuItem
+                      onClick={() => downloadTemplate("markdown")}
+                    >
                       <FileText className="h-4 w-4 mr-2" />
                       Markdown Format (.md)
                     </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
                 <p className="text-sm text-muted-foreground">
-                  Contains existing data with IDs for updates, or empty template for new data
+                  Contains existing data with IDs for updates, or empty template
+                  for new data
                 </p>
               </div>
             </div>
 
             {/* Step 2: Upload File */}
             <div className="space-y-3">
-              <h3 className="text-lg font-semibold">Step 2: Upload Completed Template</h3>
+              <h3 className="text-lg font-semibold">
+                Step 2: Upload Completed Template
+              </h3>
               {!file ? (
                 <div
                   className={`border-2 border-dashed rounded-lg p-8 text-center transition-colors ${
-                    dragActive ? 'border-primary bg-primary/5' : 'border-muted-foreground/25'
+                    dragActive
+                      ? "border-primary bg-primary/5"
+                      : "border-muted-foreground/25"
                   }`}
                   onDragOver={(e) => {
                     e.preventDefault();
@@ -354,8 +433,12 @@ export default function EnhancedBulkImportDialog({ open, onOpenChange, propertyT
                   onDrop={handleDrop}
                 >
                   <Upload className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
-                  <p className="text-lg font-medium mb-2">Drop your file here</p>
-                  <p className="text-muted-foreground mb-4">Supports .xlsx, .xls, and .csv files</p>
+                  <p className="text-lg font-medium mb-2">
+                    Drop your file here
+                  </p>
+                  <p className="text-muted-foreground mb-4">
+                    Supports .xlsx, .xls, and .csv files
+                  </p>
                   <Button onClick={() => fileInputRef.current?.click()}>
                     Choose File
                   </Button>
@@ -372,7 +455,9 @@ export default function EnhancedBulkImportDialog({ open, onOpenChange, propertyT
                   <div className="flex items-center gap-3">
                     <FileSpreadsheet className="h-5 w-5 text-primary" />
                     <span className="font-medium">{file.name}</span>
-                    <Badge variant="secondary">{(file.size / 1024).toFixed(1)} KB</Badge>
+                    <Badge variant="secondary">
+                      {(file.size / 1024).toFixed(1)} KB
+                    </Badge>
                   </div>
                   <Button variant="ghost" onClick={() => setFile(null)}>
                     Remove
@@ -384,22 +469,25 @@ export default function EnhancedBulkImportDialog({ open, onOpenChange, propertyT
             {/* Import Options */}
             {validationResult && (
               <div className="space-y-3">
-                <h3 className="text-lg font-semibold">Step 3: Import Options</h3>
+                <h3 className="text-lg font-semibold">
+                  Step 3: Import Options
+                </h3>
                 <div className="flex items-center space-x-2">
                   <Checkbox
                     id="replace-mode"
                     checked={replaceMode}
-                    onCheckedChange={(checked) => setReplaceMode(checked as boolean)}
+                    onCheckedChange={(checked) =>
+                      setReplaceMode(checked as boolean)
+                    }
                   />
                   <label htmlFor="replace-mode" className="text-sm font-medium">
                     Replace existing data (instead of appending)
                   </label>
                 </div>
                 <p className="text-xs text-muted-foreground">
-                  {replaceMode 
-                    ? '⚠️ This will delete all existing questions for this property type before importing' 
-                    : 'New data will be added alongside existing questions'
-                  }
+                  {replaceMode
+                    ? "⚠️ This will delete all existing questions for this property type before importing"
+                    : "New data will be added alongside existing questions"}
                 </p>
               </div>
             )}
@@ -418,22 +506,30 @@ export default function EnhancedBulkImportDialog({ open, onOpenChange, propertyT
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                   <div className="bg-muted p-3 rounded-lg">
                     <p className="text-sm text-muted-foreground">Total Rows</p>
-                    <p className="text-2xl font-bold">{validationResult.summary.totalRows}</p>
+                    <p className="text-2xl font-bold">
+                      {validationResult.summary.totalRows}
+                    </p>
                   </div>
                   <div className="bg-green-50 dark:bg-green-900/20 p-3 rounded-lg">
-                    <p className="text-sm text-green-600 dark:text-green-400">Valid Rows</p>
+                    <p className="text-sm text-green-600 dark:text-green-400">
+                      Valid Rows
+                    </p>
                     <p className="text-2xl font-bold text-green-600 dark:text-green-400">
                       {validationResult.summary.validRows}
                     </p>
                   </div>
                   <div className="bg-red-50 dark:bg-red-900/20 p-3 rounded-lg">
-                    <p className="text-sm text-red-600 dark:text-red-400">Invalid Rows</p>
+                    <p className="text-sm text-red-600 dark:text-red-400">
+                      Invalid Rows
+                    </p>
                     <p className="text-2xl font-bold text-red-600 dark:text-red-400">
                       {validationResult.summary.invalidRows}
                     </p>
                   </div>
                   <div className="bg-blue-50 dark:bg-blue-900/20 p-3 rounded-lg">
-                    <p className="text-sm text-blue-600 dark:text-blue-400">Unique Questions</p>
+                    <p className="text-sm text-blue-600 dark:text-blue-400">
+                      Unique Questions
+                    </p>
                     <p className="text-2xl font-bold text-blue-600 dark:text-blue-400">
                       {validationResult.summary.uniqueQuestions}
                     </p>
@@ -443,13 +539,17 @@ export default function EnhancedBulkImportDialog({ open, onOpenChange, propertyT
                 {/* Categories Preview */}
                 {validationResult.summary.categories.size > 0 && (
                   <div>
-                    <p className="text-sm font-medium mb-2">Categories to be processed:</p>
+                    <p className="text-sm font-medium mb-2">
+                      Categories to be processed:
+                    </p>
                     <div className="flex flex-wrap gap-2">
-                      {Array.from(validationResult.summary.categories).map((category) => (
-                        <Badge key={category} variant="secondary">
-                          {category}
-                        </Badge>
-                      ))}
+                      {Array.from(validationResult.summary.categories).map(
+                        (category) => (
+                          <Badge key={category} variant="secondary">
+                            {category}
+                          </Badge>
+                        ),
+                      )}
                     </div>
                   </div>
                 )}
@@ -459,8 +559,9 @@ export default function EnhancedBulkImportDialog({ open, onOpenChange, propertyT
                   <Alert>
                     <AlertCircle className="h-4 w-4" />
                     <AlertDescription>
-                      {validationResult.invalid.length} rows have validation errors and will be skipped.
-                      Please review and fix the errors below.
+                      {validationResult.invalid.length} rows have validation
+                      errors and will be skipped. Please review and fix the
+                      errors below.
                     </AlertDescription>
                   </Alert>
                 )}
@@ -472,7 +573,9 @@ export default function EnhancedBulkImportDialog({ open, onOpenChange, propertyT
                       <AccordionTrigger>
                         <div className="flex items-center space-x-2">
                           <CheckCircle className="h-4 w-4 text-green-500" />
-                          <span>Valid Data ({validationResult.valid.length} rows)</span>
+                          <span>
+                            Valid Data ({validationResult.valid.length} rows)
+                          </span>
                         </div>
                       </AccordionTrigger>
                       <AccordionContent>
@@ -489,21 +592,30 @@ export default function EnhancedBulkImportDialog({ open, onOpenChange, propertyT
                               </TableRow>
                             </TableHeader>
                             <TableBody>
-                              {validationResult.valid.slice(0, 10).map((row, index) => (
-                                <TableRow key={index}>
-                                  <TableCell>{row.rowIndex}</TableCell>
-                                  <TableCell>{row.category_name_ro}</TableCell>
-                                  <TableCell className="max-w-48 truncate">{row.question_ro}</TableCell>
-                                  <TableCell>{row.question_weight}</TableCell>
-                                  <TableCell className="max-w-32 truncate">{row.answer_ro}</TableCell>
-                                  <TableCell>{row.answer_weight}</TableCell>
-                                </TableRow>
-                              ))}
+                              {validationResult.valid
+                                .slice(0, 10)
+                                .map((row, index) => (
+                                  <TableRow key={index}>
+                                    <TableCell>{row.rowIndex}</TableCell>
+                                    <TableCell>
+                                      {row.category_name_ro}
+                                    </TableCell>
+                                    <TableCell className="max-w-48 truncate">
+                                      {row.question_ro}
+                                    </TableCell>
+                                    <TableCell>{row.question_weight}</TableCell>
+                                    <TableCell className="max-w-32 truncate">
+                                      {row.answer_ro}
+                                    </TableCell>
+                                    <TableCell>{row.answer_weight}</TableCell>
+                                  </TableRow>
+                                ))}
                             </TableBody>
                           </Table>
                           {validationResult.valid.length > 10 && (
                             <p className="text-sm text-muted-foreground mt-2 text-center">
-                              Showing first 10 rows of {validationResult.valid.length} valid rows
+                              Showing first 10 rows of{" "}
+                              {validationResult.valid.length} valid rows
                             </p>
                           )}
                         </div>
@@ -516,7 +628,10 @@ export default function EnhancedBulkImportDialog({ open, onOpenChange, propertyT
                       <AccordionTrigger>
                         <div className="flex items-center space-x-2">
                           <AlertCircle className="h-4 w-4 text-red-500" />
-                          <span>Invalid Data ({validationResult.invalid.length} rows)</span>
+                          <span>
+                            Invalid Data ({validationResult.invalid.length}{" "}
+                            rows)
+                          </span>
                         </div>
                       </AccordionTrigger>
                       <AccordionContent>
@@ -535,11 +650,17 @@ export default function EnhancedBulkImportDialog({ open, onOpenChange, propertyT
                                 <TableRow key={index}>
                                   <TableCell>{row.rowIndex}</TableCell>
                                   <TableCell>{row.category_name_ro}</TableCell>
-                                  <TableCell className="max-w-48 truncate">{row.question_ro}</TableCell>
+                                  <TableCell className="max-w-48 truncate">
+                                    {row.question_ro}
+                                  </TableCell>
                                   <TableCell>
                                     <div className="space-y-1">
                                       {row.errors.map((error, errorIndex) => (
-                                        <Badge key={errorIndex} variant="destructive" className="text-xs">
+                                        <Badge
+                                          key={errorIndex}
+                                          variant="destructive"
+                                          className="text-xs"
+                                        >
                                           {error}
                                         </Badge>
                                       ))}
@@ -578,30 +699,49 @@ export default function EnhancedBulkImportDialog({ open, onOpenChange, propertyT
             <DialogTitle>Confirm Import</DialogTitle>
             <DialogDescription>
               <div className="space-y-2">
-                <p>Are you sure you want to {replaceMode ? 'replace' : 'import'} the questions data?</p>
+                <p>
+                  Are you sure you want to {replaceMode ? "replace" : "import"}{" "}
+                  the questions data?
+                </p>
                 {replaceMode && (
                   <p className="text-red-600 font-medium">
-                    ⚠️ This will permanently delete all existing questions for this property type!
+                    ⚠️ This will permanently delete all existing questions for
+                    this property type!
                   </p>
                 )}
                 <div className="mt-4 p-3 bg-muted rounded">
                   <p className="text-sm">
-                    <strong>Summary:</strong><br />
-                    • {validationResult?.summary.validRows} valid rows will be processed<br />
-                    • {validationResult?.summary.uniqueQuestions} unique questions<br />
-                    • {validationResult?.summary.categories.size} categories<br />
-                    • Mode: {replaceMode ? 'Replace existing data' : 'Append to existing data'}
+                    <strong>Summary:</strong>
+                    <br />• {validationResult?.summary.validRows} valid rows
+                    will be processed
+                    <br />• {validationResult?.summary.uniqueQuestions} unique
+                    questions
+                    <br />• {validationResult?.summary.categories.size}{" "}
+                    categories
+                    <br />• Mode:{" "}
+                    {replaceMode
+                      ? "Replace existing data"
+                      : "Append to existing data"}
                   </p>
                 </div>
               </div>
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setShowConfirmDialog(false)}>
+            <Button
+              variant="outline"
+              onClick={() => setShowConfirmDialog(false)}
+            >
               Cancel
             </Button>
-            <Button onClick={handleImport} disabled={importing} variant={replaceMode ? 'destructive' : 'default'}>
-              {importing ? 'Importing...' : `Confirm ${replaceMode ? 'Replace' : 'Import'}`}
+            <Button
+              onClick={handleImport}
+              disabled={importing}
+              variant={replaceMode ? "destructive" : "default"}
+            >
+              {importing
+                ? "Importing..."
+                : `Confirm ${replaceMode ? "Replace" : "Import"}`}
             </Button>
           </DialogFooter>
         </DialogContent>

@@ -1,15 +1,15 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { z } from 'zod';
-import { db } from '@/lib/db/drizzle';
-import { users } from '@/lib/db/schema';
-import { hashPassword, setSession } from '@/lib/auth/session';
-import { eq } from 'drizzle-orm';
+import { eq } from "drizzle-orm";
+import { type NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
+import { hashPassword, setSession } from "@/lib/auth/session";
+import { db } from "@/lib/db/drizzle";
+import { users } from "@/lib/db/schema";
 
 const signUpSchema = z.object({
-  firstName: z.string().min(1, 'First name is required'),
-  lastName: z.string().min(1, 'Last name is required'),
-  email: z.string().email('Invalid email address'),
-  password: z.string().min(8, 'Password must be at least 8 characters'),
+  firstName: z.string().min(1, "First name is required"),
+  lastName: z.string().min(1, "Last name is required"),
+  email: z.string().email("Invalid email address"),
+  password: z.string().min(8, "Password must be at least 8 characters"),
 });
 
 export async function POST(request: NextRequest) {
@@ -26,8 +26,8 @@ export async function POST(request: NextRequest) {
 
     if (existingUser) {
       return NextResponse.json(
-        { error: 'User with this email already exists' },
-        { status: 409 }
+        { error: "User with this email already exists" },
+        { status: 409 },
       );
     }
 
@@ -48,7 +48,7 @@ export async function POST(request: NextRequest) {
     await setSession(newUser);
 
     return NextResponse.json({
-      message: 'Account created successfully',
+      message: "Account created successfully",
       user: {
         id: newUser.id,
         email: newUser.email,
@@ -59,15 +59,15 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(
-        { error: 'Invalid input', details: error.errors },
-        { status: 400 }
+        { error: "Invalid input", details: error.errors },
+        { status: 400 },
       );
     }
 
-    console.error('Sign up error:', error);
+    console.error("Sign up error:", error);
     return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
+      { error: "Internal server error" },
+      { status: 500 },
     );
   }
 }

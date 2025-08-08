@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import {
   Table,
@@ -8,23 +8,23 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@workspace/ui/components/table';
-import { useTranslations } from '@/i18n/client';
+} from "@workspace/ui/components/table";
+import type * as Commerce from "commerce-kit";
+import Image from "next/image";
+import { useOptimistic } from "react";
+import { useTranslations } from "@/i18n/client";
 import {
   calculateCartTotalPossiblyWithTax,
   formatMoney,
   formatProductName,
-} from '@/lib/utils';
+} from "@/lib/utils";
 import {
   CartAmountWithSpinner,
   CartItemLineTotal,
   CartItemQuantity,
-} from '@/ui/checkout/cart-items.client';
-import { FormatDeliveryEstimate } from '@/ui/checkout/shipping-rates-section';
-import { YnsLink } from '@/ui/yns-link';
-import type * as Commerce from 'commerce-kit';
-import Image from 'next/image';
-import { useOptimistic } from 'react';
+} from "@/ui/checkout/cart-items.client";
+import { FormatDeliveryEstimate } from "@/ui/checkout/shipping-rates-section";
+import { YnsLink } from "@/ui/yns-link";
 
 export const CartSummaryTable = ({
   cart,
@@ -33,15 +33,15 @@ export const CartSummaryTable = ({
   cart: Commerce.Cart;
   locale: string;
 }) => {
-  const t = useTranslations('/cart.page.summaryTable');
+  const t = useTranslations("/cart.page.summaryTable");
 
   const [optimisticCart, dispatchOptimisticCartAction] = useOptimistic(
     cart,
     (
       prevCart,
-      action: { productId: string; action: 'INCREASE' | 'DECREASE' }
+      action: { productId: string; action: "INCREASE" | "DECREASE" },
     ) => {
-      const modifier = action.action === 'INCREASE' ? 1 : -1;
+      const modifier = action.action === "INCREASE" ? 1 : -1;
 
       return {
         ...prevCart,
@@ -52,10 +52,10 @@ export const CartSummaryTable = ({
           return line;
         }),
       };
-    }
+    },
   );
 
-  const currency = optimisticCart.lines[0]!.product.default_price.currency;
+  const currency = optimisticCart.lines[0]?.product.default_price.currency;
   const total = calculateCartTotalPossiblyWithTax(optimisticCart);
 
   return (
@@ -63,14 +63,14 @@ export const CartSummaryTable = ({
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead className='hidden w-24 sm:table-cell'>
-              <span className='sr-only'>{t('imageCol')}</span>
+            <TableHead className="hidden w-24 sm:table-cell">
+              <span className="sr-only">{t("imageCol")}</span>
             </TableHead>
-            <TableHead className=''>{t('productCol')}</TableHead>
-            <TableHead className='w-1/6 min-w-32'>{t('priceCol')}</TableHead>
-            <TableHead className='w-1/6 min-w-32'>{t('quantityCol')}</TableHead>
-            <TableHead className='w-1/6 min-w-32 text-right'>
-              {t('totalCol')}
+            <TableHead className="">{t("productCol")}</TableHead>
+            <TableHead className="w-1/6 min-w-32">{t("priceCol")}</TableHead>
+            <TableHead className="w-1/6 min-w-32">{t("quantityCol")}</TableHead>
+            <TableHead className="w-1/6 min-w-32 text-right">
+              {t("totalCol")}
             </TableHead>
           </TableRow>
         </TableHeader>
@@ -83,25 +83,25 @@ export const CartSummaryTable = ({
             // );
             return (
               <TableRow key={line.product.id}>
-                <TableCell className='hidden sm:table-cell sm:w-24'>
+                <TableCell className="hidden sm:table-cell sm:w-24">
                   {line.product.images[0] && (
                     <Image
-                      className='aspect-square rounded-md object-cover'
+                      className="aspect-square rounded-md object-cover"
                       src={line.product.images[0]}
                       width={96}
                       height={96}
-                      alt=''
+                      alt=""
                     />
                   )}
                 </TableCell>
-                <TableCell className='font-medium'>
+                <TableCell className="font-medium">
                   <YnsLink
-                    className='transition-colors hover:text-muted-foreground'
+                    className="transition-colors hover:text-muted-foreground"
                     href={`/product/${line.product.metadata.slug}`}
                   >
                     {formatProductName(
                       line.product.name,
-                      line.product.metadata.variant
+                      line.product.metadata.variant,
                     )}
                   </YnsLink>
                 </TableCell>
@@ -120,7 +120,7 @@ export const CartSummaryTable = ({
                     onChange={dispatchOptimisticCartAction}
                   />
                 </TableCell>
-                <TableCell className='text-right'>
+                <TableCell className="text-right">
                   <CartItemLineTotal
                     currency={line.product.default_price.currency}
                     quantity={line.quantity}
@@ -134,16 +134,16 @@ export const CartSummaryTable = ({
           })}
           {cart.shippingRate && (
             <TableRow>
-              <TableCell className='hidden sm:table-cell sm:w-24'></TableCell>
-              <TableCell className='font-medium' colSpan={3}>
-                {cart.shippingRate.display_name}{' '}
-                <span className='text-muted-foreground'>
+              <TableCell className="hidden sm:table-cell sm:w-24"></TableCell>
+              <TableCell className="font-medium" colSpan={3}>
+                {cart.shippingRate.display_name}{" "}
+                <span className="text-muted-foreground">
                   <FormatDeliveryEstimate
                     estimate={cart.shippingRate.delivery_estimate}
                   />
                 </span>
               </TableCell>
-              <TableCell className='text-right'>
+              <TableCell className="text-right">
                 {cart.shippingRate.fixed_amount &&
                   formatMoney({
                     amount: cart.shippingRate.fixed_amount.amount,
@@ -156,13 +156,13 @@ export const CartSummaryTable = ({
         </TableBody>
         <TableFooter>
           {optimisticCart.cart.taxBreakdown.map((tax, idx) => (
-            <TableRow key={idx + tax.taxAmount} className='font-normal'>
-              <TableCell className='hidden w-24 sm:table-cell'></TableCell>
-              <TableCell colSpan={3} className='text-right'>
+            <TableRow key={idx + tax.taxAmount} className="font-normal">
+              <TableCell className="hidden w-24 sm:table-cell"></TableCell>
+              <TableCell colSpan={3} className="text-right">
                 {tax.taxType.toString().toLocaleUpperCase()} {tax.taxPercentage}
                 %
               </TableCell>
-              <TableCell className='text-right'>
+              <TableCell className="text-right">
                 <CartAmountWithSpinner
                   total={tax.taxAmount}
                   currency={currency}
@@ -171,12 +171,12 @@ export const CartSummaryTable = ({
               </TableCell>
             </TableRow>
           ))}
-          <TableRow className='text-lg font-bold'>
-            <TableCell className='hidden w-24 sm:table-cell'></TableCell>
-            <TableCell colSpan={3} className='text-right'>
-              {t('totalSummary')}
+          <TableRow className="text-lg font-bold">
+            <TableCell className="hidden w-24 sm:table-cell"></TableCell>
+            <TableCell colSpan={3} className="text-right">
+              {t("totalSummary")}
             </TableCell>
-            <TableCell className='text-right'>
+            <TableCell className="text-right">
               <CartAmountWithSpinner
                 total={total}
                 currency={currency}

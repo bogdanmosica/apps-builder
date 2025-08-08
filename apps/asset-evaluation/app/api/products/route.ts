@@ -1,26 +1,32 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { db } from '@/lib/db/drizzle';
-import { products, teamMembers } from '@/lib/db/schema';
-import { getUser } from '@/lib/db/queries';
-import { eq, and, desc } from 'drizzle-orm';
-import { z } from 'zod';
+import { and, desc, eq } from "drizzle-orm";
+import { type NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
+import { db } from "@/lib/db/drizzle";
+import { getUser } from "@/lib/db/queries";
+import { products, teamMembers } from "@/lib/db/schema";
 
 // Type for product data from database
 type ProductData = typeof products.$inferSelect;
 
 const createProductSchema = z.object({
-  name: z.string().min(1, 'Product name is required').max(100, 'Product name must be less than 100 characters'),
+  name: z
+    .string()
+    .min(1, "Product name is required")
+    .max(100, "Product name must be less than 100 characters"),
   description: z.string().optional(),
-  price: z.number().min(0, 'Price must be a positive number'),
-  currency: z.string().length(3, 'Currency must be 3 characters').default('usd'),
-  billingPeriod: z.enum(['monthly', 'yearly', 'one_time']).default('monthly'),
+  price: z.number().min(0, "Price must be a positive number"),
+  currency: z
+    .string()
+    .length(3, "Currency must be 3 characters")
+    .default("usd"),
+  billingPeriod: z.enum(["monthly", "yearly", "one_time"]).default("monthly"),
 });
 
 export async function GET(request: NextRequest) {
   try {
     const user = await getUser();
     if (!user) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     // Get user's team
@@ -48,15 +54,15 @@ export async function GET(request: NextRequest) {
     const formattedProducts = teamProducts.map((product: ProductData) => ({
       ...product,
       formattedPrice: `$${(product.price / 100).toFixed(2)}`,
-      isActive: product.isActive === 'true',
+      isActive: product.isActive === "true",
     }));
 
     return NextResponse.json({ products: formattedProducts });
   } catch (error) {
-    console.error('Error fetching products:', error);
+    console.error("Error fetching products:", error);
     return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
+      { error: "Internal server error" },
+      { status: 500 },
     );
   }
 }
@@ -65,7 +71,7 @@ export async function POST(request: NextRequest) {
   try {
     const user = await getUser();
     if (!user) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     // Get user's team
@@ -76,9 +82,12 @@ export async function POST(request: NextRequest) {
       .limit(1);
 
     if (userWithTeam.length === 0) {
-      return NextResponse.json({ 
-        error: 'No team found. Please create or join a team first.' 
-      }, { status: 400 });
+      return NextResponse.json(
+        {
+          error: "No team found. Please create or join a team first.",
+        },
+        { status: 400 },
+      );
     }
 
     const teamId = userWithTeam[0].teamId;
@@ -100,30 +109,33 @@ export async function POST(request: NextRequest) {
         price: priceInCents,
         currency: validatedData.currency,
         billingPeriod: validatedData.billingPeriod,
-        isActive: 'true',
+        isActive: "true",
       })
       .returning();
 
-    return NextResponse.json({ 
-      product: {
-        ...newProduct[0],
-        formattedPrice: `$${(newProduct[0].price / 100).toFixed(2)}`,
-        isActive: newProduct[0].isActive === 'true',
+    return NextResponse.json(
+      {
+        product: {
+          ...newProduct[0],
+          formattedPrice: `$${(newProduct[0].price / 100).toFixed(2)}`,
+          isActive: newProduct[0].isActive === "true",
+        },
+        message: "Product created successfully",
       },
-      message: 'Product created successfully'
-    }, { status: 201 });
+      { status: 201 },
+    );
   } catch (error) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(
-        { error: 'Validation error', details: error.errors },
-        { status: 400 }
+        { error: "Validation error", details: error.errors },
+        { status: 400 },
       );
     }
 
-    console.error('Error creating product:', error);
+    console.error("Error creating product:", error);
     return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
+      { error: "Internal server error" },
+      { status: 500 },
     );
   }
 }

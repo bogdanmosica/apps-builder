@@ -1,43 +1,43 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { Button } from '@workspace/ui/components/button';
-import { Badge } from '@workspace/ui/components/badge';
-import { Card, CardContent } from '@workspace/ui/components/card';
+import { Badge } from "@workspace/ui/components/badge";
+import { Button } from "@workspace/ui/components/button";
+import { Card, CardContent } from "@workspace/ui/components/card";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@workspace/ui/components/collapsible";
 import {
   Sheet,
   SheetContent,
   SheetDescription,
   SheetHeader,
   SheetTitle,
-} from '@workspace/ui/components/sheet';
+} from "@workspace/ui/components/sheet";
 import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from '@workspace/ui/components/collapsible';
-import {
-  ChevronLeft,
+  AlertTriangle,
+  ArrowRight,
+  Camera,
+  CheckCircle,
   ChevronDown,
+  ChevronLeft,
   ChevronRight,
   ChevronUp,
-  Star,
-  CheckCircle,
-  AlertTriangle,
-  Camera,
   FileText,
-  ArrowRight,
-} from 'lucide-react';
-import { useRouter } from 'next/navigation';
+  Star,
+} from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 
 // Demo Data Model
 interface Question {
   id: string;
   text: string;
-  grade: 'A' | 'B' | 'C' | 'D';
+  grade: "A" | "B" | "C" | "D";
   weight: number;
   rationale: string;
-  evidence?: 'foto' | 'doc';
+  evidence?: "foto" | "doc";
 }
 
 interface Chapter {
@@ -107,17 +107,17 @@ interface PrimaryCTAProps {
 }
 
 // Utility Functions
-const getGradeColor = (grade: 'A' | 'B' | 'C' | 'D'): string => {
+const getGradeColor = (grade: "A" | "B" | "C" | "D"): string => {
   const colorMap = {
-    A: 'bg-[hsl(var(--success))] text-[hsl(var(--success-foreground))]',
-    B: 'bg-[hsl(var(--primary))] text-[hsl(var(--primary-foreground))]',
-    C: 'bg-[hsl(var(--warning))] text-[hsl(var(--warning-foreground))]',
-    D: 'bg-[hsl(var(--destructive))] text-[hsl(var(--destructive-foreground))]'
+    A: "bg-[hsl(var(--success))] text-[hsl(var(--success-foreground))]",
+    B: "bg-[hsl(var(--primary))] text-[hsl(var(--primary-foreground))]",
+    C: "bg-[hsl(var(--warning))] text-[hsl(var(--warning-foreground))]",
+    D: "bg-[hsl(var(--destructive))] text-[hsl(var(--destructive-foreground))]",
   };
   return colorMap[grade];
 };
 
-const getGradeNumeric = (grade: 'A' | 'B' | 'C' | 'D'): number => {
+const getGradeNumeric = (grade: "A" | "B" | "C" | "D"): number => {
   const gradeMap = { A: 1.0, B: 0.75, C: 0.5, D: 0 };
   return gradeMap[grade];
 };
@@ -132,12 +132,19 @@ function ScoreChip({ value, showStars = true }: ScoreChipProps) {
     const stars = [];
     const fullStars = Math.floor(score);
     const hasHalf = score % 1 >= 0.5;
-    
+
     for (let i = 0; i < 5; i++) {
       if (i < fullStars) {
-        stars.push(<Star key={i} className="h-4 w-4 fill-yellow-400 text-yellow-400" />);
+        stars.push(
+          <Star key={i} className="h-4 w-4 fill-yellow-400 text-yellow-400" />,
+        );
       } else if (i === fullStars && hasHalf) {
-        stars.push(<Star key={i} className="h-4 w-4 fill-yellow-400/50 text-yellow-400" />);
+        stars.push(
+          <Star
+            key={i}
+            className="h-4 w-4 fill-yellow-400/50 text-yellow-400"
+          />,
+        );
       } else {
         stars.push(<Star key={i} className="h-4 w-4 text-gray-300" />);
       }
@@ -164,19 +171,25 @@ function StatusChips({ issues }: StatusChipsProps) {
   return (
     <div className="flex items-center gap-2">
       {issues.warnings > 0 && (
-        <Badge variant="outline" className="bg-yellow-50 text-yellow-700 border-yellow-200 text-xs">
+        <Badge
+          variant="outline"
+          className="bg-yellow-50 text-yellow-700 border-yellow-200 text-xs"
+        >
           <AlertTriangle className="h-3 w-3 mr-1" />
-          {issues.warnings} Warning{issues.warnings !== 1 ? 's' : ''}
+          {issues.warnings} Warning{issues.warnings !== 1 ? "s" : ""}
         </Badge>
       )}
       {issues.dangers > 0 && (
         <Badge variant="destructive" className="text-xs">
           <AlertTriangle className="h-3 w-3 mr-1" />
-          {issues.dangers} Issue{issues.dangers !== 1 ? 's' : ''}
+          {issues.dangers} Issue{issues.dangers !== 1 ? "s" : ""}
         </Badge>
       )}
       {issues.warnings === 0 && issues.dangers === 0 && (
-        <Badge variant="default" className="bg-green-100 text-green-700 text-xs">
+        <Badge
+          variant="default"
+          className="bg-green-100 text-green-700 text-xs"
+        >
           <CheckCircle className="h-3 w-3 mr-1" />
           All Good
         </Badge>
@@ -186,7 +199,7 @@ function StatusChips({ issues }: StatusChipsProps) {
 }
 
 // Primary CTA Component
-function PrimaryCTA({ onClick, className = '' }: PrimaryCTAProps) {
+function PrimaryCTA({ onClick, className = "" }: PrimaryCTAProps) {
   return (
     <Button
       onClick={onClick}
@@ -208,7 +221,9 @@ function QuestionRow({ question, chapterId, onSelect }: QuestionRowProps) {
       <div className="flex items-start justify-between">
         <div className="flex-1 mr-4">
           <div className="flex items-center gap-3 mb-2">
-            <Badge className={`text-xs px-2 py-1 ${getGradeColor(question.grade)}`}>
+            <Badge
+              className={`text-xs px-2 py-1 ${getGradeColor(question.grade)}`}
+            >
               {question.grade}
             </Badge>
             <Badge variant="outline" className="text-xs">
@@ -216,10 +231,16 @@ function QuestionRow({ question, chapterId, onSelect }: QuestionRowProps) {
             </Badge>
             {question.evidence && (
               <Badge variant="outline" className="text-xs">
-                {question.evidence === 'foto' ? (
-                  <><Camera className="h-3 w-3 mr-1" />Photo</>
+                {question.evidence === "foto" ? (
+                  <>
+                    <Camera className="h-3 w-3 mr-1" />
+                    Photo
+                  </>
                 ) : (
-                  <><FileText className="h-3 w-3 mr-1" />Doc</>
+                  <>
+                    <FileText className="h-3 w-3 mr-1" />
+                    Doc
+                  </>
                 )}
               </Badge>
             )}
@@ -238,13 +259,20 @@ function QuestionRow({ question, chapterId, onSelect }: QuestionRowProps) {
 }
 
 // Question Sheet Component
-function QuestionSheet({ question, chapterId, isOpen, onClose, onPrev, onNext }: QuestionSheetProps) {
+function QuestionSheet({
+  question,
+  chapterId,
+  isOpen,
+  onClose,
+  onPrev,
+  onNext,
+}: QuestionSheetProps) {
   if (!question) return null;
 
   return (
     <Sheet open={isOpen} onOpenChange={onClose}>
-      <SheetContent 
-        side="bottom" 
+      <SheetContent
+        side="bottom"
         className="h-[85vh] rounded-t-lg"
         role="dialog"
         aria-modal="true"
@@ -257,11 +285,13 @@ function QuestionSheet({ question, chapterId, isOpen, onClose, onPrev, onNext }:
             Detailed information about the selected question
           </SheetDescription>
         </SheetHeader>
-        
+
         <div className="mt-6 space-y-6">
           <div>
             <div className="flex items-center gap-3 mb-3">
-              <Badge className={`text-sm px-3 py-1 ${getGradeColor(question.grade)}`}>
+              <Badge
+                className={`text-sm px-3 py-1 ${getGradeColor(question.grade)}`}
+              >
                 Grade {question.grade}
               </Badge>
               <Badge variant="outline" className="text-sm">
@@ -269,10 +299,16 @@ function QuestionSheet({ question, chapterId, isOpen, onClose, onPrev, onNext }:
               </Badge>
               {question.evidence && (
                 <Badge variant="outline" className="text-sm">
-                  {question.evidence === 'foto' ? (
-                    <><Camera className="h-4 w-4 mr-2" />Photo Evidence</>
+                  {question.evidence === "foto" ? (
+                    <>
+                      <Camera className="h-4 w-4 mr-2" />
+                      Photo Evidence
+                    </>
                   ) : (
-                    <><FileText className="h-4 w-4 mr-2" />Document Evidence</>
+                    <>
+                      <FileText className="h-4 w-4 mr-2" />
+                      Document Evidence
+                    </>
                   )}
                 </Badge>
               )}
@@ -291,7 +327,15 @@ function QuestionSheet({ question, chapterId, isOpen, onClose, onPrev, onNext }:
                 Score Calculation
               </h4>
               <p className="text-sm text-[hsl(var(--muted-foreground))]">
-                Grade {question.grade} ({getGradeNumeric(question.grade).toFixed(2)}) × Weight {(question.weight * 100).toFixed(0)}% = {(getGradeNumeric(question.grade) * question.weight * 5).toFixed(2)} points
+                Grade {question.grade} (
+                {getGradeNumeric(question.grade).toFixed(2)}) × Weight{" "}
+                {(question.weight * 100).toFixed(0)}% ={" "}
+                {(
+                  getGradeNumeric(question.grade) *
+                  question.weight *
+                  5
+                ).toFixed(2)}{" "}
+                points
               </p>
             </div>
 
@@ -300,8 +344,9 @@ function QuestionSheet({ question, chapterId, isOpen, onClose, onPrev, onNext }:
                 Evaluation Guidelines
               </h4>
               <p className="text-sm text-[hsl(var(--muted-foreground))]">
-                This assessment considers long-term impact and maintenance costs. 
-                Grade A indicates excellent condition with minimal future investment needed.
+                This assessment considers long-term impact and maintenance
+                costs. Grade A indicates excellent condition with minimal future
+                investment needed.
               </p>
             </div>
 
@@ -311,10 +356,9 @@ function QuestionSheet({ question, chapterId, isOpen, onClose, onPrev, onNext }:
                   Supporting Evidence
                 </h4>
                 <p className="text-sm text-[hsl(var(--muted-foreground))]">
-                  {question.evidence === 'foto' 
-                    ? 'Photographic evidence has been attached to support this assessment.'
-                    : 'Documentation is available to verify this evaluation.'
-                  }
+                  {question.evidence === "foto"
+                    ? "Photographic evidence has been attached to support this assessment."
+                    : "Documentation is available to verify this evaluation."}
                 </p>
               </div>
             )}
@@ -322,8 +366,8 @@ function QuestionSheet({ question, chapterId, isOpen, onClose, onPrev, onNext }:
 
           {(onPrev || onNext) && (
             <div className="flex justify-between pt-4 border-t border-[hsl(var(--border))]">
-              <Button 
-                variant="outline" 
+              <Button
+                variant="outline"
                 onClick={onPrev}
                 disabled={!onPrev}
                 className="flex items-center gap-2"
@@ -331,8 +375,8 @@ function QuestionSheet({ question, chapterId, isOpen, onClose, onPrev, onNext }:
                 <ChevronLeft className="h-4 w-4" />
                 Previous
               </Button>
-              <Button 
-                variant="outline" 
+              <Button
+                variant="outline"
                 onClick={onNext}
                 disabled={!onNext}
                 className="flex items-center gap-2"
@@ -349,16 +393,24 @@ function QuestionSheet({ question, chapterId, isOpen, onClose, onPrev, onNext }:
 }
 
 // Chapter Accordion Component
-function ChapterAccordion({ chapters, expandedChapters, onToggleChapter, onQuestionSelect }: ChapterAccordionProps) {
+function ChapterAccordion({
+  chapters,
+  expandedChapters,
+  onToggleChapter,
+  onQuestionSelect,
+}: ChapterAccordionProps) {
   return (
     <div className="space-y-3">
       {chapters.map((chapter) => (
-        <Card key={chapter.id} className="bg-[hsl(var(--card))] border border-[hsl(var(--border))] rounded-lg">
-          <Collapsible 
+        <Card
+          key={chapter.id}
+          className="bg-[hsl(var(--card))] border border-[hsl(var(--border))] rounded-lg"
+        >
+          <Collapsible
             open={expandedChapters.has(chapter.id)}
             onOpenChange={() => onToggleChapter(chapter.id)}
           >
-            <CollapsibleTrigger 
+            <CollapsibleTrigger
               className="w-full p-4 text-left hover:bg-[hsl(var(--accent))] transition-colors focus-visible:ring-2 ring-[hsl(var(--ring))] rounded-lg"
               aria-expanded={expandedChapters.has(chapter.id)}
             >
@@ -373,8 +425,13 @@ function ChapterAccordion({ chapters, expandedChapters, onToggleChapter, onQuest
                     </Badge>
                   </div>
                   <div className="flex items-center justify-between text-sm text-[hsl(var(--muted-foreground))] mb-2">
-                    <span>{chapter.answered}/{chapter.total} answered</span>
-                    <span>{Math.round((chapter.answered / chapter.total) * 100)}% complete</span>
+                    <span>
+                      {chapter.answered}/{chapter.total} answered
+                    </span>
+                    <span>
+                      {Math.round((chapter.answered / chapter.total) * 100)}%
+                      complete
+                    </span>
                   </div>
                   <div className="w-full bg-[hsl(var(--secondary))] rounded-full h-2">
                     <div
@@ -392,7 +449,7 @@ function ChapterAccordion({ chapters, expandedChapters, onToggleChapter, onQuest
                 </div>
               </div>
             </CollapsibleTrigger>
-            
+
             <CollapsibleContent>
               <div className="px-4 pb-4 space-y-2">
                 {chapter.questions.map((question) => (
@@ -414,170 +471,170 @@ function ChapterAccordion({ chapters, expandedChapters, onToggleChapter, onQuest
 
 // Demo Data
 const demoProperty: DemoProperty = {
-  id: 'demo-001',
-  title: '3BR New Build — Periurban',
+  id: "demo-001",
+  title: "3BR New Build — Periurban",
   yearBuilt: 2022,
   areaSqm: 120,
-  locationType: 'periurban'
+  locationType: "periurban",
 };
 
 const demoChapters: Chapter[] = [
   {
-    id: 'utilities',
-    name: 'Utilități',
+    id: "utilities",
+    name: "Utilități",
     score: 4.6,
     answered: 7,
     total: 9,
     questions: [
       {
-        id: 'u-01',
-        text: 'Terenul este racordat la apă potabilă?',
-        grade: 'A',
+        id: "u-01",
+        text: "Terenul este racordat la apă potabilă?",
+        grade: "A",
         weight: 0.15,
-        rationale: 'Conductă prezentă, presiune adecvată.',
-        evidence: 'foto'
+        rationale: "Conductă prezentă, presiune adecvată.",
+        evidence: "foto",
       },
       {
-        id: 'u-02',
-        text: 'Branșament gaz existent și funcțional?',
-        grade: 'B',
+        id: "u-02",
+        text: "Branșament gaz existent și funcțional?",
+        grade: "B",
         weight: 0.15,
-        rationale: 'Branșament prezent, contor nou, PIF în curs.'
+        rationale: "Branșament prezent, contor nou, PIF în curs.",
       },
       {
-        id: 'u-03',
-        text: 'Canalizare conectată la rețeaua publică?',
-        grade: 'B',
-        weight: 0.10,
-        rationale: 'Rețea pe stradă, racord programat.',
-        evidence: 'doc'
+        id: "u-03",
+        text: "Canalizare conectată la rețeaua publică?",
+        grade: "B",
+        weight: 0.1,
+        rationale: "Rețea pe stradă, racord programat.",
+        evidence: "doc",
       },
       {
-        id: 'u-04',
-        text: 'Rețea electrică cu putere suficientă?',
-        grade: 'A',
-        weight: 0.20,
-        rationale: 'Branșament 380V, contor digital nou.'
+        id: "u-04",
+        text: "Rețea electrică cu putere suficientă?",
+        grade: "A",
+        weight: 0.2,
+        rationale: "Branșament 380V, contor digital nou.",
       },
       {
-        id: 'u-05',
-        text: 'Internet fibră optică disponibil?',
-        grade: 'A',
+        id: "u-05",
+        text: "Internet fibră optică disponibil?",
+        grade: "A",
         weight: 0.05,
-        rationale: 'Furnizori multipli, viteză garantată 1Gbps.'
+        rationale: "Furnizori multipli, viteză garantată 1Gbps.",
       },
       {
-        id: 'u-06',
-        text: 'Sistem de încălzire centralizată?',
-        grade: 'C',
+        id: "u-06",
+        text: "Sistem de încălzire centralizată?",
+        grade: "C",
         weight: 0.15,
-        rationale: 'Nu există, necesită sistem propriu.'
+        rationale: "Nu există, necesită sistem propriu.",
       },
       {
-        id: 'u-07',
-        text: 'Evacuare ape pluviale funcțională?',
-        grade: 'B',
-        weight: 0.10,
-        rationale: 'Sistem prezent, necesită verificări periodice.'
-      }
-    ]
+        id: "u-07",
+        text: "Evacuare ape pluviale funcțională?",
+        grade: "B",
+        weight: 0.1,
+        rationale: "Sistem prezent, necesită verificări periodice.",
+      },
+    ],
   },
   {
-    id: 'structure',
-    name: 'Structură',
+    id: "structure",
+    name: "Structură",
     score: 4.3,
     answered: 6,
     total: 8,
     questions: [
       {
-        id: 's-01',
-        text: 'Pereți structurali conform proiectului?',
-        grade: 'A',
-        weight: 0.20,
-        rationale: 'Conformitate verificată vizual.'
+        id: "s-01",
+        text: "Pereți structurali conform proiectului?",
+        grade: "A",
+        weight: 0.2,
+        rationale: "Conformitate verificată vizual.",
       },
       {
-        id: 's-02',
-        text: 'Infiltrații vizibile la subsol?',
-        grade: 'A',
-        weight: 0.10,
-        rationale: 'Nicio urmă de umezeală.',
-        evidence: 'foto'
+        id: "s-02",
+        text: "Infiltrații vizibile la subsol?",
+        grade: "A",
+        weight: 0.1,
+        rationale: "Nicio urmă de umezeală.",
+        evidence: "foto",
       },
       {
-        id: 's-03',
-        text: 'Fisuri în pereții exteriori?',
-        grade: 'A',
+        id: "s-03",
+        text: "Fisuri în pereții exteriori?",
+        grade: "A",
         weight: 0.15,
-        rationale: 'Suprafețe în stare perfectă.'
+        rationale: "Suprafețe în stare perfectă.",
       },
       {
-        id: 's-04',
-        text: 'Fundația și soclu în stare bună?',
-        grade: 'B',
+        id: "s-04",
+        text: "Fundația și soclu în stare bună?",
+        grade: "B",
         weight: 0.25,
-        rationale: 'Mici defecte cosmetice, structură solidă.'
+        rationale: "Mici defecte cosmetice, structură solidă.",
       },
       {
-        id: 's-05',
-        text: 'Acoperișul fără probleme?',
-        grade: 'B',
-        weight: 0.20,
-        rationale: 'Țiglă în stare bună, jgheaburi funcționale.'
+        id: "s-05",
+        text: "Acoperișul fără probleme?",
+        grade: "B",
+        weight: 0.2,
+        rationale: "Țiglă în stare bună, jgheaburi funcționale.",
       },
       {
-        id: 's-06',
-        text: 'Instalații înglobate conform normelor?',
-        grade: 'A',
-        weight: 0.10,
-        rationale: 'Trase conform proiectului, certificat ANRE.'
-      }
-    ]
+        id: "s-06",
+        text: "Instalații înglobate conform normelor?",
+        grade: "A",
+        weight: 0.1,
+        rationale: "Trase conform proiectului, certificat ANRE.",
+      },
+    ],
   },
   {
-    id: 'climate',
-    name: 'Eficiență energetică',
+    id: "climate",
+    name: "Eficiență energetică",
     score: 3.9,
     answered: 5,
     total: 7,
     questions: [
       {
-        id: 'e-01',
-        text: 'Izolație acoperiș ≥ 20 cm?',
-        grade: 'C',
+        id: "e-01",
+        text: "Izolație acoperiș ≥ 20 cm?",
+        grade: "C",
         weight: 0.15,
-        rationale: 'Estimat 15–18 cm.'
+        rationale: "Estimat 15–18 cm.",
       },
       {
-        id: 'e-02',
-        text: 'Ferestre tripan cu rupere termică?',
-        grade: 'B',
-        weight: 0.10,
-        rationale: 'Tripan pe fațade principale.'
+        id: "e-02",
+        text: "Ferestre tripan cu rupere termică?",
+        grade: "B",
+        weight: 0.1,
+        rationale: "Tripan pe fațade principale.",
       },
       {
-        id: 'e-03',
-        text: 'Izolație termică pereți exteriori?',
-        grade: 'B',
-        weight: 0.20,
-        rationale: 'Polistiren 10cm, executie corectă.'
+        id: "e-03",
+        text: "Izolație termică pereți exteriori?",
+        grade: "B",
+        weight: 0.2,
+        rationale: "Polistiren 10cm, executie corectă.",
       },
       {
-        id: 'e-04',
-        text: 'Sistem ventilație cu recuperare căldură?',
-        grade: 'D',
+        id: "e-04",
+        text: "Sistem ventilație cu recuperare căldură?",
+        grade: "D",
         weight: 0.15,
-        rationale: 'Lipsește, doar ventilație naturală.'
+        rationale: "Lipsește, doar ventilație naturală.",
       },
       {
-        id: 'e-05',
-        text: 'Certificat energetic clasa A sau B?',
-        grade: 'C',
+        id: "e-05",
+        text: "Certificat energetic clasa A sau B?",
+        grade: "C",
         weight: 0.25,
-        rationale: 'Clasa C confirmată prin audit.'
-      }
-    ]
-  }
+        rationale: "Clasa C confirmată prin audit.",
+      },
+    ],
+  },
 ];
 
 const demoScoring: DemoScoring = {
@@ -585,25 +642,27 @@ const demoScoring: DemoScoring = {
   stars: 4.0,
   issues: {
     warnings: 2,
-    dangers: 0
-  }
+    dangers: 0,
+  },
 };
 
 // Main Demo Screen Component
 export default function DemoPage() {
   const router = useRouter();
   const [expandedChapters, setExpandedChapters] = useState<Set<string>>(
-    new Set(['utilities'])
+    new Set(["utilities"]),
   );
-  const [selectedQuestion, setSelectedQuestion] = useState<Question | null>(null);
-  const [selectedChapterId, setSelectedChapterId] = useState<string>('');
+  const [selectedQuestion, setSelectedQuestion] = useState<Question | null>(
+    null,
+  );
+  const [selectedChapterId, setSelectedChapterId] = useState<string>("");
   const [isQuestionSheetOpen, setIsQuestionSheetOpen] = useState(false);
   const [showFooterCTA, setShowFooterCTA] = useState(true);
 
   useEffect(() => {
-    trackEvent('demo_open', { 
-      source: 'route',
-      isMobile: window.innerWidth < 768
+    trackEvent("demo_open", {
+      source: "route",
+      isMobile: window.innerWidth < 768,
     });
   }, []);
 
@@ -613,13 +672,13 @@ export default function DemoPage() {
       const scrollHeight = document.documentElement.scrollHeight;
       const clientHeight = window.innerHeight;
       const scrollPercentage = scrollTop / (scrollHeight - clientHeight);
-      
+
       // Hide footer CTA when user is near the end (80%+)
       setShowFooterCTA(scrollPercentage < 0.8);
     };
 
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   const handleToggleChapter = (chapterId: string) => {
@@ -631,11 +690,11 @@ export default function DemoPage() {
     }
     setExpandedChapters(newExpanded);
 
-    trackEvent('demo_chapter_view', { 
-      chapterId, 
-      chapterName: demoChapters.find(c => c.id === chapterId)?.name,
+    trackEvent("demo_chapter_view", {
+      chapterId,
+      chapterName: demoChapters.find((c) => c.id === chapterId)?.name,
       isExpanded: newExpanded.has(chapterId),
-      isMobile: window.innerWidth < 768
+      isMobile: window.innerWidth < 768,
     });
   };
 
@@ -644,11 +703,11 @@ export default function DemoPage() {
     setSelectedChapterId(chapterId);
     setIsQuestionSheetOpen(true);
 
-    trackEvent('demo_question_view', { 
+    trackEvent("demo_question_view", {
       questionId: question.id,
       chapterId,
       grade: question.grade,
-      isMobile: window.innerWidth < 768
+      isMobile: window.innerWidth < 768,
     });
   };
 
@@ -657,23 +716,23 @@ export default function DemoPage() {
   };
 
   const handlePrimaryCTA = () => {
-    trackEvent('demo_primary_cta_click', { 
+    trackEvent("demo_primary_cta_click", {
       globalScore: demoScoring.globalScore,
       isMobile: window.innerWidth < 768,
-      location: 'header'
+      location: "header",
     });
     // Navigate to actual evaluation flow
-    router.push('/evaluation');
+    router.push("/evaluation");
   };
 
   const handleFooterCTA = () => {
-    trackEvent('demo_primary_cta_click', { 
+    trackEvent("demo_primary_cta_click", {
       globalScore: demoScoring.globalScore,
       isMobile: window.innerWidth < 768,
-      location: 'footer'
+      location: "footer",
     });
     // Navigate to actual evaluation flow
-    router.push('/evaluation');
+    router.push("/evaluation");
   };
 
   return (
@@ -690,7 +749,8 @@ export default function DemoPage() {
                 Interactive Property Evaluation Demo
               </h1>
               <p className="text-sm text-[hsl(var(--muted-foreground))]">
-                {demoProperty.title} • {demoProperty.yearBuilt} • {demoProperty.areaSqm}m² • {demoProperty.locationType}
+                {demoProperty.title} • {demoProperty.yearBuilt} •{" "}
+                {demoProperty.areaSqm}m² • {demoProperty.locationType}
               </p>
             </div>
           </div>
@@ -717,7 +777,7 @@ export default function DemoPage() {
           onToggleChapter={handleToggleChapter}
           onQuestionSelect={handleQuestionSelect}
         />
-        
+
         {/* Final CTA */}
         <div className="mt-8 p-6 bg-gradient-to-r from-[hsl(var(--card))] to-[hsl(var(--accent))] rounded-lg border border-[hsl(var(--border))]">
           <div className="text-center space-y-4">
@@ -725,9 +785,13 @@ export default function DemoPage() {
               Ready to evaluate your property?
             </h2>
             <p className="text-[hsl(var(--muted-foreground))]">
-              This demo shows just a fraction of our full evaluation system. Get detailed insights, photo uploads, family collaboration, and more.
+              This demo shows just a fraction of our full evaluation system. Get
+              detailed insights, photo uploads, family collaboration, and more.
             </p>
-            <PrimaryCTA onClick={handleFooterCTA} className="w-full sm:w-auto" />
+            <PrimaryCTA
+              onClick={handleFooterCTA}
+              className="w-full sm:w-auto"
+            />
           </div>
         </div>
       </main>

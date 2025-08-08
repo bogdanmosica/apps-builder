@@ -1,19 +1,19 @@
-'use client';
+"use client";
 
-import { Button } from '@workspace/ui/components/button';
-import { Input } from '@workspace/ui/components/input';
-import { useTranslations } from '@/i18n/client';
-import { signForNewsletter } from '@/ui/footer/actions';
-import { Loader2Icon } from 'lucide-react';
-import { useState } from 'react';
-import { toast } from 'sonner';
+import { Button } from "@workspace/ui/components/button";
+import { Input } from "@workspace/ui/components/input";
+import { Loader2Icon } from "lucide-react";
+import { useState } from "react";
+import { toast } from "sonner";
+import { useTranslations } from "@/i18n/client";
+import { signForNewsletter } from "@/ui/footer/actions";
 
 export const Newsletter = () => {
-  const t = useTranslations('Global.newsletter');
+  const t = useTranslations("Global.newsletter");
   const [loading, setLoading] = useState(false);
   return (
     <form
-      className='flex gap-x-2'
+      className="flex gap-x-2"
       onSubmit={() => {
         setLoading(true);
       }}
@@ -21,36 +21,36 @@ export const Newsletter = () => {
         try {
           const result = await signForNewsletter(formData);
           if (result?.status && result.status < 400) {
-            toast.info(t('success'), {
-              position: 'bottom-left',
+            toast.info(t("success"), {
+              position: "bottom-left",
             });
           } else {
-            toast.error(t('error'), { position: 'bottom-left' });
+            toast.error(t("error"), { position: "bottom-left" });
           }
-        } catch (error) {
-          toast.error(t('error'), { position: 'bottom-left' });
+        } catch (_error) {
+          toast.error(t("error"), { position: "bottom-left" });
         } finally {
           setLoading(false);
         }
       }}
     >
       <Input
-        className='max-w-lg flex-1'
-        placeholder={t('emailPlaceholder')}
-        type='email'
-        name='email'
+        className="max-w-lg flex-1"
+        placeholder={t("emailPlaceholder")}
+        type="email"
+        name="email"
         required
       />
       <Button
-        type='submit'
-        className='w-24 rounded-full'
-        variant='default'
+        type="submit"
+        className="w-24 rounded-full"
+        variant="default"
         disabled={loading}
       >
         {loading ? (
-          <Loader2Icon className='h-4 w-4 animate-spin' />
+          <Loader2Icon className="h-4 w-4 animate-spin" />
         ) : (
-          t('subscribeButton')
+          t("subscribeButton")
         )}
       </Button>
     </form>

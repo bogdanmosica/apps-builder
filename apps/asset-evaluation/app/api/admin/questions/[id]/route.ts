@@ -1,36 +1,40 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { getUser } from '@/lib/db/queries';
-import { db } from '@/lib/db/drizzle';
-import { questions, answers, userEvaluationAnswers } from '@/lib/db/schema';
-import { eq, inArray } from 'drizzle-orm';
-import { z } from 'zod';
+import { eq, inArray } from "drizzle-orm";
+import { type NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
+import { db } from "@/lib/db/drizzle";
+import { getUser } from "@/lib/db/queries";
+import { answers, questions, userEvaluationAnswers } from "@/lib/db/schema";
 
 const updateQuestionSchema = z.object({
-  text_ro: z.string().min(1, 'Romanian text is required'),
-  text_en: z.string().min(1, 'English text is required'),
+  text_ro: z.string().min(1, "Romanian text is required"),
+  text_en: z.string().min(1, "English text is required"),
   weight: z.number().int().min(1).max(100),
-  answers: z.array(z.object({
-    id: z.number().optional(), // Existing answer ID
-    text_ro: z.string().min(1, 'Romanian text is required'),
-    text_en: z.string().min(1, 'English text is required'),
-    weight: z.number().int().min(0).max(100),
-    isNew: z.boolean().optional(),
-  })).min(2, 'At least 2 answers are required'),
+  answers: z
+    .array(
+      z.object({
+        id: z.number().optional(), // Existing answer ID
+        text_ro: z.string().min(1, "Romanian text is required"),
+        text_en: z.string().min(1, "English text is required"),
+        weight: z.number().int().min(0).max(100),
+        isNew: z.boolean().optional(),
+      }),
+    )
+    .min(2, "At least 2 answers are required"),
   deletedAnswerIds: z.array(z.number()).optional(),
 });
 
 // PUT /api/admin/questions/[id] - Full update with answers
 export async function PUT(
   request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     const user = await getUser();
-    
-    if (!user || !['admin', 'owner'].includes(user.role)) {
+
+    if (!user || !["admin", "owner"].includes(user.role)) {
       return NextResponse.json(
-        { success: false, error: 'Unauthorized' },
-        { status: 403 }
+        { success: false, error: "Unauthorized" },
+        { status: 403 },
       );
     }
 
@@ -38,8 +42,8 @@ export async function PUT(
     const id = parseInt(idParam);
     if (isNaN(id)) {
       return NextResponse.json(
-        { success: false, error: 'Invalid question ID' },
-        { status: 400 }
+        { success: false, error: "Invalid question ID" },
+        { status: 400 },
       );
     }
 
@@ -48,12 +52,22 @@ export async function PUT(
 
     if (!validation.success) {
       return NextResponse.json(
-        { success: false, error: 'Invalid input', details: validation.error.issues },
-        { status: 400 }
+        {
+          success: false,
+          error: "Invalid input",
+          details: validation.error.issues,
+        },
+        { status: 400 },
       );
     }
 
-    const { text_ro, text_en, weight, answers: answersData, deletedAnswerIds = [] } = validation.data;
+    const {
+      text_ro,
+      text_en,
+      weight,
+      answers: answersData,
+      deletedAnswerIds = [],
+    } = validation.data;
 
     // Check if question exists
     const existing = await db.query.questions.findFirst({
@@ -65,8 +79,8 @@ export async function PUT(
 
     if (!existing) {
       return NextResponse.json(
-        { success: false, error: 'Question not found' },
-        { status: 404 }
+        { success: false, error: "Question not found" },
+        { status: 404 },
       );
     }
 
@@ -126,10 +140,10 @@ export async function PUT(
       data: updatedQuestion,
     });
   } catch (error) {
-    console.error('Error updating question:', error);
+    console.error("Error updating question:", error);
     return NextResponse.json(
-      { success: false, error: 'Internal server error' },
-      { status: 500 }
+      { success: false, error: "Internal server error" },
+      { status: 500 },
     );
   }
 }
@@ -137,15 +151,15 @@ export async function PUT(
 // PATCH /api/admin/questions/[id] - Simple update (backwards compatibility)
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     const user = await getUser();
-    
-    if (!user || !['admin', 'owner'].includes(user.role)) {
+
+    if (!user || !["admin", "owner"].includes(user.role)) {
       return NextResponse.json(
-        { success: false, error: 'Unauthorized' },
-        { status: 403 }
+        { success: false, error: "Unauthorized" },
+        { status: 403 },
       );
     }
 
@@ -153,26 +167,30 @@ export async function PATCH(
     const id = parseInt(idParam);
     if (isNaN(id)) {
       return NextResponse.json(
-        { success: false, error: 'Invalid question ID' },
-        { status: 400 }
+        { success: false, error: "Invalid question ID" },
+        { status: 400 },
       );
     }
 
     const body = await request.json();
-    
+
     const simpleUpdateSchema = z.object({
-      text_ro: z.string().min(1, 'Romanian text is required'),
+      text_ro: z.string().min(1, "Romanian text is required"),
       text_en: z.string().nullable(),
       weight: z.number().int().min(1).max(10),
-      categoryId: z.number().int().positive('Category ID is required'),
+      categoryId: z.number().int().positive("Category ID is required"),
     });
-    
+
     const validation = simpleUpdateSchema.safeParse(body);
 
     if (!validation.success) {
       return NextResponse.json(
-        { success: false, error: 'Invalid input', details: validation.error.issues },
-        { status: 400 }
+        {
+          success: false,
+          error: "Invalid input",
+          details: validation.error.issues,
+        },
+        { status: 400 },
       );
     }
 
@@ -185,8 +203,8 @@ export async function PATCH(
 
     if (!existing) {
       return NextResponse.json(
-        { success: false, error: 'Question not found' },
-        { status: 404 }
+        { success: false, error: "Question not found" },
+        { status: 404 },
       );
     }
 
@@ -207,10 +225,10 @@ export async function PATCH(
       data: updatedQuestion,
     });
   } catch (error) {
-    console.error('Error updating question:', error);
+    console.error("Error updating question:", error);
     return NextResponse.json(
-      { success: false, error: 'Internal server error' },
-      { status: 500 }
+      { success: false, error: "Internal server error" },
+      { status: 500 },
     );
   }
 }
@@ -218,25 +236,25 @@ export async function PATCH(
 // DELETE /api/admin/questions/[id]
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     const user = await getUser();
-    
-    if (!user || !['admin', 'owner'].includes(user.role)) {
+
+    if (!user || !["admin", "owner"].includes(user.role)) {
       return NextResponse.json(
-        { success: false, error: 'Unauthorized' },
-        { status: 403 }
+        { success: false, error: "Unauthorized" },
+        { status: 403 },
       );
     }
 
     const { id: idParam } = await params;
     const id = parseInt(idParam);
-    
+
     if (isNaN(id)) {
       return NextResponse.json(
-        { success: false, error: 'Invalid question ID' },
-        { status: 400 }
+        { success: false, error: "Invalid question ID" },
+        { status: 400 },
       );
     }
 
@@ -250,23 +268,25 @@ export async function DELETE(
 
     if (!existing) {
       return NextResponse.json(
-        { success: false, error: 'Question not found' },
-        { status: 404 }
+        { success: false, error: "Question not found" },
+        { status: 404 },
       );
     }
 
     // Delete cascade: user evaluation answers -> answers -> question
     if (existing.answers.length > 0) {
       const answerIds = existing.answers.map((a: any) => a.id);
-      
+
       // First delete any user evaluation answers that reference these answers
-      await db.delete(userEvaluationAnswers)
+      await db
+        .delete(userEvaluationAnswers)
         .where(inArray(userEvaluationAnswers.answerId, answerIds));
-      
+
       // Also delete any user evaluation answers that reference this question
-      await db.delete(userEvaluationAnswers)
+      await db
+        .delete(userEvaluationAnswers)
         .where(eq(userEvaluationAnswers.questionId, id));
-      
+
       // Then delete the answers
       await db.delete(answers).where(eq(answers.questionId, id));
     }
@@ -276,14 +296,17 @@ export async function DELETE(
 
     return NextResponse.json({
       success: true,
-      message: 'Question and all its answers deleted successfully',
+      message: "Question and all its answers deleted successfully",
     });
   } catch (error) {
-    console.error('Error deleting question:', error);
-    console.error('Error stack:', error instanceof Error ? error.stack : 'No stack trace');
+    console.error("Error deleting question:", error);
+    console.error(
+      "Error stack:",
+      error instanceof Error ? error.stack : "No stack trace",
+    );
     return NextResponse.json(
-      { success: false, error: 'Internal server error' },
-      { status: 500 }
+      { success: false, error: "Internal server error" },
+      { status: 500 },
     );
   }
 }

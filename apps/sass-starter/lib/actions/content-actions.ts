@@ -1,18 +1,18 @@
-import { 
-  getContentPosts, 
-  getContentCategories, 
-  getContentMedia, 
+import { redirect } from "next/navigation";
+import {
+  getContentCategories,
+  getContentMedia,
+  getContentPosts,
   getContentStats,
-  getRecentContentActivity
-} from '@/lib/db/content-queries';
-import { getUser } from '@/lib/db/queries';
-import { redirect } from 'next/navigation';
+  getRecentContentActivity,
+} from "@/lib/db/content-queries";
+import { getUser } from "@/lib/db/queries";
 
 export async function getContentData() {
   const user = await getUser();
-  
+
   if (!user) {
-    redirect('/sign-in');
+    redirect("/sign-in");
   }
 
   // For now, we'll use teamId = 1 as a default
@@ -20,13 +20,15 @@ export async function getContentData() {
   const teamId = 1;
 
   try {
-    const [posts, categories, media, stats, recentActivity] = await Promise.all([
-      getContentPosts(teamId),
-      getContentCategories(teamId),
-      getContentMedia(teamId, { limit: 20 }),
-      getContentStats(teamId),
-      getRecentContentActivity(teamId, 5)
-    ]);
+    const [posts, categories, media, stats, recentActivity] = await Promise.all(
+      [
+        getContentPosts(teamId),
+        getContentCategories(teamId),
+        getContentMedia(teamId, { limit: 20 }),
+        getContentStats(teamId),
+        getRecentContentActivity(teamId, 5),
+      ],
+    );
 
     return {
       posts,
@@ -36,7 +38,7 @@ export async function getContentData() {
       recentActivity,
     };
   } catch (error) {
-    console.error('Error fetching content data:', error);
+    console.error("Error fetching content data:", error);
     return {
       posts: [],
       categories: [],

@@ -1,8 +1,8 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { db } from '@/lib/db/drizzle';
-import { conversations, messages, teams, users } from '@/lib/db/schema';
-import { eq, desc, and, sql } from 'drizzle-orm';
-import { getSession } from '@/lib/auth/session';
+import { and, desc, eq, sql } from "drizzle-orm";
+import { type NextRequest, NextResponse } from "next/server";
+import { getSession } from "@/lib/auth/session";
+import { db } from "@/lib/db/drizzle";
+import { conversations, messages, teams, users } from "@/lib/db/schema";
 
 // Type for conversation data from query
 type ConversationData = {
@@ -28,16 +28,21 @@ export async function GET(request: NextRequest) {
     const session = await getSession();
 
     if (!session?.user?.id) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const { searchParams } = new URL(request.url);
-    const type = searchParams.get('type');
-    const status = searchParams.get('status') || 'active'; // Default to active
-    const priority = searchParams.get('priority');
-    const search = searchParams.get('search');
+    const type = searchParams.get("type");
+    const status = searchParams.get("status") || "active"; // Default to active
+    const priority = searchParams.get("priority");
+    const search = searchParams.get("search");
 
-    console.log('🔍 Fetching conversations with filters:', { type, status, priority, search });
+    console.log("🔍 Fetching conversations with filters:", {
+      type,
+      status,
+      priority,
+      search,
+    });
 
     // Get user's team
     const user = await db.query.users.findFirst({
@@ -52,7 +57,10 @@ export async function GET(request: NextRequest) {
     });
 
     if (!user || !user.teamMembers[0]) {
-      return NextResponse.json({ error: 'User not found or not part of a team' }, { status: 404 });
+      return NextResponse.json(
+        { error: "User not found or not part of a team" },
+        { status: 404 },
+      );
     }
 
     const teamId = user.teamMembers[0].teamId;
@@ -60,14 +68,14 @@ export async function GET(request: NextRequest) {
     // Build query conditions
     const conditions = [eq(conversations.teamId, teamId)];
 
-    if (type && type !== 'all') {
+    if (type && type !== "all") {
       conditions.push(eq(conversations.type, type));
     }
 
     // Always filter by status (active/archived/closed)
     conditions.push(eq(conversations.status, status));
 
-    if (priority && priority !== 'all') {
+    if (priority && priority !== "all") {
       conditions.push(eq(conversations.priority, priority));
     }
 
@@ -102,7 +110,8 @@ export async function GET(request: NextRequest) {
         (conv: ConversationData) =>
           conv.participantName?.toLowerCase().includes(searchLower) ||
           conv.participantEmail?.toLowerCase().includes(searchLower) ||
-          (conv.lastMessage && conv.lastMessage.toLowerCase().includes(searchLower))
+          (conv.lastMessage &&
+            conv.lastMessage.toLowerCase().includes(searchLower)),
       );
     }
 
@@ -113,7 +122,8 @@ export async function GET(request: NextRequest) {
         email: conv.participantEmail,
         avatar: conv.participantAvatar,
         lastMessage: conv.lastMessage,
-        timestamp: conv.lastMessageAt?.toISOString() || new Date().toISOString(),
+        timestamp:
+          conv.lastMessageAt?.toISOString() || new Date().toISOString(),
         unread: conv.unreadCount,
         status: conv.participantStatus, // Online/offline status of participant
         conversationStatus: conv.status, // Active/archived/closed status of conversation
@@ -122,8 +132,11 @@ export async function GET(request: NextRequest) {
       })),
     });
   } catch (error) {
-    console.error('Error fetching conversations:', error);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    console.error("Error fetching conversations:", error);
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 },
+    );
   }
 }
 
@@ -132,14 +145,22 @@ export async function POST(request: NextRequest) {
     const session = await getSession();
 
     if (!session?.user?.id) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const body = await request.json();
-    const { participantName, participantEmail, type = 'support', priority = 'medium' } = body;
+    const {
+      participantName,
+      participantEmail,
+      type = "support",
+      priority = "medium",
+    } = body;
 
     if (!participantName || !participantEmail) {
-      return NextResponse.json({ error: 'Participant name and email are required' }, { status: 400 });
+      return NextResponse.json(
+        { error: "Participant name and email are required" },
+        { status: 400 },
+      );
     }
 
     // Get user's team
@@ -155,7 +176,10 @@ export async function POST(request: NextRequest) {
     });
 
     if (!user || !user.teamMembers[0]) {
-      return NextResponse.json({ error: 'User not found or not part of a team' }, { status: 404 });
+      return NextResponse.json(
+        { error: "User not found or not part of a team" },
+        { status: 404 },
+      );
     }
 
     const teamId = user.teamMembers[0].teamId;
@@ -173,22 +197,28 @@ export async function POST(request: NextRequest) {
       })
       .returning();
 
-    return NextResponse.json({
-      conversation: {
-        id: newConversation.id,
-        participant: newConversation.participantName,
-        email: newConversation.participantEmail,
-        avatar: newConversation.participantAvatar,
-        lastMessage: newConversation.lastMessage,
-        timestamp: newConversation.lastMessageAt?.toISOString(),
-        unread: newConversation.unreadCount,
-        status: newConversation.participantStatus,
-        type: newConversation.type,
-        priority: newConversation.priority,
+    return NextResponse.json(
+      {
+        conversation: {
+          id: newConversation.id,
+          participant: newConversation.participantName,
+          email: newConversation.participantEmail,
+          avatar: newConversation.participantAvatar,
+          lastMessage: newConversation.lastMessage,
+          timestamp: newConversation.lastMessageAt?.toISOString(),
+          unread: newConversation.unreadCount,
+          status: newConversation.participantStatus,
+          type: newConversation.type,
+          priority: newConversation.priority,
+        },
       },
-    }, { status: 201 });
+      { status: 201 },
+    );
   } catch (error) {
-    console.error('Error creating conversation:', error);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    console.error("Error creating conversation:", error);
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 },
+    );
   }
 }

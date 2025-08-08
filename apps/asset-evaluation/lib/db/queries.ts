@@ -1,16 +1,25 @@
-import { desc, and, eq, isNull } from 'drizzle-orm';
-import { db } from './drizzle';
-import { activityLogs, teamMembers, teams, users, userProfiles, evaluationSessions, propertyTypes, type EvaluationSession } from './schema';
-import { getSession } from '@/lib/auth/session';
+import { and, desc, eq, isNull } from "drizzle-orm";
+import { getSession } from "@/lib/auth/session";
+import { db } from "./drizzle";
+import {
+  activityLogs,
+  type EvaluationSession,
+  evaluationSessions,
+  propertyTypes,
+  teamMembers,
+  teams,
+  userProfiles,
+  users,
+} from "./schema";
 
 export async function getUser() {
   try {
     const sessionData = await getSession();
-    
+
     if (
       !sessionData ||
       !sessionData.user ||
-      typeof sessionData.user.id !== 'number'
+      typeof sessionData.user.id !== "number"
     ) {
       return null;
     }
@@ -31,7 +40,7 @@ export async function getUser() {
 
     return user[0];
   } catch (error) {
-    console.error('Error fetching user:', error);
+    console.error("Error fetching user:", error);
     // Return null instead of throwing to prevent page crashes
     return null;
   }
@@ -43,7 +52,7 @@ export async function getUserWithProfile() {
     if (
       !sessionData ||
       !sessionData.user ||
-      typeof sessionData.user.id !== 'number'
+      typeof sessionData.user.id !== "number"
     ) {
       return null;
     }
@@ -61,7 +70,7 @@ export async function getUserWithProfile() {
 
     return result || null;
   } catch (error) {
-    console.error('Error fetching user with profile:', error);
+    console.error("Error fetching user with profile:", error);
     return null;
   }
 }
@@ -91,7 +100,10 @@ export async function updateUserProfile(userId: number, profileData: any) {
   return profile;
 }
 
-export async function updateUserBasicInfo(userId: number, userData: { name?: string; email?: string }) {
+export async function updateUserBasicInfo(
+  userId: number,
+  userData: { name?: string; email?: string },
+) {
   const [user] = await db
     .update(users)
     .set({
@@ -121,13 +133,13 @@ export async function updateTeamSubscription(
     stripeProductId: string | null;
     planName: string | null;
     subscriptionStatus: string;
-  }
+  },
 ) {
   await db
     .update(teams)
     .set({
       ...subscriptionData,
-      updatedAt: new Date()
+      updatedAt: new Date(),
     })
     .where(eq(teams.id, teamId));
 }
@@ -136,7 +148,7 @@ export async function getUserWithTeam(userId: number) {
   const result = await db
     .select({
       user: users,
-      teamId: teamMembers.teamId
+      teamId: teamMembers.teamId,
     })
     .from(users)
     .leftJoin(teamMembers, eq(users.id, teamMembers.userId))
@@ -149,7 +161,7 @@ export async function getUserWithTeam(userId: number) {
 export async function getActivityLogs() {
   const user = await getUser();
   if (!user) {
-    throw new Error('User not authenticated');
+    throw new Error("User not authenticated");
   }
 
   return await db
@@ -158,7 +170,7 @@ export async function getActivityLogs() {
       action: activityLogs.action,
       timestamp: activityLogs.timestamp,
       ipAddress: activityLogs.ipAddress,
-      userName: users.name
+      userName: users.name,
     })
     .from(activityLogs)
     .leftJoin(users, eq(activityLogs.userId, users.id))
@@ -184,14 +196,14 @@ export async function getTeamForUser() {
                 columns: {
                   id: true,
                   name: true,
-                  email: true
-                }
-              }
-            }
-          }
-        }
-      }
-    }
+                  email: true,
+                },
+              },
+            },
+          },
+        },
+      },
+    },
   });
 
   return result?.team || null;
@@ -215,7 +227,7 @@ export async function getUserEvaluations() {
 
     return evaluations;
   } catch (error) {
-    console.error('Error fetching user evaluations:', error);
+    console.error("Error fetching user evaluations:", error);
     return [];
   }
 }
@@ -246,9 +258,21 @@ export async function getUserEvaluationStats() {
       };
     }
 
-    const totalScore = evaluations.reduce((sum: number, evaluation: EvaluationSession) => sum + evaluation.percentage, 0);
-    const bestScore = Math.max(...evaluations.map((evaluation: EvaluationSession) => evaluation.percentage));
-    const averageCompletionRate = evaluations.reduce((sum: number, evaluation: EvaluationSession) => sum + evaluation.completionRate, 0);
+    const totalScore = evaluations.reduce(
+      (sum: number, evaluation: EvaluationSession) =>
+        sum + evaluation.percentage,
+      0,
+    );
+    const bestScore = Math.max(
+      ...evaluations.map(
+        (evaluation: EvaluationSession) => evaluation.percentage,
+      ),
+    );
+    const averageCompletionRate = evaluations.reduce(
+      (sum: number, evaluation: EvaluationSession) =>
+        sum + evaluation.completionRate,
+      0,
+    );
 
     return {
       totalEvaluations: evaluations.length,
@@ -257,7 +281,7 @@ export async function getUserEvaluationStats() {
       completionRate: Math.round(averageCompletionRate / evaluations.length),
     };
   } catch (error) {
-    console.error('Error fetching user evaluation stats:', error);
+    console.error("Error fetching user evaluation stats:", error);
     return {
       totalEvaluations: 0,
       averageScore: 0,

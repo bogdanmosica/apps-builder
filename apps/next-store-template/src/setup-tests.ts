@@ -15,5 +15,5 @@ loadEnvConfig(".");
 expect.extend(matchers);
 
 afterEach(() => {
-	cleanup();
+  cleanup();
 });
